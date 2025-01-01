@@ -1,0 +1,94 @@
+server:
+  port: 8080
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${PROD_DB_URL}
+    username: ${PROD_DB_USERNAME}
+    password: ${PROD_DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: com.napjak.global.common.config.MysqlCustomDialect
+        format_sql: true
+
+  data:
+    redis:
+      host: ${PROD_REDIS_HOST}
+      port: ${PROD_REDIS_PORT}
+      password: ${PROD_REDIS_PASSWORD}
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${PROD_KAKAO_CLIENT_ID}
+            client-secret: ${PROD_KAKAO_CLIENT_SECRET}
+            redirect-uri: ${PROD_KAKAO_REDIRECT_URI}
+            client-authentication-method: POST
+            authorization-grant-type: authorization_code
+            scope: profile_nickname, account_email
+            client-name: Kakao
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+  coolsms:
+    api:
+      key: ${PROD_COOLSMS_KEY}
+      secret: ${PROD_COOLSMS_SECRET}
+      number: ${PROD_COOLSMS_NUMBER}
+
+jwt:
+  secret: ${PROD_JWT_SECRET}
+  access-token-expire-time: ${PROD_ACCESS_TOKEN_EXPIRE_TIME}
+  refresh-token-expire-time: ${PROD_REFRESH_TOKEN_EXPIRE_TIME}
+
+cloud:
+  aws:
+    region: ap-northeast-2
+    credentials:
+      access-key: ${PROD_S3_ACCESS_KEY}
+      secret-key: ${PROD_S3_SECRET_KEY}
+  s3:
+    bucket: napjak-prod-bucket
+  stack:
+    auto: false
+
+logging:
+  level:
+    root: info
+
+cors:
+  allowed-origins: ${PROD_ALLOWED_ORIGINS}
+
+app:
+  server:
+    url: ${PROD_SERVER_URL}
+
+springdoc:
+  use-fqn: false
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: alpha
+    display-request-duration: true
+    urls-primary-name: general
