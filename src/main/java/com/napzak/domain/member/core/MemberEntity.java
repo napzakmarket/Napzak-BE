@@ -37,7 +37,7 @@ public class MemberEntity {
 	@Column(name = COLUMN_NICKNAME, nullable = false)
 	private String nickname;
 
-	@Column(name = COLUMN_PHONE, nullable = false)
+	@Column(name = COLUMN_PHONE, nullable = true)
 	private String phone;
 
 	@Column(name = COLUMN_PHOTO, nullable = true)
@@ -61,7 +61,7 @@ public class MemberEntity {
 	private SocialType socialType;
 
 	@Builder
-	private MemberEntity(String nickname, String phone, String photo, Role role, Long socialId, SocialType socialType) {
+	private MemberEntity(String nickname, String phone, Role role, Long socialId, SocialType socialType, String photo) {
 		this.nickname = nickname;
 		this.phone = phone;
 		this.photo = photo;
@@ -73,18 +73,18 @@ public class MemberEntity {
 	public static MemberEntity create(
 		final String nickname,
 		final String phone,
-		final String photo,
 		final Role role,
 		final Long socialId,
-		final SocialType socialType
+		final SocialType socialType,
+		final String photo
 	) {
 		return MemberEntity.builder()
 			.nickname(nickname)
 			.phone(phone)
-			.photo(photo)
 			.role(role)
 			.socialId(socialId)
 			.socialType(socialType)
+			.photo(photo)
 			.build();
 	}
 }
