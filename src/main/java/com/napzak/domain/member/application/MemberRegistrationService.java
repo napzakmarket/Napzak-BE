@@ -22,7 +22,7 @@ public class MemberRegistrationService {
 
         MemberEntity member = MemberEntity.create(
                 memberInfoResponse.nickname(),
-                memberInfoResponse.email(),
+                null,
                 Role.MEMBER,
                 memberInfoResponse.socialId(),
                 memberInfoResponse.socialType(),
