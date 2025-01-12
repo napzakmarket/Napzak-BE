@@ -5,7 +5,6 @@ import com.napzak.domain.member.core.SocialType;
 import com.napzak.domain.member.exception.MemberErrorCode;
 import com.napzak.domain.member.port.MemberUseCase;
 import com.napzak.domain.member.repository.MemberRepository;
-import com.napzak.global.common.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

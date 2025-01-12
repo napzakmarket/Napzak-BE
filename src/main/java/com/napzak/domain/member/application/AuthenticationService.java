@@ -12,12 +12,8 @@ import com.napzak.global.auth.jwt.provider.JwtValidationType;
 import com.napzak.global.auth.jwt.service.TokenService;
 import com.napzak.global.auth.security.AdminAuthentication;
 import com.napzak.global.auth.security.MemberAuthentication;
-import com.napzak.global.common.exception.BadRequestException;
 import com.napzak.global.common.exception.NapzakException;
-import com.napzak.global.common.exception.NotFoundException;
-import com.napzak.global.common.exception.UnauthorizedException;
 import com.napzak.global.common.exception.code.ErrorCode;
-import feign.FeignException;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +21,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Member;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +46,7 @@ public class AuthenticationService {
                                                              final MemberInfoResponse memberInfoResponse) {
         String nickname = memberInfoResponse.nickname();
         Optional<MemberEntity> optionalMember = memberRepository.findById(memberId);
-        MemberEntity member = optionalMember.orElseThrow(()-> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        MemberEntity member = optionalMember.orElseThrow(()-> new NapzakException(ErrorCode.USER_NOT_FOUND));
         Role role = member.getRole();
 
         Collection<GrantedAuthority> authorities = List.of(role.toGrantedAuthority());
@@ -136,11 +131,11 @@ public class AuthenticationService {
 
         if (!validationType.equals(JwtValidationType.VALID_JWT)) {
             throw switch (validationType) {
-                case EXPIRED_JWT_TOKEN -> new UnauthorizedException(TokenErrorCode.REFRESH_TOKEN_EXPIRED_ERROR);
-                case INVALID_JWT_TOKEN -> new BadRequestException(TokenErrorCode.INVALID_REFRESH_TOKEN_ERROR);
-                case INVALID_JWT_SIGNATURE -> new BadRequestException(TokenErrorCode.REFRESH_TOKEN_SIGNATURE_ERROR);
-                case UNSUPPORTED_JWT_TOKEN -> new BadRequestException(TokenErrorCode.UNSUPPORTED_REFRESH_TOKEN_ERROR);
-                case EMPTY_JWT -> new BadRequestException(TokenErrorCode.REFRESH_TOKEN_EMPTY_ERROR);
+                case EXPIRED_JWT_TOKEN -> new NapzakException(TokenErrorCode.REFRESH_TOKEN_EXPIRED_ERROR);
+                case INVALID_JWT_TOKEN -> new NapzakException(TokenErrorCode.INVALID_REFRESH_TOKEN_ERROR);
+                case INVALID_JWT_SIGNATURE -> new NapzakException(TokenErrorCode.REFRESH_TOKEN_SIGNATURE_ERROR);
+                case UNSUPPORTED_JWT_TOKEN -> new NapzakException(TokenErrorCode.UNSUPPORTED_REFRESH_TOKEN_ERROR);
+                case EMPTY_JWT -> new NapzakException(TokenErrorCode.REFRESH_TOKEN_EMPTY_ERROR);
                 default -> new NapzakException(TokenErrorCode.UNKNOWN_REFRESH_TOKEN_ERROR);
             };
         }
@@ -151,7 +146,7 @@ public class AuthenticationService {
 
         if (!memberId.equals(storedMemberId)) {
             log.error("MemberId mismatch: token does not match the stored refresh token");
-            throw new BadRequestException(TokenErrorCode.REFRESH_TOKEN_MEMBER_ID_MISMATCH_ERROR);
+            throw new NapzakException(TokenErrorCode.REFRESH_TOKEN_MEMBER_ID_MISMATCH_ERROR);
         }
     }
 
