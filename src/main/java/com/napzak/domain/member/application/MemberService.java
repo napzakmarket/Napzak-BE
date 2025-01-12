@@ -5,6 +5,7 @@ import com.napzak.domain.member.core.SocialType;
 import com.napzak.domain.member.exception.MemberErrorCode;
 import com.napzak.domain.member.port.MemberUseCase;
 import com.napzak.domain.member.repository.MemberRepository;
+import com.napzak.global.common.exception.NapzakException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class MemberService implements MemberUseCase {
     @Transactional(readOnly = true)
     public MemberEntity findMemberByMemberId(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new NapzakException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 
     @Override
@@ -34,7 +35,7 @@ public class MemberService implements MemberUseCase {
     @Transactional(readOnly = true)
     public MemberEntity findMemberBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
         return memberRepository.findBySocialTypeAndSocialId(socialId, socialType)
-                .orElseThrow(() -> new NotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new NapzakException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 
 }
