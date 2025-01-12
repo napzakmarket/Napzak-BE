@@ -1,4 +1,4 @@
-package com.napzak.domain.member.dto;
+package com.napzak.domain.member.api.dto;
 
 import com.napzak.domain.member.core.Role;
 

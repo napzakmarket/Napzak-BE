@@ -1,6 +1,6 @@
-package com.napzak.domain.member.api;
+package com.napzak.domain.member.api.controller;
 
-import com.napzak.domain.member.dto.MemberLoginResponse;
+import com.napzak.domain.member.api.dto.MemberLoginResponse;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.auth.client.dto.MemberLoginRequest;
 import com.napzak.global.common.exception.dto.SuccessResponse;

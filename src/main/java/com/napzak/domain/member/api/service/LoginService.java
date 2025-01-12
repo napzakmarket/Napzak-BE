@@ -1,9 +1,8 @@
-package com.napzak.domain.member.application;
+package com.napzak.domain.member.api.service;
 
 import com.napzak.domain.member.core.MemberEntity;
 import com.napzak.domain.member.core.SocialType;
-import com.napzak.domain.member.dto.LoginSuccessResponse;
-import com.napzak.domain.member.port.MemberUseCase;
+import com.napzak.domain.member.api.dto.LoginSuccessResponse;
 import com.napzak.global.auth.client.dto.MemberSocialInfoResponse;
 import com.napzak.global.auth.client.dto.MemberLoginRequest;
 import com.napzak.global.auth.client.service.SocialService;
@@ -18,9 +17,9 @@ import org.springframework.stereotype.Service;
 public class LoginService {
 
     private final SocialService kakaoSocialService;
-    private final MemberUseCase memberUseCase;
     private final MemberRegistrationService memberRegistrationService;
     private final AuthenticationService authenticationService;
+    private final MemberService memberService;
 
     @Transactional
     public LoginSuccessResponse login(
@@ -59,11 +58,11 @@ public class LoginService {
 
     //기존 회원을 찾거나, 없으면 새로 멤버 등록
     private Long findOrRegisterMember(final MemberSocialInfoResponse memberSocialInfoResponse){
-        boolean memberExits = memberUseCase.checkMemberExistsBySocialIdAndSocialType(memberSocialInfoResponse.socialId(),
+        boolean memberExits = memberService.checkMemberExistsBySocialIdAndSocialType(memberSocialInfoResponse.socialId(),
                 memberSocialInfoResponse.socialType());
 
         if (memberExits){
-            MemberEntity member = memberUseCase.findMemberBySocialIdAndSocialType(memberSocialInfoResponse.socialId(),
+            MemberEntity member = memberService.findMemberBySocialIdAndSocialType(memberSocialInfoResponse.socialId(),
                     memberSocialInfoResponse.socialType());
             return member.getId();
         }
@@ -75,7 +74,7 @@ public class LoginService {
             Long memberId,
             MemberSocialInfoResponse memberSocialInfoResponse){
 
-        MemberEntity member = memberUseCase.findMemberByMemberId(memberId);
+        MemberEntity member = memberService.findMemberByMemberId(memberId);
         return authenticationService.generateLoginSuccessResponse(memberId, memberSocialInfoResponse);
 
     }

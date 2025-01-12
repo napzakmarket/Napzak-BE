@@ -1,15 +1,14 @@
-package com.napzak.domain.member.exception;
+package com.napzak.domain.member.core.exception;
 
-import com.napzak.global.common.exception.base.BaseSuccessCode;
+import com.napzak.global.common.exception.base.BaseErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum MemberSuccessCode implements BaseSuccessCode {
-    LOGIN_SUCCESS(HttpStatus.OK, "로그인 성공"),
-    LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃 성공");
+public enum MemberErrorCode implements BaseErrorCode {
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 사용자가 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
@@ -18,5 +17,4 @@ public enum MemberSuccessCode implements BaseSuccessCode {
     public HttpStatus getHttpStatus() {
         return this.httpStatus;
     }
-
 }

@@ -1,10 +1,9 @@
-package com.napzak.domain.member.application;
+package com.napzak.domain.member.api.service;
 
 import com.napzak.domain.member.core.MemberEntity;
 import com.napzak.domain.member.core.SocialType;
-import com.napzak.domain.member.exception.MemberErrorCode;
-import com.napzak.domain.member.port.MemberUseCase;
-import com.napzak.domain.member.repository.MemberRepository;
+import com.napzak.domain.member.core.exception.MemberErrorCode;
+import com.napzak.domain.member.core.MemberRepository;
 import com.napzak.global.common.exception.NapzakException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,23 +14,20 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class MemberService implements MemberUseCase {
+public class MemberService {
     private final MemberRepository memberRepository;
 
-    @Override
     @Transactional(readOnly = true)
     public MemberEntity findMemberByMemberId(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new NapzakException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 
-    @Override
     @Transactional(readOnly = true)
     public boolean checkMemberExistsBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
         return memberRepository.findBySocialTypeAndSocialId(socialId, socialType).isPresent();
     }
 
-    @Override
     @Transactional(readOnly = true)
     public MemberEntity findMemberBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
         return memberRepository.findBySocialTypeAndSocialId(socialId, socialType)

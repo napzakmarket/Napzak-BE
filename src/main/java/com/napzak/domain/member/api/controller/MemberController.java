@@ -1,9 +1,9 @@
-package com.napzak.domain.member.api;
+package com.napzak.domain.member.api.controller;
 
-import com.napzak.domain.member.application.LoginService;
-import com.napzak.domain.member.dto.LoginSuccessResponse;
-import com.napzak.domain.member.dto.MemberLoginResponse;
-import com.napzak.domain.member.exception.MemberSuccessCode;
+import com.napzak.domain.member.api.service.LoginService;
+import com.napzak.domain.member.api.dto.LoginSuccessResponse;
+import com.napzak.domain.member.api.dto.MemberLoginResponse;
+import com.napzak.domain.member.core.exception.MemberSuccessCode;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.auth.client.dto.MemberLoginRequest;
 import com.napzak.global.auth.jwt.service.TokenService;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/members")
 @RequiredArgsConstructor
-public class MemberController implements MemberApi{
+public class MemberController implements MemberApi {
 
     private final LoginService loginService;
     private final TokenService tokenService;

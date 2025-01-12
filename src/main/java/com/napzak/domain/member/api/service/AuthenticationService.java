@@ -1,10 +1,10 @@
-package com.napzak.domain.member.application;
+package com.napzak.domain.member.api.service;
 
 import com.napzak.domain.member.core.MemberEntity;
 import com.napzak.domain.member.core.Role;
-import com.napzak.domain.member.dto.AccessTokenGenerateResponse;
-import com.napzak.domain.member.dto.LoginSuccessResponse;
-import com.napzak.domain.member.repository.MemberRepository;
+import com.napzak.domain.member.api.dto.AccessTokenGenerateResponse;
+import com.napzak.domain.member.api.dto.LoginSuccessResponse;
+import com.napzak.domain.member.core.MemberRepository;
 import com.napzak.global.auth.client.dto.MemberSocialInfoResponse;
 import com.napzak.global.auth.jwt.exception.TokenErrorCode;
 import com.napzak.global.auth.jwt.provider.JwtTokenProvider;
