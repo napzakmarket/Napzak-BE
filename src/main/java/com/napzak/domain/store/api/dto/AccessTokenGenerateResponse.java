@@ -1,4 +1,4 @@
-package com.napzak.domain.member.api.dto;
+package com.napzak.domain.store.api.dto;
 
 public record AccessTokenGenerateResponse(
         String accessToken

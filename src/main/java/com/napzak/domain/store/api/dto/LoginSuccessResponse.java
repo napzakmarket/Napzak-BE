@@ -1,6 +1,6 @@
-package com.napzak.domain.member.api.dto;
+package com.napzak.domain.store.api.dto;
 
-import com.napzak.domain.member.core.Role;
+import com.napzak.domain.store.core.Role;
 
 public record LoginSuccessResponse(
         String accessToken,

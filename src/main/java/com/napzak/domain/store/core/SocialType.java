@@ -1,4 +1,4 @@
-package com.napzak.domain.member.core;
+package com.napzak.domain.store.core;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

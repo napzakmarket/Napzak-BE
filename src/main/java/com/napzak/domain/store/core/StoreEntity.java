@@ -1,6 +1,6 @@
-package com.napzak.domain.member.core;
+package com.napzak.domain.store.core;
 
-import static com.napzak.domain.member.core.MemberTableConstants.*;
+import static com.napzak.domain.store.core.StoreTableConstants.*;
 
 import java.time.LocalDateTime;
 
@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Table(
-	name = TABLE_MEMBER,
+	name = TABLE_STORE,
 	indexes = {
 		@Index(name = "uk1", columnList = "phone", unique = true)
 	}
@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberEntity {
+public class StoreEntity {
 
 	@Id
 	@Column(name = COLUMN_ID)
@@ -44,7 +44,7 @@ public class MemberEntity {
 	private String photo;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = COLUMN_ROLE, nullable = false, columnDefinition = "varchar(10) default 'MEMBER'")
+	@Column(name = COLUMN_ROLE, nullable = false, columnDefinition = "varchar(10) default 'Store'")
 	private Role role;
 
 	@Column(name = COLUMN_CREATED_AT, nullable = false)
@@ -61,7 +61,7 @@ public class MemberEntity {
 	private SocialType socialType;
 
 	@Builder
-	private MemberEntity(String nickname, String phone, Role role, Long socialId, SocialType socialType, String photo) {
+	private StoreEntity(String nickname, String phone, Role role, Long socialId, SocialType socialType, String photo) {
 		this.nickname = nickname;
 		this.phone = phone;
 		this.photo = photo;
@@ -70,7 +70,7 @@ public class MemberEntity {
 		this.socialType = socialType;
 	}
 
-	public static MemberEntity create(
+	public static StoreEntity create(
 		final String nickname,
 		final String phone,
 		final Role role,
@@ -78,7 +78,7 @@ public class MemberEntity {
 		final SocialType socialType,
 		final String photo
 	) {
-		return MemberEntity.builder()
+		return StoreEntity.builder()
 			.nickname(nickname)
 			.phone(phone)
 			.role(role)

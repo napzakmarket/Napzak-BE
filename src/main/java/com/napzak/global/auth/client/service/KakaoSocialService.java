@@ -1,9 +1,9 @@
 package com.napzak.global.auth.client.service;
 
 
-import com.napzak.domain.member.core.SocialType;
-import com.napzak.global.auth.client.dto.MemberSocialInfoResponse;
-import com.napzak.global.auth.client.dto.MemberLoginRequest;
+import com.napzak.domain.store.core.SocialType;
+import com.napzak.global.auth.client.dto.StoreSocialInfoResponse;
+import com.napzak.global.auth.client.dto.StoreLoginRequest;
 import com.napzak.global.auth.client.kakao.KakaoApiClient;
 import com.napzak.global.auth.client.kakao.KakaoAuthApiClient;
 import com.napzak.global.auth.client.kakao.dto.KakaoAccessTokenResponse;
@@ -33,9 +33,9 @@ public class KakaoSocialService implements SocialService {
 
     @Transactional
     @Override
-    public MemberSocialInfoResponse login(
+    public StoreSocialInfoResponse login(
             final String authorizationCode,
-            final MemberLoginRequest loginRequest
+            final StoreLoginRequest loginRequest
     ){
             String accessToken;
             try{
@@ -64,11 +64,11 @@ public class KakaoSocialService implements SocialService {
         return kakaoApiClient.getUserInformation("Bearer "+accessToken);
     }
 
-    private MemberSocialInfoResponse getLoginDto(
+    private StoreSocialInfoResponse getLoginDto(
             final SocialType socialType,
             final KakaoUserResponse kakaoUserResponse
     ){
-        return MemberSocialInfoResponse.of(
+        return StoreSocialInfoResponse.of(
                 kakaoUserResponse.id(),
                 socialType
         );
