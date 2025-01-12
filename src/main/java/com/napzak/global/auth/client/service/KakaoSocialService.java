@@ -33,14 +33,6 @@ public class KakaoSocialService implements SocialService {
     private final KakaoApiClient kakaoApiClient;
     private final KakaoAuthApiClient kakaoAuthApiClient;
 
-    //@RequiredArgsConstructor가 컴파일 시점에 자동으로 생성자를 생성해주기 때문에 아래 내용 없어도 됨
-    /*
-    public KakaoSocialService(KakaoApiClient kakaoApiClient, KakaoAuthApiClient kakaoAuthApiClient) {
-        this.kakaoApiClient = kakaoApiClient;
-        this.kakaoAuthApiClient = kakaoAuthApiClient;
-    }
-     */
-
     @Transactional
     @Override
     public MemberInfoResponse login(
