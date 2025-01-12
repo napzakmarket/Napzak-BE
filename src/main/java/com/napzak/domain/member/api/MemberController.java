@@ -31,10 +31,10 @@ public class MemberController implements MemberApi{
     @Override
     public ResponseEntity<SuccessResponse<MemberLoginResponse>> login(
             String authorizationCode,
-            MemberLoginRequest loginRequest,
+            MemberLoginRequest memberLoginRequest,
             HttpServletResponse httpServletResponse
     ){
-            LoginSuccessResponse successResponse = loginService.login(authorizationCode, loginRequest);
+            LoginSuccessResponse successResponse = loginService.login(authorizationCode, memberLoginRequest);
             ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN, successResponse.refreshToken())
                     .maxAge(COOKIE_MAX_AGE)
                     .path("/")

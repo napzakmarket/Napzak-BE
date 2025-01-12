@@ -6,5 +6,5 @@ import com.napzak.global.auth.client.dto.MemberLoginRequest;
 public interface SocialService {
     MemberSocialInfoResponse login(
             final String authorizationToken,
-            final MemberLoginRequest loginRequest);
+            final MemberLoginRequest memberLoginRequest);
 }

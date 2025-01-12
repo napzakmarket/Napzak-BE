@@ -14,7 +14,7 @@ public interface MemberApi {
     ResponseEntity<SuccessResponse<MemberLoginResponse>> login(
             @RequestParam String authorizationCode,
             @RequestBody MemberLoginRequest body,
-            HttpServletResponse response
+            HttpServletResponse httpServletResponse
             );
 
     ResponseEntity<SuccessResponse<Void>> logOut(
