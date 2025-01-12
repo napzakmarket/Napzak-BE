@@ -7,7 +7,7 @@ import com.napzak.domain.member.exception.MemberSuccessCode;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.auth.client.dto.MemberLoginRequest;
 import com.napzak.global.auth.jwt.service.TokenService;
-import com.napzak.global.common.dto.SuccessResponse;
+import com.napzak.global.common.exception.dto.SuccessResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
