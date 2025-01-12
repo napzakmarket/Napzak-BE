@@ -39,6 +39,7 @@ public class JwtTokenProvider {
 
 	private static final String MEMBER_ID = "memberId";
 	private static final String ROLE_KEY = "role";
+	private static final String NICKNAME = "nickname";
 
 	@PostConstruct
 	protected void init() {
@@ -132,5 +133,15 @@ public class JwtTokenProvider {
 	private SecretKey getSigningKey() {
 		String encodedKey = Base64.getEncoder().encodeToString(jwtSecret.getBytes());
 		return Keys.hmacShaKeyFor(encodedKey.getBytes());
+	}
+
+	public String getNicknameFromJwt(String token) {
+		Claims claims = getBody(token);
+		String nickname = claims.get(NICKNAME).toString();
+
+		// 로그 추가: memberId 확인
+		log.info("Extracted nickname from JWT: {}", nickname);
+
+		return nickname;
 	}
 }

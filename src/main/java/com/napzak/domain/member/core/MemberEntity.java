@@ -34,7 +34,7 @@ public class MemberEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = COLUMN_NICKNAME, nullable = false)
+	@Column(name = COLUMN_NICKNAME, nullable = true)
 	private String nickname;
 
 	@Column(name = COLUMN_PHONE, nullable = true)

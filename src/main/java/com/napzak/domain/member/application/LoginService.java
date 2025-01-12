@@ -3,9 +3,8 @@ package com.napzak.domain.member.application;
 import com.napzak.domain.member.core.MemberEntity;
 import com.napzak.domain.member.core.SocialType;
 import com.napzak.domain.member.dto.LoginSuccessResponse;
-import com.napzak.domain.member.dto.MemberLoginResponse;
 import com.napzak.domain.member.port.MemberUseCase;
-import com.napzak.global.auth.client.dto.MemberInfoResponse;
+import com.napzak.global.auth.client.dto.MemberSocialInfoResponse;
 import com.napzak.global.auth.client.dto.MemberLoginRequest;
 import com.napzak.global.auth.client.service.SocialService;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +28,7 @@ public class LoginService {
             MemberLoginRequest request){
         try {
             // 소셜 서비스로부터 사용자 정보 조회
-            MemberInfoResponse memberInfo = findMemberInfo(authorizationCode, request);
+            MemberSocialInfoResponse memberInfo = findMemberInfo(authorizationCode, request);
 
             // 회원 정보를 DB에서 확인
             Long memberId = findOrRegisterMember(memberInfo);
@@ -42,7 +41,7 @@ public class LoginService {
         }
     }
     //소셜 타입에 따라 사용자 정보 조회
-    private MemberInfoResponse findMemberInfo(
+    private MemberSocialInfoResponse findMemberInfo(
             String authorizationCode,
             MemberLoginRequest request){
 
@@ -59,25 +58,25 @@ public class LoginService {
     }
 
     //기존 회원을 찾거나, 없으면 새로 멤버 등록
-    private Long findOrRegisterMember(final MemberInfoResponse memberInfoResponse){
-        boolean memberExits = memberUseCase.checkMemberExistsBySocialIdAndSocialType(memberInfoResponse.socialId(),
-                memberInfoResponse.socialType());
+    private Long findOrRegisterMember(final MemberSocialInfoResponse memberSocialInfoResponse){
+        boolean memberExits = memberUseCase.checkMemberExistsBySocialIdAndSocialType(memberSocialInfoResponse.socialId(),
+                memberSocialInfoResponse.socialType());
 
         if (memberExits){
-            MemberEntity member = memberUseCase.findMemberBySocialIdAndSocialType(memberInfoResponse.socialId(),
-                    memberInfoResponse.socialType());
+            MemberEntity member = memberUseCase.findMemberBySocialIdAndSocialType(memberSocialInfoResponse.socialId(),
+                    memberSocialInfoResponse.socialType());
             return member.getId();
         }
 
-        return memberRegistrationService.registerMemberWithUserInfo(memberInfoResponse);
+        return memberRegistrationService.registerMemberWithUserInfo(memberSocialInfoResponse);
     }
 
     private LoginSuccessResponse returnLoginSuccessResponse(
             Long memberId,
-            MemberInfoResponse memberInfoResponse){
+            MemberSocialInfoResponse memberSocialInfoResponse){
 
         MemberEntity member = memberUseCase.findMemberByMemberId(memberId);
-        return authenticationService.generateLoginSuccessResponse(memberId, memberInfoResponse);
+        return authenticationService.generateLoginSuccessResponse(memberId, memberSocialInfoResponse);
 
     }
 

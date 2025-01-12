@@ -5,7 +5,7 @@ import com.napzak.domain.member.core.Role;
 import com.napzak.domain.member.dto.AccessTokenGenerateResponse;
 import com.napzak.domain.member.dto.LoginSuccessResponse;
 import com.napzak.domain.member.repository.MemberRepository;
-import com.napzak.global.auth.client.dto.MemberInfoResponse;
+import com.napzak.global.auth.client.dto.MemberSocialInfoResponse;
 import com.napzak.global.auth.jwt.exception.TokenErrorCode;
 import com.napzak.global.auth.jwt.provider.JwtTokenProvider;
 import com.napzak.global.auth.jwt.provider.JwtValidationType;
@@ -39,20 +39,21 @@ public class AuthenticationService {
      * 로그인 성공 응답 객체(LoginSuccessResponse)를 반환하는 메서드.
      *
      * @param memberId 회원의 고유 ID
-     * @param memberInfoResponse 로그인 시 외부로부터 전달된 회원 정보
+     * @param memberSocialInfoResponse 로그인 시 외부로부터 전달된 회원 정보
      * @return 로그인 성공 응답(LoginSuccessResponse)
      */
     public LoginSuccessResponse generateLoginSuccessResponse(final Long memberId,
-                                                             final MemberInfoResponse memberInfoResponse) {
-        String nickname = memberInfoResponse.nickname();
+                                                             final MemberSocialInfoResponse memberSocialInfoResponse) {
+
         Optional<MemberEntity> optionalMember = memberRepository.findById(memberId);
         MemberEntity member = optionalMember.orElseThrow(()-> new NapzakException(ErrorCode.USER_NOT_FOUND));
-        Role role = member.getRole();
+        final Role role = member.getRole();
+        final String nickname = member.getNickname();
 
         Collection<GrantedAuthority> authorities = List.of(role.toGrantedAuthority());
 
-        log.info("Starting login success response generation for memberId: {}, nickname: {}, role: {}", memberId,
-                nickname, role.getRoleName());
+        log.info("Starting login success response generation for memberId: {}, nickname: {}, role: {}", memberId, nickname,
+                 role.getRoleName());
 
         UsernamePasswordAuthenticationToken authenticationToken = createAuthenticationToken(memberId, role,
                 authorities);
@@ -85,9 +86,11 @@ public class AuthenticationService {
         Role role = jwtTokenProvider.getRoleFromJwt(refreshToken);
         Collection<GrantedAuthority> authorities = List.of(role.toGrantedAuthority());
 
+        String nickname = jwtTokenProvider.getNicknameFromJwt(refreshToken);
+
         UsernamePasswordAuthenticationToken authenticationToken = createAuthenticationToken(memberId, role, authorities);
-        log.info("Generated new access token for memberId: {}, role: {}, authorities: {}",
-                memberId, role.getRoleName(), authorities);
+        log.info("Generated new access token for memberId: {}, nickname: {}, role: {}, authorities: {}",
+                memberId, nickname, role.getRoleName(), authorities);
 
         return AccessTokenGenerateResponse.from(jwtTokenProvider.issueAccessToken(authenticationToken));
     }

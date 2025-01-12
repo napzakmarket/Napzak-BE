@@ -3,7 +3,7 @@ package com.napzak.domain.member.application;
 import com.napzak.domain.member.core.MemberEntity;
 import com.napzak.domain.member.core.Role;
 import com.napzak.domain.member.repository.MemberRepository;
-import com.napzak.global.auth.client.dto.MemberInfoResponse;
+import com.napzak.global.auth.client.dto.MemberSocialInfoResponse;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,15 +17,15 @@ public class MemberRegistrationService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public Long registerMemberWithUserInfo(final MemberInfoResponse memberInfoResponse) {
+    public Long registerMemberWithUserInfo(final MemberSocialInfoResponse memberSocialInfoResponse) {
         //log.info("Registering new user with role: {}", users.getRole());
 
         MemberEntity member = MemberEntity.create(
-                memberInfoResponse.nickname(),
+                null,
                 null,
                 Role.MEMBER,
-                memberInfoResponse.socialId(),
-                memberInfoResponse.socialType(),
+                memberSocialInfoResponse.socialId(),
+                memberSocialInfoResponse.socialType(),
                 null
         );
 
