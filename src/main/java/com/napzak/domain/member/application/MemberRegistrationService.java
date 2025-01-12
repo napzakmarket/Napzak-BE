@@ -18,7 +18,6 @@ public class MemberRegistrationService {
 
     @Transactional
     public Long registerMemberWithUserInfo(final MemberSocialInfoResponse memberSocialInfoResponse) {
-        //log.info("Registering new user with role: {}", users.getRole());
 
         MemberEntity member = MemberEntity.create(
                 null,
@@ -31,7 +30,7 @@ public class MemberRegistrationService {
 
         memberRepository.save(member);
 
-        //log.info("Member registered with memberId: {}, role: {}", member.getId(), users.getRole());
+        log.info("Member registered with memberId: {}, role: {}", member.getId(), member.getRole());
 
         return member.getId();
     }
