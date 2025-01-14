@@ -2,7 +2,7 @@ package com.napzak.domain.store.api.controller;
 
 import com.napzak.domain.store.api.dto.StoreLoginResponse;
 import com.napzak.global.auth.annotation.CurrentMember;
-import com.napzak.global.auth.client.dto.StoreLoginRequest;
+import com.napzak.global.auth.client.dto.StoreSocialLoginRequest;
 import com.napzak.global.common.exception.dto.SuccessResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,7 @@ public interface StoreApi {
 
     ResponseEntity<SuccessResponse<StoreLoginResponse>> login(
             @RequestParam String authorizationCode,
-            @RequestBody StoreLoginRequest storeLoginRequest,
+            @RequestBody StoreSocialLoginRequest storeSocialLoginRequest,
             HttpServletResponse httpServletResponse
             );
 

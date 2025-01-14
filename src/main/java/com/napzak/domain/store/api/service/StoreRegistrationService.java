@@ -5,8 +5,9 @@ import com.napzak.domain.store.core.StoreSaver;
 import com.napzak.domain.store.core.entity.StoreEntity;
 import com.napzak.domain.store.core.entity.enums.Role;
 import com.napzak.domain.store.core.StoreRepository;
+import com.napzak.domain.store.core.entity.enums.SocialType;
+import com.napzak.domain.store.core.vo.Store;
 import com.napzak.global.auth.client.dto.StoreSocialInfoResponse;
-import org.apache.catalina.Store;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +23,13 @@ public class StoreRegistrationService {
     @Transactional
     public Long registerStoreWithStoreInfo(final StoreSocialInfoResponse storeSocialInfoResponse) {
 
-        StoreEntity storeEntity = storeSaver.save(null, null, Role.STORE, null, storeSocialInfoResponse.socialId(), storeSocialInfoResponse.socialType(), null);
+        Long socialId = storeSocialInfoResponse.socialId();
+        SocialType socialType = storeSocialInfoResponse.socialType();
 
-        log.info("Store registered with storeId: {}, role: {}", storeEntity.getId(), storeEntity.getRole());
+        Store store = storeSaver.save(null, null, Role.STORE, null, socialId, socialType, null);
 
-        return storeEntity.getId();
+        log.info("Store registered with storeId: {}, role: {}", store.getId(), store.getRole());
+
+        return store.getId();
     }
 }

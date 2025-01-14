@@ -14,7 +14,7 @@ public class StoreSaver {
     private final StoreRepository storeRepository;
 
     @Transactional
-    public StoreEntity save(
+    public Store save(
             final String nickname,
             final String phoneNumber,
             final Role role,
@@ -24,8 +24,9 @@ public class StoreSaver {
             final String photo
             ){
         final StoreEntity storeEntity = StoreEntity.create(nickname, phoneNumber, role, description, socialId, socialType, photo);
+
         storeRepository.save(storeEntity);
 
-        return storeEntity;
+        return Store.fromEntity(storeEntity);
     }
 }

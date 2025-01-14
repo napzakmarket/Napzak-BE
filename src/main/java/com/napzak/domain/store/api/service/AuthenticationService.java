@@ -5,6 +5,7 @@ import com.napzak.domain.store.core.entity.StoreEntity;
 import com.napzak.domain.store.core.entity.enums.Role;
 import com.napzak.domain.store.api.dto.AccessTokenGenerateResponse;
 import com.napzak.domain.store.api.dto.LoginSuccessResponse;
+import com.napzak.domain.store.core.vo.Store;
 import com.napzak.global.auth.client.dto.StoreSocialInfoResponse;
 import com.napzak.global.auth.jwt.exception.TokenErrorCode;
 import com.napzak.global.auth.jwt.provider.JwtTokenProvider;
@@ -44,9 +45,9 @@ public class AuthenticationService {
     public LoginSuccessResponse generateLoginSuccessResponse(final Long storeId,
                                                              final StoreSocialInfoResponse storeSocialInfoResponse) {
 
-        StoreEntity storeEntity = storeRetriever.findStoreByStoreId(storeId);
-        final Role role = storeEntity.getRole();
-        final String nickname = storeEntity.getNickname();
+        Store store = storeRetriever.findStoreByStoreId(storeId);
+        final Role role = store.getRole();
+        final String nickname = store.getNickname();
 
         Collection<GrantedAuthority> authorities = List.of(role.toGrantedAuthority());
 

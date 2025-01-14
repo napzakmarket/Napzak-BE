@@ -3,6 +3,7 @@ package com.napzak.domain.store.core;
 import com.napzak.domain.store.api.exception.StoreErrorCode;
 import com.napzak.domain.store.core.entity.StoreEntity;
 import com.napzak.domain.store.core.entity.enums.SocialType;
+import com.napzak.domain.store.core.vo.Store;
 import com.napzak.global.common.exception.NapzakException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,15 +18,17 @@ public class StoreRetriever {
     private final StoreRepository storeRepository;
 
     @Transactional(readOnly = true)
-    public StoreEntity findBySocialTypeAndSocialId(Long socialId, SocialType socialType){
-        return storeRepository.findBySocialTypeAndSocialId(socialId, socialType)
+    public Store findBySocialTypeAndSocialId(Long socialId, SocialType socialType){
+        StoreEntity storeEntity = storeRepository.findBySocialTypeAndSocialId(socialId, socialType)
                 .orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
+        return Store.fromEntity(storeEntity);
     }
 
     @Transactional(readOnly = true)
-    public StoreEntity findStoreByStoreId(Long StoreId){
-        return   storeRepository.findById(StoreId)
+    public Store findStoreByStoreId(Long StoreId){
+        StoreEntity storeEntity = storeRepository.findById(StoreId)
                 .orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
+        return Store.fromEntity(storeEntity);
     }
 
     @Transactional(readOnly = true)

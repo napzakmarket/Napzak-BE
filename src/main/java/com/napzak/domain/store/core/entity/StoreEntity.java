@@ -51,7 +51,7 @@ public class StoreEntity {
 	@Column(name = COLUMN_ROLE, nullable = false, columnDefinition = "varchar(10) default 'Store'")
 	private Role role;
 
-	@Column(name = COLUMN_DESCRIPTION, nullable = false)
+	@Column(name = COLUMN_DESCRIPTION, nullable = true)
 	private String description;
 
 	@Column(name = COLUMN_CREATED_AT, nullable = false)

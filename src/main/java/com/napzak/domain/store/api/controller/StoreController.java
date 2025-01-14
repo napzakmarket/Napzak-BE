@@ -5,7 +5,7 @@ import com.napzak.domain.store.api.dto.LoginSuccessResponse;
 import com.napzak.domain.store.api.dto.StoreLoginResponse;
 import com.napzak.domain.store.api.exception.StoreSuccessCode;
 import com.napzak.global.auth.annotation.CurrentMember;
-import com.napzak.global.auth.client.dto.StoreLoginRequest;
+import com.napzak.global.auth.client.dto.StoreSocialLoginRequest;
 import com.napzak.global.auth.jwt.service.TokenService;
 import com.napzak.global.common.exception.dto.SuccessResponse;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,10 +31,10 @@ public class StoreController implements StoreApi {
     @Override
     public ResponseEntity<SuccessResponse<StoreLoginResponse>> login(
             String authorizationCode,
-            StoreLoginRequest storeLoginRequest,
+            StoreSocialLoginRequest storeSocialLoginRequest,
             HttpServletResponse httpServletResponse
     ){
-            LoginSuccessResponse successResponse = loginService.login(authorizationCode, storeLoginRequest);
+            LoginSuccessResponse successResponse = loginService.login(authorizationCode, storeSocialLoginRequest);
             ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN, successResponse.refreshToken())
                     .maxAge(COOKIE_MAX_AGE)
                     .path("/")

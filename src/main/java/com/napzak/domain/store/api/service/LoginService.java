@@ -1,10 +1,10 @@
 package com.napzak.domain.store.api.service;
 
-import com.napzak.domain.store.core.entity.StoreEntity;
 import com.napzak.domain.store.core.entity.enums.SocialType;
 import com.napzak.domain.store.api.dto.LoginSuccessResponse;
+import com.napzak.domain.store.core.vo.Store;
 import com.napzak.global.auth.client.dto.StoreSocialInfoResponse;
-import com.napzak.global.auth.client.dto.StoreLoginRequest;
+import com.napzak.global.auth.client.dto.StoreSocialLoginRequest;
 import com.napzak.global.auth.client.service.SocialService;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class LoginService {
     @Transactional
     public LoginSuccessResponse login(
             String authorizationCode,
-            StoreLoginRequest request){
+            StoreSocialLoginRequest request){
         try {
             // 소셜 서비스로부터 사용자 정보 조회
             StoreSocialInfoResponse storeInfo = findStoreInfo(authorizationCode, request);
@@ -42,7 +42,7 @@ public class LoginService {
     //소셜 타입에 따라 사용자 정보 조회
     private StoreSocialInfoResponse findStoreInfo(
             String authorizationCode,
-            StoreLoginRequest request){
+            StoreSocialLoginRequest request){
 
         SocialService socialService = getSocialService(request.socialType());
         return socialService.login(authorizationCode, request);
@@ -58,13 +58,15 @@ public class LoginService {
 
     //기존 회원을 찾거나, 없으면 새로 멤버 등록
     private Long findOrRegisterStore(final StoreSocialInfoResponse storeSocialInfoResponse){
-        boolean storeExits = storeService.checkStoreExistsBySocialIdAndSocialType(storeSocialInfoResponse.socialId(),
-                storeSocialInfoResponse.socialType());
+
+        final Long socialId = storeSocialInfoResponse.socialId();
+        final SocialType socialType = storeSocialInfoResponse.socialType();
+
+        boolean storeExits = storeService.checkStoreExistsBySocialIdAndSocialType(socialId, socialType);
 
         if (storeExits){
-            StoreEntity storeEntity = storeService.findStoreBySocialIdAndSocialType(storeSocialInfoResponse.socialId(),
-                    storeSocialInfoResponse.socialType());
-            return storeEntity.getId();
+            Store store = storeService.findStoreBySocialIdAndSocialType(socialId, socialType);
+            return store.getId();
         }
 
         return storeRegistrationService.registerStoreWithStoreInfo(storeSocialInfoResponse);
@@ -74,7 +76,6 @@ public class LoginService {
             Long storeId,
             StoreSocialInfoResponse storeSocialInfoResponse){
 
-        StoreEntity storeEntity = storeService.findStoreByStoreId(storeId);
         return authenticationService.generateLoginSuccessResponse(storeId, storeSocialInfoResponse);
 
     }
