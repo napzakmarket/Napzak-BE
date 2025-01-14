@@ -1,11 +1,9 @@
-#--- docker-compose-dev.yml (blue, green) ---
 version: '3'
 services:
   napzak-dev-blue:
     container_name: napzak-dev-blue
-    build:
-      context: .
-      dockerfile: Dockerfile-dev
+    # GitHub Actions가 푸시한 Docker Hub 이미지
+    image: "sailin1367/napzak-dev:latest"
     ports:
       - "8081:8080"
     networks:
@@ -13,9 +11,8 @@ services:
 
   napzak-dev-green:
     container_name: napzak-dev-green
-    build:
-      context: .
-      dockerfile: Dockerfile-dev
+    # 똑같이 latest 태그 사용 (blue/green 둘 다 동일 이미지)
+    image: "sailin1367/napzak-dev:latest"
     ports:
       - "8082:8080"
     networks:

@@ -54,7 +54,7 @@ jobs:
           context: .
           file: ./Dockerfile-prod
           push: true
-          tags: ${{ secrets.PROD_DOCKERHUB_USERNAME }}/${{ secrets.PROD_REPONAME }}
+          tags: ${{ secrets.PROD_DOCKERHUB_USERNAME }}/${{ secrets.PROD_REPONAME }}:latest
 
   CD:
     needs: [CI]
@@ -70,4 +70,5 @@ jobs:
           key: ${{ secrets.PROD_SERVER_KEY }}
           script: |
             cd ~
+            docker pull ${{ secrets.PROD_DOCKERHUB_USERNAME }}/${{ secrets.PROD_REPONAME }}:latest
             ./deploy.sh
