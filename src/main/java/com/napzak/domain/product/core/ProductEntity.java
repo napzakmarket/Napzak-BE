@@ -98,6 +98,7 @@ public class ProductEntity {
 
     public static ProductEntity create(
             final String title,
+            final StoreEntity store,
             final String description,
             final TradeType tradeType,
             final TradeStatus tradeStatus,
@@ -107,11 +108,11 @@ public class ProductEntity {
             final int standardDeliveryFee,
             final int halfDeliveryFee,
             final Condition condition,
-            final StoreEntity store,
             final GenreEntity genre
     ) {
         return ProductEntity.builder()
                 .title(title)
+                .store(store)
                 .description(description)
                 .tradeType(tradeType)
                 .tradeStatus(tradeStatus)
@@ -121,7 +122,6 @@ public class ProductEntity {
                 .standardDeliveryFee(standardDeliveryFee)
                 .halfDeliveryFee(halfDeliveryFee)
                 .condition(condition)
-                .store(store)
                 .genre(genre)
                 .build();
     }
