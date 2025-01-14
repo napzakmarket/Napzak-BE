@@ -1,17 +1,11 @@
 FROM gradle:8.8-jdk17 AS builder
 WORKDIR /usr/src
 
-# 필요한 파일 복사
-COPY gradlew /usr/src/gradlew
-COPY gradle /usr/src/gradle
-COPY settings.gradle build.gradle ./
-COPY src /usr/src/src
+# 로컬에 있는 모든 소스 복사
+COPY . /usr/src
 
-# 실행 권한 추가
-RUN chmod +x ./gradlew
-
-# Gradle 명령 실행
-RUN ./gradlew dependencies --refresh-dependencies
+# 빌드 (테스트 스킵)
+RUN chmod +x ./gradlew && ./gradlew clean build -x test
 
 FROM openjdk:17-jdk-alpine
 WORKDIR /app
