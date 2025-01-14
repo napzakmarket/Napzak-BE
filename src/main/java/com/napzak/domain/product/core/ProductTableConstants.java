@@ -1,7 +1,7 @@
 package com.napzak.domain.product.core;
 
 public class ProductTableConstants {
-    public final static String TABLE_PRODUCT = "product_photo";
+    public final static String TABLE_PRODUCT = "product";
     public final static String COLUMN_ID = "id";
     public final static String COLUMN_TITLE = "title";
     public final static String COLUMN_DESCRIPTION = "description";
