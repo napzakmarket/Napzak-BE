@@ -20,32 +20,33 @@ public class ProductPhotoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = COLUMN_PRODUCT_ID, nullable = false)
+    @ManyToOne
+    @JoinColumn(name = COLUMN_PRODUCT_ID, nullable = false)
     private ProductEntity product;
 
     @Column(name = COLUMN_PHOTO_URL, nullable = false)
     private String photoUrl;
 
-    @Column(name = COLUMN_ORDER, nullable = false)
-    private int order;
+    @Column(name = COLUMN_SEQUENCE, nullable = false)
+    private int sequence;
 
     @Builder
-    private  ProductPhotoEntity(Long id, ProductEntity product, String photoUrl, int order){
+    private  ProductPhotoEntity(Long id, ProductEntity product, String photoUrl, int sequence){
         this.id = id;
         this.product = product;
         this.photoUrl = photoUrl;
-        this.order = order;
+        this.sequence = sequence;
     }
 
     public static ProductPhotoEntity create(
             final ProductEntity product,
             final String photoUrl,
-            final int order
+            final int sequence
     ){
             return ProductPhotoEntity.builder()
                     .product(product)
                     .photoUrl(photoUrl)
-                    .order(order)
+                    .sequence(sequence)
                     .build();
     }
 

@@ -2,7 +2,7 @@ package com.napzak.domain.product.core;
 
 
 import com.napzak.domain.genre.core.GenreEntity;
-import com.napzak.domain.product.core.enums.Condition;
+import com.napzak.domain.product.core.enums.ProductCondition;
 import com.napzak.domain.product.core.enums.TradeStatus;
 import com.napzak.domain.product.core.enums.TradeType;
 import com.napzak.domain.store.core.StoreEntity;
@@ -66,19 +66,19 @@ public class ProductEntity {
     private int halfDeliveryFee;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = COLUMN_CONDITION, nullable = true)
-    private Condition condition;
+    @Column(name = COLUMN_PRODUCT_CONDITION, nullable = true)
+    private ProductCondition productCondition;
 
     @ManyToOne
-    @JoinColumn(name = "store_id", nullable = false)
+    @JoinColumn(name = COLUMN_STORE_ID, nullable = false)
     private StoreEntity store;
 
-    @ManyToOne
-    @JoinColumn(name = "genre_id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = COLUMN_GENRE_ID, nullable = false)
     private GenreEntity genre;
 
     @Builder
-    private ProductEntity(Long id, String title, String description, TradeType tradeType, int price, TradeStatus tradeStatus, Boolean isPriceNegotiable, Boolean isDeliveryIncluded, int standardDeliveryFee, int halfDeliveryFee, Condition condition, StoreEntity store, GenreEntity genre
+    private ProductEntity(Long id, String title, String description, TradeType tradeType, int price, TradeStatus tradeStatus, Boolean isPriceNegotiable, Boolean isDeliveryIncluded, int standardDeliveryFee, int halfDeliveryFee, ProductCondition productCondition, StoreEntity store, GenreEntity genre
     ){
         this.id = id;
         this.title = title;
@@ -90,7 +90,7 @@ public class ProductEntity {
         this.isDeliveryIncluded = isDeliveryIncluded;
         this.standardDeliveryFee = standardDeliveryFee;
         this.halfDeliveryFee = halfDeliveryFee;
-        this.condition = condition;
+        this.productCondition = productCondition;
         this.store = store;
         this.genre = genre;
     }
@@ -107,7 +107,7 @@ public class ProductEntity {
             final Boolean isDeliveryIncluded,
             final int standardDeliveryFee,
             final int halfDeliveryFee,
-            final Condition condition,
+            final ProductCondition productCondition,
             final GenreEntity genre
     ) {
         return ProductEntity.builder()
@@ -121,7 +121,7 @@ public class ProductEntity {
                 .isDeliveryIncluded(isDeliveryIncluded)
                 .standardDeliveryFee(standardDeliveryFee)
                 .halfDeliveryFee(halfDeliveryFee)
-                .condition(condition)
+                .productCondition(productCondition)
                 .genre(genre)
                 .build();
     }
