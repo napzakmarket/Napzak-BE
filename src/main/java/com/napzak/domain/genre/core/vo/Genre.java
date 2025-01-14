@@ -1,4 +1,4 @@
-package com.napzak.domain.genre.core;
+package com.napzak.domain.genre.core.vo;
 import com.napzak.domain.genre.core.entity.GenreEntity;
 import lombok.Getter;
 
