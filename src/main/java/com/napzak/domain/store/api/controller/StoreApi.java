@@ -13,7 +13,7 @@ public interface StoreApi {
 
     ResponseEntity<SuccessResponse<StoreLoginResponse>> login(
             @RequestParam String authorizationCode,
-            @RequestBody StoreLoginRequest body,
+            @RequestBody StoreLoginRequest storeLoginRequest,
             HttpServletResponse httpServletResponse
             );
 
