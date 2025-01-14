@@ -1,10 +1,10 @@
 package com.napzak.domain.store.api.service;
 
+import com.napzak.domain.store.core.StoreRetriever;
 import com.napzak.domain.store.core.entity.StoreEntity;
 import com.napzak.domain.store.core.entity.enums.Role;
 import com.napzak.domain.store.api.dto.AccessTokenGenerateResponse;
 import com.napzak.domain.store.api.dto.LoginSuccessResponse;
-import com.napzak.domain.store.core.StoreRepository;
 import com.napzak.global.auth.client.dto.StoreSocialInfoResponse;
 import com.napzak.global.auth.jwt.exception.TokenErrorCode;
 import com.napzak.global.auth.jwt.provider.JwtTokenProvider;
@@ -13,7 +13,6 @@ import com.napzak.global.auth.jwt.service.TokenService;
 import com.napzak.global.auth.security.AdminAuthentication;
 import com.napzak.global.auth.security.MemberAuthentication;
 import com.napzak.global.common.exception.NapzakException;
-import com.napzak.global.common.exception.code.ErrorCode;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +31,7 @@ public class AuthenticationService {
     private static final String BEARER_PREFIX = "Bearer ";
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenService tokenService;
-    private final StoreRepository storeRepository;
+    private final StoreRetriever storeRetriever;
 
     /**
      * 사용자의 로그인 성공 시 Access Token과 Refresh Token을 생성하고,
@@ -45,8 +44,7 @@ public class AuthenticationService {
     public LoginSuccessResponse generateLoginSuccessResponse(final Long storeId,
                                                              final StoreSocialInfoResponse storeSocialInfoResponse) {
 
-        Optional<StoreEntity> optionalStore = storeRepository.findById(storeId);
-        StoreEntity storeEntity = optionalStore.orElseThrow(()-> new NapzakException(ErrorCode.USER_NOT_FOUND));
+        StoreEntity storeEntity = storeRetriever.findStoreByStoreId(storeId);
         final Role role = storeEntity.getRole();
         final String nickname = storeEntity.getNickname();
 

@@ -1,5 +1,6 @@
 package com.napzak.domain.store.api.service;
 
+import com.napzak.domain.store.core.StoreRetriever;
 import com.napzak.domain.store.core.entity.StoreEntity;
 import com.napzak.domain.store.core.entity.enums.SocialType;
 import com.napzak.domain.store.api.exception.StoreErrorCode;
@@ -15,23 +16,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @Service
 public class StoreService {
-    private final StoreRepository storeRepository;
+    private final StoreRetriever storeRetriever;
 
     @Transactional(readOnly = true)
     public StoreEntity findStoreByStoreId(Long StoreId) {
-        return storeRepository.findById(StoreId)
-                .orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
+        return storeRetriever.findStoreByStoreId(StoreId);
+
     }
 
     @Transactional(readOnly = true)
     public boolean checkStoreExistsBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
-        return storeRepository.findBySocialTypeAndSocialId(socialId, socialType).isPresent();
+        return storeRetriever.checkStoreExistsBySocialIdAndSocialType(socialId, socialType);
     }
 
     @Transactional(readOnly = true)
     public StoreEntity findStoreBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
-        return storeRepository.findBySocialTypeAndSocialId(socialId, socialType)
-                .orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
+        return storeRetriever.findBySocialTypeAndSocialId(socialId, socialType);
     }
 
 }
