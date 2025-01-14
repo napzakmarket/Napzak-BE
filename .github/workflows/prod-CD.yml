@@ -69,19 +69,4 @@ jobs:
           username: ${{ secrets.PROD_SERVER_USERNAME }}
           key: ${{ secrets.PROD_SERVER_KEY }}
           script: |
-            # 2) /home/ubuntu/35-APPJAM-SERVER-NAPZAKMARKET 디렉토리로 이동
-            cd /home/ubuntu/35-APPJAM-SERVER-NAPZAKMARKET
-            
-            # 3) .env 파일 작성
-            echo "REDIS_PASSWORD=${{ secrets.PROD_REDIS_PASSWORD }}" > .env
-
-            # 4) docker-compose pull + up
-            docker-compose -f docker-compose-prod.yml pull
-            docker-compose -f docker-compose-prod.yml up -d --remove-orphans
-
-            # 5) 로그 확인
-            docker logs napzak-prod
-            docker logs napzak-prod-redis
-
-            # 6) .env 파일 삭제
-            rm .env
+            bash /home/ubuntu/35-APPJAM-SERVER-NAPZAKMARKET/deploy.sh
