@@ -1,7 +1,7 @@
 package com.napzak.global.auth.client.service;
 
 
-import com.napzak.domain.store.core.SocialType;
+import com.napzak.domain.store.core.enums.SocialType;
 import com.napzak.global.auth.client.dto.StoreSocialInfoResponse;
 import com.napzak.global.auth.client.dto.StoreLoginRequest;
 import com.napzak.global.auth.client.kakao.KakaoApiClient;

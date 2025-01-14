@@ -1,6 +1,6 @@
 package com.napzak.domain.store.api.dto;
 
-import com.napzak.domain.store.core.Role;
+import com.napzak.domain.store.core.enums.Role;
 
 public record LoginSuccessResponse(
         String accessToken,

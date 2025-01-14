@@ -1,6 +1,6 @@
 package com.napzak.global.auth.client.dto;
 
-import com.napzak.domain.store.core.SocialType;
+import com.napzak.domain.store.core.enums.SocialType;
 import jakarta.validation.constraints.NotNull;
 
 public record StoreLoginRequest(
