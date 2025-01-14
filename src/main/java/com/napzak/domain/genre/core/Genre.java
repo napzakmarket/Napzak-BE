@@ -1,4 +1,5 @@
 package com.napzak.domain.genre.core;
+import com.napzak.domain.genre.core.entity.GenreEntity;
 import lombok.Getter;
 
 @Getter

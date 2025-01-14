@@ -1,6 +1,6 @@
 package com.napzak.global.auth.client.dto;
 
-import com.napzak.domain.store.core.enums.SocialType;
+import com.napzak.domain.store.core.entity.enums.SocialType;
 
 public record StoreSocialInfoResponse(
         Long socialId,

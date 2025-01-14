@@ -3,7 +3,7 @@ package com.napzak.domain.store.api.controller;
 import com.napzak.domain.store.api.service.LoginService;
 import com.napzak.domain.store.api.dto.LoginSuccessResponse;
 import com.napzak.domain.store.api.dto.StoreLoginResponse;
-import com.napzak.domain.store.core.exception.StoreSuccessCode;
+import com.napzak.domain.store.api.exception.StoreSuccessCode;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.auth.client.dto.StoreLoginRequest;
 import com.napzak.global.auth.jwt.service.TokenService;

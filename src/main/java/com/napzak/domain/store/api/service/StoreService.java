@@ -1,8 +1,8 @@
 package com.napzak.domain.store.api.service;
 
-import com.napzak.domain.store.core.StoreEntity;
-import com.napzak.domain.store.core.enums.SocialType;
-import com.napzak.domain.store.core.exception.StoreErrorCode;
+import com.napzak.domain.store.core.entity.StoreEntity;
+import com.napzak.domain.store.core.entity.enums.SocialType;
+import com.napzak.domain.store.api.exception.StoreErrorCode;
 import com.napzak.domain.store.core.StoreRepository;
 import com.napzak.global.common.exception.NapzakException;
 import lombok.RequiredArgsConstructor;

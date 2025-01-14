@@ -1,7 +1,7 @@
 package com.napzak.domain.store.api.service;
 
-import com.napzak.domain.store.core.StoreEntity;
-import com.napzak.domain.store.core.enums.Role;
+import com.napzak.domain.store.core.entity.StoreEntity;
+import com.napzak.domain.store.core.entity.enums.Role;
 import com.napzak.domain.store.core.StoreRepository;
 import com.napzak.global.auth.client.dto.StoreSocialInfoResponse;
 import org.springframework.transaction.annotation.Transactional;

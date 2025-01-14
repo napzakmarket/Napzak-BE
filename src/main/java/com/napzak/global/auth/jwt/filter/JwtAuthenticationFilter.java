@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.napzak.domain.store.core.enums.Role;
+import com.napzak.domain.store.core.entity.enums.Role;
 import com.napzak.global.auth.jwt.provider.JwtTokenProvider;
 import com.napzak.global.auth.jwt.provider.JwtValidationType;
 import com.napzak.global.auth.security.AdminAuthentication;
