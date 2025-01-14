@@ -56,7 +56,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DEV_SERVER_HOST }}
-          username: ${{ secrets.DEV_USERNAME }}
+          username: ${{ secrets.DEV_SERVER_USERNAME }}
           key: ${{ secrets.DEV_SERVER_KEY }}
           script: |
             # 배포 스크립트(deploy.sh) 실행
