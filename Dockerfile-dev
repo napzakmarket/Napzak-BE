@@ -5,7 +5,7 @@ WORKDIR /usr/src
 COPY . /usr/src
 
 # 빌드 (테스트 스킵)
-RUN chmod +x ./gradlew \
+RUN chmod +x ./gradlew
 RUN ./gradlew clean build -x test
 
 FROM openjdk:17-jdk-alpine
