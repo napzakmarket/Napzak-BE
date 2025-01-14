@@ -76,8 +76,8 @@ jobs:
             echo "REDIS_PASSWORD=${{ secrets.PROD_REDIS_PASSWORD }}" > .env
 
             # 4) docker-compose pull + up
-            docker-compose --env-file .env pull napzak-prod
-            docker-compose --env-file .env up -d --remove-orphans
+            docker-compose -f docker-compose-prod.yml pull
+            docker-compose -f docker-compose-prod.yml up -d --remove-orphans
 
             # 5) 로그 확인
             docker logs napzak-prod
