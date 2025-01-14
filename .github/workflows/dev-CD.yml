@@ -69,6 +69,12 @@ jobs:
           username: ${{ secrets.DEV_SERVER_USERNAME }}
           key: ${{ secrets.DEV_SERVER_KEY }}
           script: |
-            # 배포 스크립트(deploy.sh) 실행
-            cd ~
-            ./deploy.sh
+            echo "Stopping previous deploy.sh processes..."
+            ps aux | grep deploy.sh | grep -v grep | awk '{print $2}' | xargs -r kill -9
+            
+            echo "Stopping and removing Docker containers..."
+            docker ps -q | xargs -r docker stop
+            docker ps -aq | xargs -r docker rm
+      
+            echo "Cleaning unused Docker resources..."
+            docker system prune -f
