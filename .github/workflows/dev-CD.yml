@@ -49,6 +49,7 @@ jobs:
   CD:
     needs: [CI]
     runs-on: ubuntu-22.04
+    environment: dev
 
     steps:
       - name: Docker Image Pull and Container Run
