@@ -31,8 +31,8 @@ jobs:
 
       - name: Create secret config file
         run: |
-          mkdir -p src/main/resources
-          echo "${{ secrets.APPLICATION_DEV }}" > src/main/resources/application-dev.yml
+          cd src/main/resources
+          echo "${{ secrets.APPLICATION_DEV }}" > ./application-dev.yml
 
       - name: Build with Gradle
         run: |
@@ -69,12 +69,5 @@ jobs:
           username: ${{ secrets.DEV_SERVER_USERNAME }}
           key: ${{ secrets.DEV_SERVER_KEY }}
           script: |
-            echo "Stopping previous deploy.sh processes..."
-            ps aux | grep deploy.sh | grep -v grep | awk '{print $2}' | xargs -r kill -9
-            
-            echo "Stopping and removing Docker containers..."
-            docker ps -q | xargs -r docker stop
-            docker ps -aq | xargs -r docker rm
-      
-            echo "Cleaning unused Docker resources..."
-            docker system prune -f
+            cd ~
+            ./deploy.sh

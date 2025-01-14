@@ -31,8 +31,8 @@ jobs:
 
       - name: create secret config file
         run: |
-          mkdir -p src/main/resources
-          echo "${{ secrets.APPLICATION_PROD }}" > src/main/resources/application-prod.yml
+          cd src/main/resources
+          echo "${{ secrets.APPLICATION_PROD }}" > ./application-prod.yml
 
       - name: build with gradle
         run: |
