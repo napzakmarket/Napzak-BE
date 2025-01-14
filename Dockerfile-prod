@@ -1,13 +1,16 @@
-#--- Dockerfile-prod ---
-FROM gradle:8.5-jdk17 AS builder
-WORKDIR /usr/src/app
+FROM gradle:8.8-jdk17 AS builder
+WORKDIR /usr/src
 
-COPY . /usr/src/app
+COPY settings.gradle build.gradle ./
+RUN ./gradlew dependencies --refresh-dependencies
 
-RUN gradle wrapper --gradle-version 8.5
+COPY src /usr/src/src
+COPY gradle /usr/src/gradle
+COPY gradlew /usr/src/gradlew
 RUN ./gradlew clean build -x test
 
 FROM openjdk:17-jdk-alpine
+WORKDIR /app
 COPY --from=builder /usr/src/build/libs/napzak-0.0.1-SNAPSHOT.jar /app/napzak.jar
 
 # prod 프로파일로 실행
