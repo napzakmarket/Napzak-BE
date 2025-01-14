@@ -1,3 +1,5 @@
+
+
 package com.napzak.domain.store.core;
 
 import static com.napzak.domain.store.core.StoreTableConstants.*;

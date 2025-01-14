@@ -1,7 +1,7 @@
 package com.napzak.domain.product.core;
 
 import com.napzak.domain.genre.core.GenreEntity;
-import com.napzak.domain.product.core.enums.Condition;
+import com.napzak.domain.product.core.enums.ProductCondition;
 import com.napzak.domain.product.core.enums.TradeStatus;
 import com.napzak.domain.product.core.enums.TradeType;
 import com.napzak.domain.store.core.StoreEntity;
@@ -25,10 +25,10 @@ public class Product {
     private final Boolean isDeliveryIncluded;
     private final int standardDeliveryFee;
     private final int halfDeliveryFee;
-    private final Condition condition;
+    private final ProductCondition productCondition;
     private final GenreEntity genre;
 
-    public Product(Long id, StoreEntity store, String title, String description, TradeType tradeType, TradeStatus tradeStatus, int price, LocalDateTime createdAt, LocalDateTime updatedAt, int viewCount, Boolean isPriceNegotiable, Boolean isDeliveryIncluded, int standardDeliveryFee, int halfDeliveryFee, Condition condition, GenreEntity genre) {
+    public Product(Long id, StoreEntity store, String title, String description, TradeType tradeType, TradeStatus tradeStatus, int price, LocalDateTime createdAt, LocalDateTime updatedAt, int viewCount, Boolean isPriceNegotiable, Boolean isDeliveryIncluded, int standardDeliveryFee, int halfDeliveryFee, ProductCondition productCondition, GenreEntity genre) {
         this.id = id;
         this.store = store;
         this.title = title;
@@ -43,7 +43,7 @@ public class Product {
         this.isDeliveryIncluded = isDeliveryIncluded;
         this.standardDeliveryFee = standardDeliveryFee;
         this.halfDeliveryFee = halfDeliveryFee;
-        this.condition = condition;
+        this.productCondition = productCondition;
         this.genre = genre;
     }
 
@@ -63,7 +63,7 @@ public class Product {
                 productEntity.getIsDeliveryIncluded(),
                 productEntity.getStandardDeliveryFee(),
                 productEntity.getHalfDeliveryFee(),
-                productEntity.getCondition(),
+                productEntity.getProductCondition(),
                 productEntity.getGenre()
         );
     }

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Condition {
+public enum ProductCondition {
     NEW("미개봉"),
     LIKE_NEW("아주 좋은 상태"),
     SLIGHTLY_USED("약간의 사용감"),

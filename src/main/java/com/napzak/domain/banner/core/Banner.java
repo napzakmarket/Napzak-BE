@@ -8,15 +8,15 @@ import java.time.LocalDateTime;
 public class Banner {
     private final Long id;
     private final String photoUrl;
-    private final int order;
+    private final int sequence;
     private final String redirectUrl;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public Banner(Long id, String photoUrl, int order, String redirectUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Banner(Long id, String photoUrl, int sequence, String redirectUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.photoUrl = photoUrl;
-        this.order = order;
+        this.sequence = sequence;
         this.redirectUrl = redirectUrl;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -26,7 +26,7 @@ public class Banner {
         return new Banner(
                 bannerEntity.getId(),
                 bannerEntity.getPhotoUrl(),
-                bannerEntity.getOrder(),
+                bannerEntity.getSequence(),
                 bannerEntity.getRedirectUrl(),
                 bannerEntity.getCreatedAt(),
                 bannerEntity.getUpdatedAt()

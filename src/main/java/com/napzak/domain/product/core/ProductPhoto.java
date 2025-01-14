@@ -8,13 +8,13 @@ public class ProductPhoto {
     private final Long id;
     private final Product product;
     private final String photoUrl;
-    private final int order;
+    private final int sequence;
 
-    public ProductPhoto(Long id, Product product, String photoUrl, int order) {
+    public ProductPhoto(Long id, Product product, String photoUrl, int sequence) {
         this.id = id;
         this.product = product;
         this.photoUrl = photoUrl;
-        this.order = order;
+        this.sequence = sequence;
     }
 
     public static ProductPhoto fromEntity(ProductPhotoEntity productPhotoEntity) {
@@ -22,7 +22,7 @@ public class ProductPhoto {
                 productPhotoEntity.getId(),
                 Product.fromEntity(productPhotoEntity.getProduct()),
                 productPhotoEntity.getPhotoUrl(),
-                productPhotoEntity.getOrder()
+                productPhotoEntity.getSequence()
         );
     }
 }

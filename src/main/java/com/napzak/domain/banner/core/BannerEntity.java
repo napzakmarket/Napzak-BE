@@ -25,8 +25,8 @@ public class BannerEntity {
     @Column(name = COLUMN_PHOTO_URL, nullable = false)
     private String photoUrl;
 
-    @Column(name = COLUMN_ORDER, nullable = false)
-    private int order;
+    @Column(name = COLUMN_SEQUENCE, nullable = false)
+    private int sequence;
 
     @Column(name = COLUMN_REDIRECT_URL, nullable = true)
     private String redirectUrl;
@@ -38,9 +38,9 @@ public class BannerEntity {
     private LocalDateTime updatedAt;
 
     @Builder
-    private BannerEntity(String photoUrl, int order, String redirectUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    private BannerEntity(String photoUrl, int sequence, String redirectUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.photoUrl = photoUrl;
-        this.order = order;
+        this.sequence = sequence;
         this.redirectUrl = redirectUrl;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -48,24 +48,14 @@ public class BannerEntity {
 
     public static BannerEntity create(
             final String photoUrl,
-            final int order,
+            final int sequence,
             final String redirectUrl
     ) {
         return BannerEntity.builder()
                 .photoUrl(photoUrl)
-                .order(order)
+                .sequence(sequence)
                 .redirectUrl(redirectUrl)
                 .build();
     }
 
-    public void update(
-            final String photoUrl,
-            final int order,
-            final String redirectUrl
-    ) {
-        this.photoUrl = photoUrl;
-        this.order = order;
-        this.redirectUrl = redirectUrl;
-        this.updatedAt = LocalDateTime.now();
-    }
 }
