@@ -28,3 +28,4 @@ public class ProductPhoto {
                 productPhotoEntity.getOrder()
         );
     }
+}
