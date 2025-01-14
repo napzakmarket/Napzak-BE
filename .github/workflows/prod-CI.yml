@@ -25,6 +25,8 @@ jobs:
           echo "${{ secrets.APPLICATION_PROD }}" > ./application-prod.yml
 
       - name: build with gradle
+        env:
+          REDIS_PASSWORD: ${{ secrets.PROD_REDIS_PASSWORD }}
         run: |
           chmod +x gradlew
           ./gradlew clean build -x test
