@@ -25,28 +25,21 @@ public class ProductHashtagEntity {
     private ProductEntity product;
 
     @ManyToOne
-    @JoinColumn(name = COLUMN_STORE_ID, nullable = false)
-    private StoreEntity store;
-
-    @ManyToOne
     @JoinColumn(name = COLUMN_HASHTAG_ID, nullable = false)
     private HashtagEntity hashtag;
 
     @Builder
-    private ProductHashtagEntity(ProductEntity product, StoreEntity store, HashtagEntity hashtag) {
+    private ProductHashtagEntity(ProductEntity product, HashtagEntity hashtag) {
         this.product = product;
-        this.store = store;
         this.hashtag = hashtag;
     }
 
     public static ProductHashtagEntity create(
             final ProductEntity product,
-            final StoreEntity store,
             final HashtagEntity hashtag
     ) {
         return ProductHashtagEntity.builder()
                 .product(product)
-                .store(store)
                 .hashtag(hashtag)
                 .build();
     }

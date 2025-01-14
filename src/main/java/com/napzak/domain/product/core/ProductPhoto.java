@@ -7,14 +7,12 @@ import lombok.Getter;
 public class ProductPhoto {
     private final Long id;
     private final Product product;
-    private final Store store;
     private final String photoUrl;
     private final int order;
 
-    public ProductPhoto(Long id, Product product, Store store, String photoUrl, int order) {
+    public ProductPhoto(Long id, Product product, String photoUrl, int order) {
         this.id = id;
         this.product = product;
-        this.store = store;
         this.photoUrl = photoUrl;
         this.order = order;
     }
@@ -23,7 +21,6 @@ public class ProductPhoto {
         return new ProductPhoto(
                 productPhotoEntity.getId(),
                 Product.fromEntity(productPhotoEntity.getProduct()),
-                Store.fromEntity(productPhotoEntity.getStore()),
                 productPhotoEntity.getPhotoUrl(),
                 productPhotoEntity.getOrder()
         );

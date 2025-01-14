@@ -7,13 +7,11 @@ import lombok.Getter;
 public class ProductHashtag {
     private final Long id;
     private final Product product;
-    private final Store store;
     private final Hashtag hashtag;
 
-    public ProductHashtag(Long id, Product product, Store store, Hashtag hashtag) {
+    public ProductHashtag(Long id, Product product,  Hashtag hashtag) {
         this.id = id;
         this.product = product;
-        this.store = store;
         this.hashtag = hashtag;
     }
 
@@ -21,7 +19,6 @@ public class ProductHashtag {
         return new ProductHashtag(
                 productHashtagEntity.getId(),
                 Product.fromEntity(productHashtagEntity.getProduct()),
-                Store.fromEntity(productHashtagEntity.getStore()),
                 Hashtag.fromEntity(productHashtagEntity.getHashtag())
         );
     }

@@ -23,9 +23,6 @@ public class ProductPhotoEntity {
     @Column(name = COLUMN_PRODUCT_ID, nullable = false)
     private ProductEntity product;
 
-    @Column(name = COLUMN_STORE_ID, nullable = false)
-    private StoreEntity store;
-
     @Column(name = COLUMN_PHOTO_URL, nullable = false)
     private String photoUrl;
 
@@ -33,23 +30,20 @@ public class ProductPhotoEntity {
     private int order;
 
     @Builder
-    private  ProductPhotoEntity(Long id, ProductEntity product, StoreEntity store, String photoUrl, int order){
+    private  ProductPhotoEntity(Long id, ProductEntity product, String photoUrl, int order){
         this.id = id;
         this.product = product;
-        this.store = store;
         this.photoUrl = photoUrl;
         this.order = order;
     }
 
     public static ProductPhotoEntity create(
             final ProductEntity product,
-            final StoreEntity store,
             final String photoUrl,
             final int order
     ){
             return ProductPhotoEntity.builder()
                     .product(product)
-                    .store(store)
                     .photoUrl(photoUrl)
                     .order(order)
                     .build();
