@@ -37,7 +37,7 @@ public class ReviewEntity {
 
     @ManyToOne
     @JoinColumn(name = COLUMN_PRODUCT_ID, nullable = false)
-    private ProductEntity product;
+    private ProductEntity productEntity;
 
     @ManyToOne
     @JoinColumn(name = COLUMN_REVIEWER_ID, nullable = false)
@@ -51,13 +51,13 @@ public class ReviewEntity {
     private ReviewEntity(
             int rate,
             String comment,
-            ProductEntity product,
+            ProductEntity productEntity,
             StoreEntity reviewer,
             StoreEntity reviewee
     ) {
         this.rate = rate;
         this.comment = comment;
-        this.product = product;
+        this.productEntity = productEntity;
         this.reviewer = reviewer;
         this.reviewee = reviewee;
     }
@@ -65,14 +65,14 @@ public class ReviewEntity {
     public static ReviewEntity create(
             final int rate,
             final String comment,
-            final ProductEntity product,
+            final ProductEntity productEntity,
             final StoreEntity reviewer,
             final StoreEntity reviewee
     ) {
         return ReviewEntity.builder()
                 .rate(rate)
                 .comment(comment)
-                .product(product)
+                .productEntity(productEntity)
                 .reviewer(reviewer)
                 .reviewee(reviewee)
                 .build();

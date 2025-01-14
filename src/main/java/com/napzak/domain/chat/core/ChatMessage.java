@@ -26,7 +26,7 @@ public class ChatMessage {
     public static ChatMessage fromEntity(ChatMessageEntity chatMessageEntity) {
         return new ChatMessage(
                 chatMessageEntity.getId(),
-                ChatRoom.fromEntity(chatMessageEntity.getChatRoom()),
+                ChatRoom.fromEntity(chatMessageEntity.getChatRoomEntity()),
                 chatMessageEntity.getContent(),
                 chatMessageEntity.getCreatedAt(),
                 chatMessageEntity.getIsRead(),

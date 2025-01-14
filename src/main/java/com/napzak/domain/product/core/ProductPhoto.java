@@ -1,6 +1,5 @@
 package com.napzak.domain.product.core;
 
-import com.napzak.domain.store.core.Store;
 import lombok.Getter;
 
 @Getter
@@ -20,7 +19,7 @@ public class ProductPhoto {
     public static ProductPhoto fromEntity(ProductPhotoEntity productPhotoEntity) {
         return new ProductPhoto(
                 productPhotoEntity.getId(),
-                Product.fromEntity(productPhotoEntity.getProduct()),
+                Product.fromEntity(productPhotoEntity.getProductEntity()),
                 productPhotoEntity.getPhotoUrl(),
                 productPhotoEntity.getSequence()
         );

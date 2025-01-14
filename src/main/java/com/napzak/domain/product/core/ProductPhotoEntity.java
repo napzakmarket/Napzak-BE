@@ -1,6 +1,5 @@
 package com.napzak.domain.product.core;
 
-import com.napzak.domain.store.core.StoreEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -22,7 +21,7 @@ public class ProductPhotoEntity {
 
     @ManyToOne
     @JoinColumn(name = COLUMN_PRODUCT_ID, nullable = false)
-    private ProductEntity product;
+    private ProductEntity productEntity;
 
     @Column(name = COLUMN_PHOTO_URL, nullable = false)
     private String photoUrl;
@@ -31,20 +30,20 @@ public class ProductPhotoEntity {
     private int sequence;
 
     @Builder
-    private  ProductPhotoEntity(Long id, ProductEntity product, String photoUrl, int sequence){
+    private  ProductPhotoEntity(Long id, ProductEntity productEntity, String photoUrl, int sequence){
         this.id = id;
-        this.product = product;
+        this.productEntity = productEntity;
         this.photoUrl = photoUrl;
         this.sequence = sequence;
     }
 
     public static ProductPhotoEntity create(
-            final ProductEntity product,
+            final ProductEntity productEntity,
             final String photoUrl,
             final int sequence
     ){
             return ProductPhotoEntity.builder()
-                    .product(product)
+                    .productEntity(productEntity)
                     .photoUrl(photoUrl)
                     .sequence(sequence)
                     .build();

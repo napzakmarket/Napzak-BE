@@ -50,7 +50,7 @@ public class Product {
     public static Product fromEntity(ProductEntity productEntity){
         return new Product(
                 productEntity.getId(),
-                productEntity.getStore(),
+                productEntity.getStoreEntity(),
                 productEntity.getTitle(),
                 productEntity.getDescription(),
                 productEntity.getTradeType(),
@@ -64,7 +64,7 @@ public class Product {
                 productEntity.getStandardDeliveryFee(),
                 productEntity.getHalfDeliveryFee(),
                 productEntity.getProductCondition(),
-                productEntity.getGenre()
+                productEntity.getGenreEntity()
         );
     }
 }

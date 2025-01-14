@@ -24,7 +24,7 @@ public class ChatMessageEntity {
 
     @ManyToOne
     @JoinColumn(name = COLUMN_CHAT_ROOM_ID, nullable = false)
-    private ChatRoomEntity chatRoom;
+    private ChatRoomEntity chatRoomEntity;
 
     @Column(name = COLUMN_CONTENT, nullable = false)
     private String content;
@@ -40,8 +40,8 @@ public class ChatMessageEntity {
     private StoreEntity sender;
 
     @Builder
-    private ChatMessageEntity(ChatRoomEntity chatRoom, String content, LocalDateTime createdAt, Boolean isRead, StoreEntity sender) {
-        this.chatRoom = chatRoom;
+    private ChatMessageEntity(ChatRoomEntity chatRoomEntity, String content, LocalDateTime createdAt, Boolean isRead, StoreEntity sender) {
+        this.chatRoomEntity = chatRoomEntity;
         this.content = content;
         this.createdAt = createdAt;
         this.isRead = isRead;
@@ -49,13 +49,13 @@ public class ChatMessageEntity {
     }
 
     public static ChatMessageEntity create(
-            final ChatRoomEntity chatRoom,
+            final ChatRoomEntity chatRoomEntity,
             final String content,
             final LocalDateTime createdAt,
             final Boolean isRead, StoreEntity sender
     ) {
         return ChatMessageEntity.builder()
-                .chatRoom(chatRoom)
+                .chatRoomEntity(chatRoomEntity)
                 .content(content)
                 .createdAt(createdAt)
                 .isRead(isRead)

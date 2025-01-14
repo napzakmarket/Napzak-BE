@@ -19,7 +19,7 @@ public class StoreRegistrationService {
     @Transactional
     public Long registerStoreWithStoreInfo(final StoreSocialInfoResponse storeSocialInfoResponse) {
 
-        StoreEntity store = StoreEntity.create(
+        StoreEntity storeEntity = StoreEntity.create(
                 null,
                 null,
                 Role.STORE,
@@ -29,10 +29,10 @@ public class StoreRegistrationService {
                 null
         );
 
-        storeRepository.save(store);
+        storeRepository.save(storeEntity);
 
-        log.info("Store registered with storeId: {}, role: {}", store.getId(), store.getRole());
+        log.info("Store registered with storeId: {}, role: {}", storeEntity.getId(), storeEntity.getRole());
 
-        return store.getId();
+        return storeEntity.getId();
     }
 }

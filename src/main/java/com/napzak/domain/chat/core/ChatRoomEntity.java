@@ -31,7 +31,7 @@ public class ChatRoomEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_PRODUCT_ID, nullable = false)
-    private ProductEntity product;
+    private ProductEntity productEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_OWNER_ID, nullable = false)
@@ -42,18 +42,18 @@ public class ChatRoomEntity {
     private StoreEntity requester;
 
     @Builder
-    private ChatRoomEntity(ProductEntity product, StoreEntity owner, StoreEntity requester) {
-        this.product = product;
+    private ChatRoomEntity(ProductEntity productEntity, StoreEntity owner, StoreEntity requester) {
+        this.productEntity = productEntity;
         this.owner = owner;
         this.requester = requester;
     }
 
     public static ChatRoomEntity create(
-            final ProductEntity product,
+            final ProductEntity productEntity,
             final StoreEntity owner,
             final StoreEntity requester) {
         return ChatRoomEntity.builder()
-                .product(product)
+                .productEntity(productEntity)
                 .owner(owner)
                 .requester(requester)
                 .build();

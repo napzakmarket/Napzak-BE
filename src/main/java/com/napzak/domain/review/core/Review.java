@@ -35,7 +35,7 @@ public class Review {
                 reviewEntity.getComment(),
                 reviewEntity.getCreatedAt(),
                 reviewEntity.getUpdatedAt(),
-                Product.fromEntity(reviewEntity.getProduct()),
+                Product.fromEntity(reviewEntity.getProductEntity()),
                 Store.fromEntity(reviewEntity.getReviewer()),
                 Store.fromEntity(reviewEntity.getReviewee())
         );

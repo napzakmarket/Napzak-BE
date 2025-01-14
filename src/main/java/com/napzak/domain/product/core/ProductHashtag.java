@@ -18,8 +18,8 @@ public class ProductHashtag {
     public static ProductHashtag fromEntity(ProductHashtagEntity productHashtagEntity) {
         return new ProductHashtag(
                 productHashtagEntity.getId(),
-                Product.fromEntity(productHashtagEntity.getProduct()),
-                Hashtag.fromEntity(productHashtagEntity.getHashtag())
+                Product.fromEntity(productHashtagEntity.getProductEntity()),
+                Hashtag.fromEntity(productHashtagEntity.getHashtagEntity())
         );
     }
 }

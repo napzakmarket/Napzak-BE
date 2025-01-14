@@ -11,15 +11,15 @@ public class ChatRoom {
     private final Long id;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
-    private final ProductEntity product;
+    private final ProductEntity productEntity;
     private final StoreEntity owner;
     private final StoreEntity requester;
 
-    public ChatRoom(Long id, LocalDateTime createdAt, LocalDateTime updatedAt, ProductEntity product, StoreEntity owner, StoreEntity requester) {
+    public ChatRoom(Long id, LocalDateTime createdAt, LocalDateTime updatedAt, ProductEntity productEntity, StoreEntity owner, StoreEntity requester) {
         this.id = id;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.product = product;
+        this.productEntity = productEntity;
         this.owner = owner;
         this.requester = requester;
     }
@@ -29,7 +29,7 @@ public class ChatRoom {
                 chatRoomEntity.getId(),
                 chatRoomEntity.getCreatedAt(),
                 chatRoomEntity.getUpdatedAt(),
-                chatRoomEntity.getProduct(),
+                chatRoomEntity.getProductEntity(),
                 chatRoomEntity.getOwner(),
                 chatRoomEntity.getRequester()
         );

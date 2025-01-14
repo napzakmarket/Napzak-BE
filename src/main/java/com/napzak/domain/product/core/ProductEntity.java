@@ -71,14 +71,14 @@ public class ProductEntity {
 
     @ManyToOne
     @JoinColumn(name = COLUMN_STORE_ID, nullable = false)
-    private StoreEntity store;
+    private StoreEntity storeEntity;
 
     @OneToOne
     @JoinColumn(name = COLUMN_GENRE_ID, nullable = false)
-    private GenreEntity genre;
+    private GenreEntity genreEntity;
 
     @Builder
-    private ProductEntity(Long id, String title, String description, TradeType tradeType, int price, TradeStatus tradeStatus, Boolean isPriceNegotiable, Boolean isDeliveryIncluded, int standardDeliveryFee, int halfDeliveryFee, ProductCondition productCondition, StoreEntity store, GenreEntity genre
+    private ProductEntity(Long id, String title, String description, TradeType tradeType, int price, TradeStatus tradeStatus, Boolean isPriceNegotiable, Boolean isDeliveryIncluded, int standardDeliveryFee, int halfDeliveryFee, ProductCondition productCondition, StoreEntity storeEntity, GenreEntity genreEntity
     ){
         this.id = id;
         this.title = title;
@@ -91,14 +91,14 @@ public class ProductEntity {
         this.standardDeliveryFee = standardDeliveryFee;
         this.halfDeliveryFee = halfDeliveryFee;
         this.productCondition = productCondition;
-        this.store = store;
-        this.genre = genre;
+        this.storeEntity = storeEntity;
+        this.genreEntity = genreEntity;
     }
 
 
     public static ProductEntity create(
             final String title,
-            final StoreEntity store,
+            final StoreEntity storeEntity,
             final String description,
             final TradeType tradeType,
             final TradeStatus tradeStatus,
@@ -108,11 +108,11 @@ public class ProductEntity {
             final int standardDeliveryFee,
             final int halfDeliveryFee,
             final ProductCondition productCondition,
-            final GenreEntity genre
+            final GenreEntity genreEntity
     ) {
         return ProductEntity.builder()
                 .title(title)
-                .store(store)
+                .storeEntity(storeEntity)
                 .description(description)
                 .tradeType(tradeType)
                 .tradeStatus(tradeStatus)
@@ -122,7 +122,7 @@ public class ProductEntity {
                 .standardDeliveryFee(standardDeliveryFee)
                 .halfDeliveryFee(halfDeliveryFee)
                 .productCondition(productCondition)
-                .genre(genre)
+                .genreEntity(genreEntity)
                 .build();
     }
 

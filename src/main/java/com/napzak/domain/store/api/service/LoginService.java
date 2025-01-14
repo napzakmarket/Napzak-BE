@@ -62,9 +62,9 @@ public class LoginService {
                 storeSocialInfoResponse.socialType());
 
         if (storeExits){
-            StoreEntity store = storeService.findStoreBySocialIdAndSocialType(storeSocialInfoResponse.socialId(),
+            StoreEntity storeEntity = storeService.findStoreBySocialIdAndSocialType(storeSocialInfoResponse.socialId(),
                     storeSocialInfoResponse.socialType());
-            return store.getId();
+            return storeEntity.getId();
         }
 
         return storeRegistrationService.registerStoreWithStoreInfo(storeSocialInfoResponse);
@@ -74,7 +74,7 @@ public class LoginService {
             Long storeId,
             StoreSocialInfoResponse storeSocialInfoResponse){
 
-        StoreEntity store = storeService.findStoreByStoreId(storeId);
+        StoreEntity storeEntity = storeService.findStoreByStoreId(storeId);
         return authenticationService.generateLoginSuccessResponse(storeId, storeSocialInfoResponse);
 
     }

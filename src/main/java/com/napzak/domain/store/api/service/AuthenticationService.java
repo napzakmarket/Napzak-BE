@@ -46,9 +46,9 @@ public class AuthenticationService {
                                                              final StoreSocialInfoResponse storeSocialInfoResponse) {
 
         Optional<StoreEntity> optionalStore = storeRepository.findById(storeId);
-        StoreEntity store= optionalStore.orElseThrow(()-> new NapzakException(ErrorCode.USER_NOT_FOUND));
-        final Role role = store.getRole();
-        final String nickname = store.getNickname();
+        StoreEntity storeEntity = optionalStore.orElseThrow(()-> new NapzakException(ErrorCode.USER_NOT_FOUND));
+        final Role role = storeEntity.getRole();
+        final String nickname = storeEntity.getNickname();
 
         Collection<GrantedAuthority> authorities = List.of(role.toGrantedAuthority());
 

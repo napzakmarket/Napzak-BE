@@ -24,30 +24,30 @@ public class InterestEntity {
 
     @ManyToOne
     @JoinColumn(name = COLUMN_STORE_ID, nullable = false)
-    private StoreEntity store;
+    private StoreEntity storeEntity;
 
     @ManyToOne
     @JoinColumn(name = COLUMN_PRODUCT_ID, nullable = false)
-    private ProductEntity product;
+    private ProductEntity productEntity;
 
     @Builder
     public InterestEntity(
             Long id,
-            StoreEntity store,
-            ProductEntity product) {
+            StoreEntity storeEntity,
+            ProductEntity productEntity) {
         this.id = id;
-        this.store = store;
-        this.product = product;
+        this.storeEntity = storeEntity;
+        this.productEntity = productEntity;
     }
 
 
     public static InterestEntity create(
-            final StoreEntity store,
-            final ProductEntity product
+            final StoreEntity storeEntity,
+            final ProductEntity productEntity
             ){
             return InterestEntity.builder()
-                    .store(store)
-                    .product(product)
+                    .storeEntity(storeEntity)
+                    .productEntity(productEntity)
                     .build();
     }
 }
