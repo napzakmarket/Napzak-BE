@@ -1,19 +1,16 @@
-#--- Dockerfile-dev ---
-FROM gradle:8.5-jdk17 AS builder
+FROM gradle:8.8-jdk17 AS builder
 WORKDIR /usr/src
 
-# 로컬에 있는 모든 소스 복사
-COPY . /usr/src
+COPY settings.gradle build.gradle ./
+RUN ./gradlew dependencies --refresh-dependencies
 
-# Gradle Wrapper 버전 지정 (없으면 생략 가능)
-RUN gradle wrapper --gradle-version 8.5
-
-# 빌드 (테스트 스킵)
+COPY src /usr/src/src
+COPY gradle /usr/src/gradle
+COPY gradlew /usr/src/gradlew
 RUN ./gradlew clean build -x test
 
-# 실제 실행 컨테이너
 FROM openjdk:17-jdk-alpine
-# 위에서 빌드된 jar 복사
+WORKDIR /app
 COPY --from=builder /usr/src/build/libs/napzak-0.0.1-SNAPSHOT.jar /app/napzak.jar
 
 # dev 프로파일로 실행
