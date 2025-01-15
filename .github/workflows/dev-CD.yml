@@ -2,15 +2,18 @@ name: dev-CD
 
 on:
   push:
-    branches:
-      - develop
-    branches-ignore:
-      - main
+    branches: [ "develop" ]
 
 jobs:
   CI:
     runs-on: ubuntu-22.04
     environment: dev
+
+    # 조건: develop -> main 병합 시 실행되지 않도록 제한
+    if: >-
+      github.event.before != '0000000000000000000000000000000000000000' &&
+      github.event.pusher.name != 'GitHub' &&
+      !contains(github.event.head_commit.message, 'Merge pull request')
 
     steps:
       - name: Checkout

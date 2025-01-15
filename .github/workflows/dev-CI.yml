@@ -2,13 +2,11 @@ name: dev-CI
 
 on:
   pull_request:
-    branches:
-      - develop
-    branches-ignore:
-      - main
+    branches: [ "develop" ]
 
 jobs:
   build:
+    if: github.event.pull_request.head.ref == 'develop'
     runs-on: ubuntu-22.04
     environment: dev
 
