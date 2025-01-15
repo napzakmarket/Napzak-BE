@@ -18,4 +18,5 @@ public class ProductTableConstants {
     public final static String COLUMN_PRODUCT_CONDITION = "product_condition";
     public final static String COLUMN_STORE_ID = "store_id";
     public final static String COLUMN_GENRE_ID = "genre_id";
+    public final static String COLUMN_INTEREST_COUNT = "interest_count";
 }

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 public class Review {
     private final Long id;
-    private final int rate;
+    private final Integer rate;
     private final String comment;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
@@ -18,7 +18,7 @@ public class Review {
     private final Store reviewer;
     private final Store reviewee;
 
-    public Review(Long id, int rate, String comment, LocalDateTime createdAt, LocalDateTime updatedAt, Product product, Store reviewer, Store reviewee) {
+    public Review(Long id, Integer rate, String comment, LocalDateTime createdAt, LocalDateTime updatedAt, Product product, Store reviewer, Store reviewee) {
         this.id = id;
         this.rate = rate;
         this.comment = comment;

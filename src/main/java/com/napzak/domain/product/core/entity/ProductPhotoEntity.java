@@ -27,10 +27,10 @@ public class ProductPhotoEntity {
     private String photoUrl;
 
     @Column(name = COLUMN_SEQUENCE, nullable = false)
-    private int sequence;
+    private Integer sequence;
 
     @Builder
-    private  ProductPhotoEntity(Long id, ProductEntity productEntity, String photoUrl, int sequence){
+    private  ProductPhotoEntity(Long id, ProductEntity productEntity, String photoUrl, Integer sequence){
         this.id = id;
         this.productEntity = productEntity;
         this.photoUrl = photoUrl;
@@ -40,13 +40,13 @@ public class ProductPhotoEntity {
     public static ProductPhotoEntity create(
             final ProductEntity productEntity,
             final String photoUrl,
-            final int sequence
+            final Integer sequence
     ){
-            return ProductPhotoEntity.builder()
-                    .productEntity(productEntity)
-                    .photoUrl(photoUrl)
-                    .sequence(sequence)
-                    .build();
+        return ProductPhotoEntity.builder()
+                .productEntity(productEntity)
+                .photoUrl(photoUrl)
+                .sequence(sequence)
+                .build();
     }
 
 }

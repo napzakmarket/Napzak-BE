@@ -33,12 +33,15 @@ public class ProductEntity {
     @Column(name = COLUMN_DESCRIPTION, nullable = false)
     private String description;
 
+    @Column(name = COLUMN_INTEREST_COUNT, nullable = false)
+    private Integer interestCount = 0;
+
     @Enumerated(EnumType.STRING)
     @Column(name = COLUMN_TRADE_TYPE, nullable = false)
     private TradeType tradeType;
 
     @Column(name = COLUMN_PRICE, nullable = false)
-    private int price;
+    private Integer price;
 
     @Column(name = COLUMN_CREATED_AT, nullable = false)
     private final LocalDateTime createdAt = LocalDateTime.now();
@@ -47,7 +50,7 @@ public class ProductEntity {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Column(name = COLUMN_VIEW_COUNT, nullable = false)
-    private int viewCount = 0;
+    private Integer viewCount = 0;
 
     @Enumerated(EnumType.STRING)
     @Column(name = COLUMN_TRADE_STATUS, nullable = false)
@@ -60,10 +63,10 @@ public class ProductEntity {
     private Boolean isDeliveryIncluded;
 
     @Column(name = COLUMN_STANDARD_DELIVERY_FEE, nullable = true)
-    private int standardDeliveryFee;
+    private Integer standardDeliveryFee;
 
     @Column(name = COLUMN_HALF_DELIVERY_FEE, nullable = true)
-    private int halfDeliveryFee;
+    private Integer halfDeliveryFee;
 
     @Enumerated(EnumType.STRING)
     @Column(name = COLUMN_PRODUCT_CONDITION, nullable = true)
@@ -73,16 +76,17 @@ public class ProductEntity {
     @JoinColumn(name = COLUMN_STORE_ID, nullable = false)
     private StoreEntity storeEntity;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = COLUMN_GENRE_ID, nullable = false)
     private GenreEntity genreEntity;
 
     @Builder
-    private ProductEntity(Long id, String title, String description, TradeType tradeType, int price, TradeStatus tradeStatus, Boolean isPriceNegotiable, Boolean isDeliveryIncluded, int standardDeliveryFee, int halfDeliveryFee, ProductCondition productCondition, StoreEntity storeEntity, GenreEntity genreEntity
+    private ProductEntity(Long id, String title, String description, Integer interestCount, TradeType tradeType, Integer price, TradeStatus tradeStatus, Boolean isPriceNegotiable, Boolean isDeliveryIncluded, Integer standardDeliveryFee, Integer halfDeliveryFee, ProductCondition productCondition, StoreEntity storeEntity, GenreEntity genreEntity
     ){
         this.id = id;
         this.title = title;
         this.description = description;
+        this.interestCount = interestCount;
         this.tradeType = tradeType;
         this.price = price;
         this.tradeStatus = tradeStatus;
@@ -100,13 +104,14 @@ public class ProductEntity {
             final String title,
             final StoreEntity storeEntity,
             final String description,
+            final Integer interestCount,
             final TradeType tradeType,
             final TradeStatus tradeStatus,
-            final int price,
+            final Integer price,
             final Boolean isPriceNegotiable,
             final Boolean isDeliveryIncluded,
-            final int standardDeliveryFee,
-            final int halfDeliveryFee,
+            final Integer standardDeliveryFee,
+            final Integer halfDeliveryFee,
             final ProductCondition productCondition,
             final GenreEntity genreEntity
     ) {
@@ -114,6 +119,7 @@ public class ProductEntity {
                 .title(title)
                 .storeEntity(storeEntity)
                 .description(description)
+                .interestCount(interestCount)
                 .tradeType(tradeType)
                 .tradeStatus(tradeStatus)
                 .price(price)

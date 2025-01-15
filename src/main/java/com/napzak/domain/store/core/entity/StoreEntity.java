@@ -1,5 +1,3 @@
-
-
 package com.napzak.domain.store.core.entity;
 
 import static com.napzak.domain.store.core.entity.StoreTableConstants.*;
@@ -23,10 +21,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Table(
-	name = TABLE_STORE,
-	indexes = {
-		@Index(name = "uk1", columnList = "phone", unique = true)
-	}
+		name = TABLE_STORE,
+		indexes = {
+				@Index(name = "uk1", columnList = "phone", unique = true)
+		}
 )
 @Entity
 @Getter
@@ -48,7 +46,7 @@ public class StoreEntity {
 	private String photo;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = COLUMN_ROLE, nullable = false, columnDefinition = "varchar(10) default 'Store'")
+	@Column(name = COLUMN_ROLE, nullable = false, columnDefinition = "varchar(10) default 'STORE'")
 	private Role role;
 
 	@Column(name = COLUMN_DESCRIPTION, nullable = true)
@@ -79,22 +77,22 @@ public class StoreEntity {
 	}
 
 	public static StoreEntity create(
-		final String nickname,
-		final String phoneNumber,
-		final Role role,
-		final String description,
-		final Long socialId,
-		final SocialType socialType,
-		final String photo
+			final String nickname,
+			final String phoneNumber,
+			final Role role,
+			final String description,
+			final Long socialId,
+			final SocialType socialType,
+			final String photo
 	) {
 		return StoreEntity.builder()
-			.nickname(nickname)
-			.phoneNumber(phoneNumber)
-			.role(role)
-			.description(description)
-			.socialId(socialId)
-			.socialType(socialType)
-			.photo(photo)
-			.build();
+				.nickname(nickname)
+				.phoneNumber(phoneNumber)
+				.role(role)
+				.description(description)
+				.socialId(socialId)
+				.socialType(socialType)
+				.photo(photo)
+				.build();
 	}
 }
