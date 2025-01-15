@@ -2,7 +2,7 @@ name: prod-CD
 
 on:
   push:
-    branches: [ "main" ]
+  - main
 
 jobs:
   CI:
