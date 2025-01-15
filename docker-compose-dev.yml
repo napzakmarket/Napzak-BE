@@ -6,22 +6,26 @@ services:
     image: "sailin1367/napzak-dev:latest"
     ports:
       - "8080:8080"
-    environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}  # Redis 비밀번호 전달
     depends_on:
       redis:
         condition: service_healthy
+    networks:
+      - napzak-dev-net
 
   redis:
     container_name: napzak-dev-redis
     image: redis:7.0-alpine
-    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    command: ["redis-server", "--requirepass", "napzakdev"]
     ports:
       - "6379:6379"
-    environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      test: ["CMD", "redis-cli", "-a", "napzakdev", "ping"]
       interval: 10s
       timeout: 5s
       retries: 3
+    networks:
+      - napzak-dev-net
+
+networks:
+  napzak-dev-net:
+    driver: bridge
