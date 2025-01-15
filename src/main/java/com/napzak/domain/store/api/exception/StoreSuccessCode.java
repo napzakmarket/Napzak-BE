@@ -1,4 +1,4 @@
-package com.napzak.domain.store.core.exception;
+package com.napzak.domain.store.api.exception;
 
 import com.napzak.global.common.exception.base.BaseSuccessCode;
 import lombok.Getter;

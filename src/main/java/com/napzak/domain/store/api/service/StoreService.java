@@ -1,10 +1,8 @@
 package com.napzak.domain.store.api.service;
 
-import com.napzak.domain.store.core.StoreEntity;
-import com.napzak.domain.store.core.SocialType;
-import com.napzak.domain.store.core.exception.StoreErrorCode;
-import com.napzak.domain.store.core.StoreRepository;
-import com.napzak.global.common.exception.NapzakException;
+import com.napzak.domain.store.core.StoreRetriever;
+import com.napzak.domain.store.core.entity.enums.SocialType;
+import com.napzak.domain.store.core.vo.Store;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,23 +13,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @Service
 public class StoreService {
-    private final StoreRepository storeRepository;
+    private final StoreRetriever storeRetriever;
 
     @Transactional(readOnly = true)
-    public StoreEntity findStoreByStoreId(Long StoreId) {
-        return storeRepository.findById(StoreId)
-                .orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
+    public Store findStoreByStoreId(Long StoreId) {
+        return storeRetriever.findStoreByStoreId(StoreId);
+
     }
 
     @Transactional(readOnly = true)
     public boolean checkStoreExistsBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
-        return storeRepository.findBySocialTypeAndSocialId(socialId, socialType).isPresent();
+        return storeRetriever.checkStoreExistsBySocialIdAndSocialType(socialId, socialType);
     }
 
     @Transactional(readOnly = true)
-    public StoreEntity findStoreBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
-        return storeRepository.findBySocialTypeAndSocialId(socialId, socialType)
-                .orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
+    public Store findStoreBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
+        return storeRetriever.findBySocialTypeAndSocialId(socialId, socialType);
     }
 
 }

@@ -1,9 +1,9 @@
 package com.napzak.global.auth.client.service;
 
 
-import com.napzak.domain.store.core.SocialType;
+import com.napzak.domain.store.core.entity.enums.SocialType;
 import com.napzak.global.auth.client.dto.StoreSocialInfoResponse;
-import com.napzak.global.auth.client.dto.StoreLoginRequest;
+import com.napzak.global.auth.client.dto.StoreSocialLoginRequest;
 import com.napzak.global.auth.client.kakao.KakaoApiClient;
 import com.napzak.global.auth.client.kakao.KakaoAuthApiClient;
 import com.napzak.global.auth.client.kakao.dto.KakaoAccessTokenResponse;
@@ -35,7 +35,7 @@ public class KakaoSocialService implements SocialService {
     @Override
     public StoreSocialInfoResponse login(
             final String authorizationCode,
-            final StoreLoginRequest loginRequest
+            final StoreSocialLoginRequest loginRequest
     ){
             String accessToken;
             try{

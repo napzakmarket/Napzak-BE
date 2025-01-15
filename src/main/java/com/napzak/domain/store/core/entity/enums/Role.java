@@ -1,4 +1,4 @@
-package com.napzak.domain.store.core;
+package com.napzak.domain.store.core.entity.enums;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

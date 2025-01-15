@@ -1,4 +1,4 @@
-package com.napzak.domain.store.core;
+package com.napzak.domain.store.core.entity.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
