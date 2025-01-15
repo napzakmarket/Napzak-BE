@@ -2,10 +2,7 @@ name: dev-CD
 
 on:
   push:
-    branches:
-      - develop
-    branches-ignore:
-      - main
+    branches: [ "develop" ]
 
 jobs:
   CI:

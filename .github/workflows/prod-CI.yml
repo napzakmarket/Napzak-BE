@@ -2,8 +2,7 @@ name: prod-CI
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
   build:
