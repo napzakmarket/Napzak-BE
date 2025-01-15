@@ -16,6 +16,7 @@ public class Product {
     private final StoreEntity store;
     private final String title;
     private final String description;
+    private final int interestCount;
     private final TradeType tradeType;
     private final TradeStatus tradeStatus;
     private final int price;
@@ -29,11 +30,30 @@ public class Product {
     private final ProductCondition productCondition;
     private final GenreEntity genre;
 
-    public Product(Long id, StoreEntity store, String title, String description, TradeType tradeType, TradeStatus tradeStatus, int price, LocalDateTime createdAt, LocalDateTime updatedAt, int viewCount, Boolean isPriceNegotiable, Boolean isDeliveryIncluded, int standardDeliveryFee, int halfDeliveryFee, ProductCondition productCondition, GenreEntity genre) {
+    public Product(
+            Long id,
+            StoreEntity store,
+            String title,
+            String description,
+            int interestCount,
+            TradeType tradeType,
+            TradeStatus tradeStatus,
+            int price,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            int viewCount,
+            Boolean isPriceNegotiable,
+            Boolean isDeliveryIncluded,
+            int standardDeliveryFee,
+            int halfDeliveryFee,
+            ProductCondition productCondition,
+            GenreEntity genre
+    ) {
         this.id = id;
         this.store = store;
         this.title = title;
         this.description = description;
+        this.interestCount = interestCount;
         this.tradeType = tradeType;
         this.tradeStatus = tradeStatus;
         this.price = price;
@@ -54,6 +74,7 @@ public class Product {
                 productEntity.getStoreEntity(),
                 productEntity.getTitle(),
                 productEntity.getDescription(),
+                productEntity.getInterestCount(),
                 productEntity.getTradeType(),
                 productEntity.getTradeStatus(),
                 productEntity.getPrice(),

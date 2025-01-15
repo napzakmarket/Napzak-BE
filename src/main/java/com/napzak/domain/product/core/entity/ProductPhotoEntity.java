@@ -30,7 +30,7 @@ public class ProductPhotoEntity {
     private int sequence;
 
     @Builder
-    private  ProductPhotoEntity(Long id, ProductEntity productEntity, String photoUrl, int sequence){
+    private ProductPhotoEntity(Long id, ProductEntity productEntity, String photoUrl, int sequence) {
         this.id = id;
         this.productEntity = productEntity;
         this.photoUrl = photoUrl;
@@ -41,12 +41,12 @@ public class ProductPhotoEntity {
             final ProductEntity productEntity,
             final String photoUrl,
             final int sequence
-    ){
-            return ProductPhotoEntity.builder()
-                    .productEntity(productEntity)
-                    .photoUrl(photoUrl)
-                    .sequence(sequence)
-                    .build();
+    ) {
+        return ProductPhotoEntity.builder()
+                .productEntity(productEntity)
+                .photoUrl(photoUrl)
+                .sequence(sequence)
+                .build();
     }
 
 }
