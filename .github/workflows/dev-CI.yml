@@ -6,7 +6,6 @@ on:
 
 jobs:
   build:
-    if: github.event.pull_request.head.ref == 'develop'
     runs-on: ubuntu-22.04
     environment: dev
 
