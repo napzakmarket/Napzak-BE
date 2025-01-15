@@ -16,21 +16,21 @@ public class Product {
     private final StoreEntity store;
     private final String title;
     private final String description;
-    private final Integer interestCount;
+    private final int interestCount;
     private final TradeType tradeType;
     private final TradeStatus tradeStatus;
-    private final Integer price;
+    private final int price;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
-    private final Integer viewCount;
+    private final int viewCount;
     private final Boolean isPriceNegotiable;
     private final Boolean isDeliveryIncluded;
-    private final Integer standardDeliveryFee;
-    private final Integer halfDeliveryFee;
+    private final int standardDeliveryFee;
+    private final int halfDeliveryFee;
     private final ProductCondition productCondition;
     private final GenreEntity genre;
 
-    public Product(Long id, StoreEntity store, String title, String description, Integer interestCount, TradeType tradeType, TradeStatus tradeStatus, Integer price, LocalDateTime createdAt, LocalDateTime updatedAt, Integer viewCount, Boolean isPriceNegotiable, Boolean isDeliveryIncluded, Integer standardDeliveryFee, Integer halfDeliveryFee, ProductCondition productCondition, GenreEntity genre) {
+    public Product(Long id, StoreEntity store, String title, String description, int interestCount, TradeType tradeType, TradeStatus tradeStatus, int price, LocalDateTime createdAt, LocalDateTime updatedAt, int viewCount, Boolean isPriceNegotiable, Boolean isDeliveryIncluded, int standardDeliveryFee, int halfDeliveryFee, ProductCondition productCondition, GenreEntity genre) {
         this.id = id;
         this.store = store;
         this.title = title;

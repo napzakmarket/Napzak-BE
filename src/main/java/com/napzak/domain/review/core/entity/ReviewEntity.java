@@ -24,7 +24,7 @@ public class ReviewEntity {
     private Long id;
 
     @Column(name = COLUMN_RATE, nullable = false)
-    private Integer rate;
+    private int rate;
 
     @Column(name = COLUMN_COMMENT, nullable = false)
     private String comment;
@@ -49,7 +49,7 @@ public class ReviewEntity {
 
     @Builder
     private ReviewEntity(
-            Integer rate,
+            int rate,
             String comment,
             ProductEntity productEntity,
             StoreEntity reviewer,
@@ -63,7 +63,7 @@ public class ReviewEntity {
     }
 
     public static ReviewEntity create(
-            final Integer rate,
+            final int rate,
             final String comment,
             final ProductEntity productEntity,
             final StoreEntity reviewer,

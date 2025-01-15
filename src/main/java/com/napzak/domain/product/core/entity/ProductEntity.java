@@ -34,14 +34,14 @@ public class ProductEntity {
     private String description;
 
     @Column(name = COLUMN_INTEREST_COUNT, nullable = false)
-    private Integer interestCount = 0;
+    private int interestCount = 0;
 
     @Enumerated(EnumType.STRING)
     @Column(name = COLUMN_TRADE_TYPE, nullable = false)
     private TradeType tradeType;
 
     @Column(name = COLUMN_PRICE, nullable = false)
-    private Integer price;
+    private int price;
 
     @Column(name = COLUMN_CREATED_AT, nullable = false)
     private final LocalDateTime createdAt = LocalDateTime.now();
@@ -50,26 +50,26 @@ public class ProductEntity {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Column(name = COLUMN_VIEW_COUNT, nullable = false)
-    private Integer viewCount = 0;
+    private int viewCount = 0;
 
     @Enumerated(EnumType.STRING)
     @Column(name = COLUMN_TRADE_STATUS, nullable = false)
     private TradeStatus tradeStatus;
 
-    @Column(name = COLUMN_IS_PRICE_NEGOTIABLE, nullable = true)
-    private Boolean isPriceNegotiable;
+    @Column(name = COLUMN_IS_PRICE_NEGOTIABLE, nullable = false)
+    private Boolean isPriceNegotiable = false;
 
-    @Column(name = COLUMN_IS_DELIVERY_INCLUDED, nullable = true)
-    private Boolean isDeliveryIncluded;
+    @Column(name = COLUMN_IS_DELIVERY_INCLUDED, nullable = false)
+    private Boolean isDeliveryIncluded = false;
 
-    @Column(name = COLUMN_STANDARD_DELIVERY_FEE, nullable = true)
-    private Integer standardDeliveryFee;
+    @Column(name = COLUMN_STANDARD_DELIVERY_FEE, nullable = false)
+    private int standardDeliveryFee = 0;
 
-    @Column(name = COLUMN_HALF_DELIVERY_FEE, nullable = true)
-    private Integer halfDeliveryFee;
+    @Column(name = COLUMN_HALF_DELIVERY_FEE, nullable = false)
+    private int halfDeliveryFee = 0;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = COLUMN_PRODUCT_CONDITION, nullable = true)
+    @Column(name = COLUMN_PRODUCT_CONDITION, nullable = false)
     private ProductCondition productCondition;
 
     @ManyToOne
@@ -81,7 +81,7 @@ public class ProductEntity {
     private GenreEntity genreEntity;
 
     @Builder
-    private ProductEntity(Long id, String title, String description, Integer interestCount, TradeType tradeType, Integer price, TradeStatus tradeStatus, Boolean isPriceNegotiable, Boolean isDeliveryIncluded, Integer standardDeliveryFee, Integer halfDeliveryFee, ProductCondition productCondition, StoreEntity storeEntity, GenreEntity genreEntity
+    private ProductEntity(Long id, String title, String description, int interestCount, TradeType tradeType, int price, TradeStatus tradeStatus, Boolean isPriceNegotiable, Boolean isDeliveryIncluded, int standardDeliveryFee, int halfDeliveryFee, ProductCondition productCondition, StoreEntity storeEntity, GenreEntity genreEntity
     ){
         this.id = id;
         this.title = title;
@@ -104,14 +104,14 @@ public class ProductEntity {
             final String title,
             final StoreEntity storeEntity,
             final String description,
-            final Integer interestCount,
+            final int interestCount,
             final TradeType tradeType,
             final TradeStatus tradeStatus,
-            final Integer price,
+            final int price,
             final Boolean isPriceNegotiable,
             final Boolean isDeliveryIncluded,
-            final Integer standardDeliveryFee,
-            final Integer halfDeliveryFee,
+            final int standardDeliveryFee,
+            final int halfDeliveryFee,
             final ProductCondition productCondition,
             final GenreEntity genreEntity
     ) {
