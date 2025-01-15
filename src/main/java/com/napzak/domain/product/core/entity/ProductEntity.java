@@ -81,7 +81,21 @@ public class ProductEntity {
     private GenreEntity genreEntity;
 
     @Builder
-    private ProductEntity(Long id, String title, String description, int interestCount, TradeType tradeType, int price, TradeStatus tradeStatus, Boolean isPriceNegotiable, Boolean isDeliveryIncluded, int standardDeliveryFee, int halfDeliveryFee, ProductCondition productCondition, StoreEntity storeEntity, GenreEntity genreEntity
+    private ProductEntity(
+            Long id,
+            String title,
+            String description,
+            int interestCount,
+            TradeType tradeType,
+            int price,
+            TradeStatus tradeStatus,
+            Boolean isPriceNegotiable,
+            Boolean isDeliveryIncluded,
+            int standardDeliveryFee,
+            int halfDeliveryFee,
+            ProductCondition productCondition,
+            StoreEntity storeEntity,
+            GenreEntity genreEntity
     ){
         this.id = id;
         this.title = title;
