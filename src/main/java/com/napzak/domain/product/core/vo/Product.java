@@ -30,7 +30,25 @@ public class Product {
     private final ProductCondition productCondition;
     private final GenreEntity genre;
 
-    public Product(Long id, StoreEntity store, String title, String description, int interestCount, TradeType tradeType, TradeStatus tradeStatus, int price, LocalDateTime createdAt, LocalDateTime updatedAt, int viewCount, Boolean isPriceNegotiable, Boolean isDeliveryIncluded, int standardDeliveryFee, int halfDeliveryFee, ProductCondition productCondition, GenreEntity genre) {
+    public Product(
+            Long id,
+            StoreEntity store,
+            String title,
+            String description,
+            int interestCount,
+            TradeType tradeType,
+            TradeStatus tradeStatus,
+            int price,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            int viewCount,
+            Boolean isPriceNegotiable,
+            Boolean isDeliveryIncluded,
+            int standardDeliveryFee,
+            int halfDeliveryFee,
+            ProductCondition productCondition,
+            GenreEntity genre
+    ) {
         this.id = id;
         this.store = store;
         this.title = title;
