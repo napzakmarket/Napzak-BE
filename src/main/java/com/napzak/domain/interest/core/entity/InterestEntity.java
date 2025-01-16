@@ -1,7 +1,5 @@
 package com.napzak.domain.interest.core.entity;
 
-import com.napzak.domain.product.core.entity.ProductEntity;
-import com.napzak.domain.store.core.entity.StoreEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -22,32 +20,30 @@ public class InterestEntity {
     @Column(name = COLUMN_ID)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = COLUMN_STORE_ID, nullable = false)
-    private StoreEntity storeEntity;
+    @Column(name = COLUMN_STORE_ID, nullable = false)
+    private Long storeId;
 
-    @ManyToOne
-    @JoinColumn(name = COLUMN_PRODUCT_ID, nullable = false)
-    private ProductEntity productEntity;
+    @Column(name = COLUMN_PRODUCT_ID, nullable = false)
+    private Long productId;
 
     @Builder
     public InterestEntity(
             Long id,
-            StoreEntity storeEntity,
-            ProductEntity productEntity) {
+            Long storeId,
+            Long productId) {
         this.id = id;
-        this.storeEntity = storeEntity;
-        this.productEntity = productEntity;
+        this.storeId = storeId;
+        this.productId = productId;
     }
 
 
     public static InterestEntity create(
-            final StoreEntity storeEntity,
-            final ProductEntity productEntity
+            final Long storeId,
+            final Long productId
             ){
             return InterestEntity.builder()
-                    .storeEntity(storeEntity)
-                    .productEntity(productEntity)
+                    .storeId(storeId)
+                    .productId(productId)
                     .build();
     }
 }

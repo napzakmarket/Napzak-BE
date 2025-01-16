@@ -13,21 +13,21 @@ import java.util.List;
 @Repository
 public interface InterestRepository extends JpaRepository<InterestEntity, Long> {
 
-    /*
+
     @Query(""" 
             SELECT COUNT(i) > 0
             FROM InterestEntity i
-            WHERE i.productEntity.id = :productId AND i.storeEntity.id = :storeId
+            WHERE i.productId = :productId AND i.storeId = :storeId
             """)
     boolean existsByProductIdAndStoreId(@Param("productId") Long productId,
                                         @Param("storeId") Long storeId);
-     */
+
 
     @Query("""
-    SELECT i.productEntity.id
+    SELECT i.productId
     FROM InterestEntity i
-    WHERE i.productEntity.id IN :productIds
-      AND i.storeEntity.id = :storeId
+    WHERE i.productId IN :productIds
+      AND i.storeId = :storeId
 """)
     List<Long> findLikedProductIdsByProductIdsAndStoreId(
             @Param("productIds") List<Long> productIds,

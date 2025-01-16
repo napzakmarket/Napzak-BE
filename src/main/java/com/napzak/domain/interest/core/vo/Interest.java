@@ -8,20 +8,20 @@ import lombok.Getter;
 @Getter
 public class Interest {
     private final Long id;
-    private final StoreEntity storeEntity;
-    private final ProductEntity productEntity;
+    private final Long storeId;
+    private final Long productId;
 
-    public Interest(Long id, StoreEntity storeEntity, ProductEntity productEntity) {
+    public Interest(Long id, Long storeId, Long productId) {
         this.id = id;
-        this.storeEntity = storeEntity;
-        this.productEntity = productEntity;
+        this.storeId = storeId;
+        this.productId = productId;
     }
 
     public static Interest fromEntity(InterestEntity interestEntity) {
         return new Interest(
                 interestEntity.getId(),
-                interestEntity.getStoreEntity(),
-                interestEntity.getProductEntity()
+                interestEntity.getStoreId(),
+                interestEntity.getProductId()
         );
     }
 }
