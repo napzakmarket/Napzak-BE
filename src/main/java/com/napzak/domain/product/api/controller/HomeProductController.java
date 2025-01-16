@@ -45,5 +45,28 @@ public class HomeProductController implements HomeProductApi{
         }
     }
 
+    @GetMapping("/sell")
+    @Override
+    public ResponseEntity<SuccessResponse<List<HomeProductResponse>>> getTopSellProducts(
+            @CurrentMember final Long storeId
+    ){
+
+        List<HomeProductResponse> homeProductResponses = homeProductService.getTopSellProducts(storeId);
+        return ResponseEntity.ok()
+                .body(SuccessResponse.of(ProductSuccessCode.PRODUCT_GET_SUCCESS, homeProductResponses));
+    }
+
+    @GetMapping("/buy")
+    @Override
+    public ResponseEntity<SuccessResponse<List<HomeProductResponse>>> getTopBuyProducts(
+            @CurrentMember final Long storeId
+    ){
+
+        List<HomeProductResponse> homeProductResponses = homeProductService.getTopBuyProducts(storeId);
+        return ResponseEntity.ok()
+                .body(SuccessResponse.of(ProductSuccessCode.PRODUCT_GET_SUCCESS, homeProductResponses));
+    }
+
+
 
 }

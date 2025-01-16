@@ -12,4 +12,12 @@ public interface HomeProductApi {
     ResponseEntity<SuccessResponse<List<HomeProductResponse>>> getRecommendProducts(
             @CurrentMember final Long storeId
     );
+
+    ResponseEntity<SuccessResponse<List<HomeProductResponse>>> getTopSellProducts(
+            @CurrentMember final Long storeId
+    );
+
+    ResponseEntity<SuccessResponse<List<HomeProductResponse>>> getTopBuyProducts(
+            @CurrentMember final Long storeId
+    );
 }
