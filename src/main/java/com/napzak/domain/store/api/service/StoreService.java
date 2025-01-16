@@ -16,12 +16,6 @@ public class StoreService {
     private final StoreRetriever storeRetriever;
 
     @Transactional(readOnly = true)
-    public Store findStoreByStoreId(Long StoreId) {
-        return storeRetriever.findStoreByStoreId(StoreId);
-
-    }
-
-    @Transactional(readOnly = true)
     public boolean checkStoreExistsBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
         return storeRetriever.checkStoreExistsBySocialIdAndSocialType(socialId, socialType);
     }

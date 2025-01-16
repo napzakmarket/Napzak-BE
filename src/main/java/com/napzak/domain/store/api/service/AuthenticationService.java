@@ -1,7 +1,6 @@
 package com.napzak.domain.store.api.service;
 
 import com.napzak.domain.store.core.StoreRetriever;
-import com.napzak.domain.store.core.entity.StoreEntity;
 import com.napzak.domain.store.core.entity.enums.Role;
 import com.napzak.domain.store.api.dto.AccessTokenGenerateResponse;
 import com.napzak.domain.store.api.dto.LoginSuccessResponse;
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -45,7 +43,7 @@ public class AuthenticationService {
     public LoginSuccessResponse generateLoginSuccessResponse(final Long storeId,
                                                              final StoreSocialInfoResponse storeSocialInfoResponse) {
 
-        Store store = storeRetriever.findStoreByStoreId(storeId);
+        Store store = storeRetriever.findStoreById(storeId);
         final Role role = store.getRole();
         final String nickname = store.getNickname();
 

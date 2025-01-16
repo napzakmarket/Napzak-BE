@@ -27,7 +27,7 @@ public class ProductRetriever {
     private final ProductPhotoRetriever productPhotoRetriever;
 
     //사용자가 특정 product에 좋아요를 눌렀는지 boolean 값을 받아오는 메서드
-    public Boolean getIsInterested(Long storeId, Long productId){
+    public Boolean getIsInterested(Long storeId, Long productId) {
         return productInterestFacade.getIsInterested(storeId, productId);
     }
 
@@ -60,7 +60,7 @@ public class ProductRetriever {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> findRecommendedProductsByStoreIdAndTradeType(Long socialId, TradeType tradeType){
+    public List<Product> findRecommendedProductsByStoreIdAndTradeType(Long socialId, TradeType tradeType) {
 
         Pageable pageable = PageRequest.of(0, 2);
         List<ProductEntity> productEntityList = productRepository.findRecommendedProductsByStoreIdAndTradeType(socialId, tradeType.toString(), pageable);
@@ -71,12 +71,12 @@ public class ProductRetriever {
     }
 
     @Transactional(readOnly = true)
-    public Product findTopProductByGenreIdAndTradeType(Long genreId, TradeType tradeType, Long storeId){
+    public Product findTopProductByGenreIdAndTradeType(Long genreId, TradeType tradeType, Long storeId) {
 
-        Pageable pageable = PageRequest.of(0,1);
+        Pageable pageable = PageRequest.of(0, 1);
         List<ProductEntity> productEntityList = productRepository.findTopSpecificProductByGenreIdAndTradeType(genreId, tradeType, storeId, pageable);
 
-        if(productEntityList.isEmpty()){
+        if (productEntityList.isEmpty()) {
             return null;
         }
 
@@ -84,7 +84,7 @@ public class ProductRetriever {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> findTopProductsByStoreIdAndTradeType(Long storeId, TradeType tradeType){
+    public List<Product> findTopProductsByStoreIdAndTradeType(Long storeId, TradeType tradeType) {
 
         Pageable pageable = PageRequest.of(0, 4);
         List<ProductEntity> productEntityList = productRepository.findTopInterestProductsByStoreIDAndTradeType(storeId, tradeType, pageable);
@@ -95,10 +95,15 @@ public class ProductRetriever {
     }
 
     @Transactional(readOnly = true)
-    public Product findProductById(Long productId){
+    public Product findProductById(Long productId) {
         ProductEntity productEntity = productRepository.findById(productId)
-                .orElseThrow(()-> new NapzakException(ProductErrorCode.PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new NapzakException(ProductErrorCode.PRODUCT_NOT_FOUND));
 
         return Product.fromEntity(productEntity);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existsById(Long productId) {
+        return productRepository.existsById(productId);
     }
 }

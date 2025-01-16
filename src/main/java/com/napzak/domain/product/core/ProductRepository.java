@@ -16,30 +16,32 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
     Optional<ProductEntity> findById(Long productId);
 
+    boolean existsById(Long productId);
+
     @Query(
             value = """
-        SELECT p.*
-        FROM product p
-        WHERE p.genre_id IN (
-            SELECT gp.genre_id
-            FROM genre_preference gp
-            WHERE gp.store_id = :storeId
-        )
-        AND p.store_id <> :storeId
-        AND p.trade_type = :tradeType
-        ORDER BY p.created_at DESC
-        """,
+                    SELECT p.*
+                    FROM product p
+                    WHERE p.genre_id IN (
+                        SELECT gp.genre_id
+                        FROM genre_preference gp
+                        WHERE gp.store_id = :storeId
+                    )
+                    AND p.store_id <> :storeId
+                    AND p.trade_type = :tradeType
+                    ORDER BY p.created_at DESC
+                    """,
             countQuery = """
-        SELECT COUNT(*)
-        FROM product p
-        WHERE p.genre_id IN (
-            SELECT gp.genre_id
-            FROM genre_preference gp
-            WHERE gp.store_id = :storeId
-        )
-        AND p.store_id <> :storeId
-        AND p.trade_type = :tradeType
-        """,
+                    SELECT COUNT(*)
+                    FROM product p
+                    WHERE p.genre_id IN (
+                        SELECT gp.genre_id
+                        FROM genre_preference gp
+                        WHERE gp.store_id = :storeId
+                    )
+                    AND p.store_id <> :storeId
+                    AND p.trade_type = :tradeType
+                    """,
             nativeQuery = true
     )
     List<ProductEntity> findRecommendedProductsByStoreIdAndTradeType(
