@@ -36,6 +36,10 @@ public class ProductRetriever {
         Pageable pageable = PageRequest.of(0,1);
         List<ProductEntity> productEntityList = productRepository.findTopSpecificProductByGenreIdAndTradeType(genreId, tradeType, storeId, pageable);
 
+        if(productEntityList.isEmpty()){
+            return null;
+        }
+
         return Product.fromEntity(productEntityList.get(0));
     }
 
