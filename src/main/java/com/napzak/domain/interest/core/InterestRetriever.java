@@ -11,11 +11,11 @@ public class InterestRetriever {
 
     private final InterestRepository interestRepository;
 
-    /*
+
     public Boolean getIsInterested(Long storeId, Long productId){
         return interestRepository.existsByProductIdAndStoreId(storeId, productId);
     }
-     */
+
 
     public List<Long> getLikedProductIds(List<Long> productIds, Long storeId){
         return interestRepository.findLikedProductIdsByProductIdsAndStoreId(productIds, storeId);
