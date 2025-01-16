@@ -49,7 +49,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
             SELECT p
             FROM ProductEntity p
             WHERE p.tradeType = :tradeType
-            AND p.storeEntity.id <> :storeID
+            AND p.storeEntity.id <> :storeId
             ORDER BY p.interestCount DESC, p.id DESC
             """)
     List<ProductEntity> findTopInterestProductsByStoreIDAndTradeType(
