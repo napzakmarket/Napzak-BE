@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ProductErrorCode implements BaseErrorCode {
-    PRODUCT_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "대표 이미지가 없습니다.");
+    PRODUCT_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "대표 이미지가 없습니다."),
+    PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 상품을 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
