@@ -20,30 +20,31 @@ public class InterestEntity {
     @Column(name = COLUMN_ID)
     private Long id;
 
-    @Column(name = COLUMN_STORE_ID, nullable = false)
-    private Long storeId;
-
     @Column(name = COLUMN_PRODUCT_ID, nullable = false)
     private Long productId;
+
+
+    @Column(name = COLUMN_STORE_ID, nullable = false)
+    private Long storeId;
 
     @Builder
     public InterestEntity(
             Long id,
-            Long storeId,
-            Long productId) {
+            Long productId,
+            Long storeId) {
         this.id = id;
-        this.storeId = storeId;
         this.productId = productId;
+        this.storeId = storeId;
     }
 
 
     public static InterestEntity create(
-            final Long storeId,
-            final Long productId
+            final Long productId,
+            final Long storeId
             ){
             return InterestEntity.builder()
-                    .storeId(storeId)
                     .productId(productId)
+                    .storeId(storeId)
                     .build();
     }
 }
