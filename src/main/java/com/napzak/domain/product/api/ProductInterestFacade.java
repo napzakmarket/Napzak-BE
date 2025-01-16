@@ -10,7 +10,7 @@ public class ProductInterestFacade {
 
     private final InterestRetriever interestRetriever;
 
-    public Boolean getIsInterested(Long storeId, Long productId){
-        return interestRetriever.getIsInterested(storeId, productId);
+    public Boolean getIsInterested(Long productId, Long storeId){
+        return interestRetriever.getIsInterested(productId, storeId);
     }
 }

@@ -27,8 +27,8 @@ public class ProductRetriever {
     private final ProductPhotoRetriever productPhotoRetriever;
 
     //사용자가 특정 product에 좋아요를 눌렀는지 boolean 값을 받아오는 메서드
-    public Boolean getIsInterested(Long storeId, Long productId) {
-        return productInterestFacade.getIsInterested(storeId, productId);
+    public Boolean getIsInterested(Long productId, Long storeId) {
+        return productInterestFacade.getIsInterested(productId, storeId);
     }
 
     /*
