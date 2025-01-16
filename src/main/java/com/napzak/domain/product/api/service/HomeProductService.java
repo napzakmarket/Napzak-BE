@@ -1,8 +1,6 @@
 package com.napzak.domain.product.api.service;
 
 import com.napzak.domain.banner.core.BannerRetriever;
-import com.napzak.domain.banner.core.vo.Banner;
-import com.napzak.domain.product.api.dto.HomeBannerResponse;
 import com.napzak.domain.product.api.dto.HomeProductResponse;
 import com.napzak.domain.product.core.ProductRetriever;
 import com.napzak.domain.product.core.entity.enums.TradeType;
@@ -73,20 +71,6 @@ public class HomeProductService {
         return homeProductResponseGenerator(allProducts,storeId);
     }
 
-
-    public List<HomeBannerResponse> getAllBanners(){
-
-        List<Banner> allBanners = bannerRetriever.findAllBanners();
-
-        return allBanners.stream()
-                .map(banner -> HomeBannerResponse.of(
-                        banner.getId(),
-                        banner.getPhotoUrl(),
-                        banner.getRedirectUrl(),
-                        banner.getSequence()
-                ))
-                .toList();
-    }
 
     //List<Product>를 받아 대표이미지, 시간 표기, 좋아요 여부를 반영해 response를 생성
     private List<HomeProductResponse> homeProductResponseGenerator(List<Product> products, Long storeId){

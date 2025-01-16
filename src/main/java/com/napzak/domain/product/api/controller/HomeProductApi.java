@@ -1,7 +1,6 @@
 package com.napzak.domain.product.api.controller;
 
 import com.napzak.domain.product.api.dto.HomeProductResponse;
-import com.napzak.domain.product.api.dto.HomeBannerResponse;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.common.exception.dto.SuccessResponse;
 import org.springframework.http.ResponseEntity;
@@ -22,5 +21,4 @@ public interface HomeProductApi {
             @CurrentMember final Long storeId
     );
 
-    ResponseEntity<SuccessResponse<List<HomeBannerResponse>>> getBanners();
 }

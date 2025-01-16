@@ -1,4 +1,4 @@
-package com.napzak.domain.product.api.dto;
+package com.napzak.domain.banner.api.dto;
 
 public record HomeBannerResponse(
         Long bannerId,

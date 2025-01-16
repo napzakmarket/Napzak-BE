@@ -1,12 +1,9 @@
 package com.napzak.domain.product.api.controller;
 
 import com.napzak.domain.product.api.ProductStoreFacade;
-import com.napzak.domain.product.api.dto.HomeBannerResponse;
 import com.napzak.domain.product.api.dto.HomeProductResponse;
 import com.napzak.domain.product.api.exception.ProductSuccessCode;
 import com.napzak.domain.product.api.service.HomeProductService;
-import com.napzak.domain.product.api.service.ProductService;
-import com.napzak.domain.product.core.ProductRetriever;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.common.exception.dto.SuccessResponse;
 import lombok.RequiredArgsConstructor;
@@ -66,15 +63,6 @@ public class HomeProductController implements HomeProductApi{
         List<HomeProductResponse> homeProductResponses = homeProductService.getTopBuyProducts(storeId);
         return ResponseEntity.ok()
                 .body(SuccessResponse.of(ProductSuccessCode.TOP_BUY_PRODUCT_GET_SUCCESS, homeProductResponses));
-    }
-
-    @GetMapping("/banners")
-    @Override
-    public ResponseEntity<SuccessResponse<List<HomeBannerResponse>>> getBanners(){
-
-        List<HomeBannerResponse> homeBannerResponses = homeProductService.getAllBanners();
-        return ResponseEntity.ok()
-                .body(SuccessResponse.of(ProductSuccessCode.BANNER_GET_SUCCESS, homeBannerResponses));
     }
 
 
