@@ -37,12 +37,12 @@ public class HomeProductController implements HomeProductApi{
 
             List<HomeProductResponse> homeProductResponses = homeProductService.getRecommendedProducts(storeId);
             return ResponseEntity.ok()
-                    .body(SuccessResponse.of(ProductSuccessCode.PRODUCT_GET_SUCCESS, homeProductResponses));
+                    .body(SuccessResponse.of(ProductSuccessCode.RECOMMEND_PRODUCT_GET_SUCCESS, homeProductResponses));
         } else{
 
             List<HomeProductResponse> homeProductResponses = homeProductService.getSpecificProducts(storeId);
             return ResponseEntity.ok()
-                    .body(SuccessResponse.of(ProductSuccessCode.PRODUCT_GET_SUCCESS, homeProductResponses));
+                    .body(SuccessResponse.of(ProductSuccessCode.RECOMMEND_PRODUCT_GET_SUCCESS, homeProductResponses));
         }
     }
 
@@ -54,7 +54,7 @@ public class HomeProductController implements HomeProductApi{
 
         List<HomeProductResponse> homeProductResponses = homeProductService.getTopSellProducts(storeId);
         return ResponseEntity.ok()
-                .body(SuccessResponse.of(ProductSuccessCode.PRODUCT_GET_SUCCESS, homeProductResponses));
+                .body(SuccessResponse.of(ProductSuccessCode.TOP_SELL_PRODUCT_GET_SUCCESS, homeProductResponses));
     }
 
     @GetMapping("/buy")
@@ -65,10 +65,10 @@ public class HomeProductController implements HomeProductApi{
 
         List<HomeProductResponse> homeProductResponses = homeProductService.getTopBuyProducts(storeId);
         return ResponseEntity.ok()
-                .body(SuccessResponse.of(ProductSuccessCode.PRODUCT_GET_SUCCESS, homeProductResponses));
+                .body(SuccessResponse.of(ProductSuccessCode.TOP_BUY_PRODUCT_GET_SUCCESS, homeProductResponses));
     }
 
-    @GetMapping("/banner")
+    @GetMapping("/banners")
     @Override
     public ResponseEntity<SuccessResponse<List<HomeBannerResponse>>> getBanners(){
 

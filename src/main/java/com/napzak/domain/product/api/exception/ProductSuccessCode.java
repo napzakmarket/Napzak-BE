@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ProductSuccessCode implements BaseSuccessCode {
-    PRODUCT_GET_SUCCESS(HttpStatus.OK, "상품 정보 불러오기 성공"),
+    RECOMMEND_PRODUCT_GET_SUCCESS(HttpStatus.OK, "개인화 상품 불러오기 성공"),
+    TOP_SELL_PRODUCT_GET_SUCCESS(HttpStatus.OK, "팔아요 인기 상품 불러오기 성공"),
+    TOP_BUY_PRODUCT_GET_SUCCESS(HttpStatus.OK, "구해요 인기 상품 불러오기 성공"),
     BANNER_GET_SUCCESS(HttpStatus.OK, "배너 정보 불러오기 성공")
     ;
 
