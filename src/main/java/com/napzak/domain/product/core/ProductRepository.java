@@ -13,23 +13,38 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
-    @Query("""
-            SELECT p
-            FROM ProductEntity p
-            Where p.genreEntity.id IN (
-                SELECT gp.genreEntity.id
-                FROM GenrePreferenceEntity gp
-                WHERE gp.storeEntity.id = :storeId
-            )
-            AND p.storeEntity.id <> :storeId
-            AND p.tradeType = :tradeType
-            ORDER BY p.createdAt DESC
-            """)
+    @Query(
+            value = """
+        SELECT p.*
+        FROM product p
+        WHERE p.genre_id IN (
+            SELECT gp.genre_id
+            FROM genre_preference gp
+            WHERE gp.store_id = :storeId
+        )
+        AND p.store_id <> :storeId
+        AND p.trade_type = :tradeType
+        ORDER BY p.created_at DESC
+        """,
+            countQuery = """
+        SELECT COUNT(*)
+        FROM product p
+        WHERE p.genre_id IN (
+            SELECT gp.genre_id
+            FROM genre_preference gp
+            WHERE gp.store_id = :storeId
+        )
+        AND p.store_id <> :storeId
+        AND p.trade_type = :tradeType
+        """,
+            nativeQuery = true
+    )
     List<ProductEntity> findRecommendedProductsByStoreIdAndTradeType(
-            Long storeId,
-            TradeType tradeType,
+            @Param("storeId") Long storeId,
+            @Param("tradeType") String tradeType,
             Pageable pageable
     );
+
 
     @Query("""
             SELECT p

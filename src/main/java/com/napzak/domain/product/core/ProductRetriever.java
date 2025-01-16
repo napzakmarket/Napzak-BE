@@ -23,7 +23,7 @@ public class ProductRetriever {
     public List<Product> findRecommendedProductsByStoreIdAndTradeType(Long socialId, TradeType tradeType){
 
         Pageable pageable = PageRequest.of(0, 2);
-        List<ProductEntity> productEntityList = productRepository.findRecommendedProductsByStoreIdAndTradeType(socialId, tradeType, pageable);
+        List<ProductEntity> productEntityList = productRepository.findRecommendedProductsByStoreIdAndTradeType(socialId, tradeType.toString(), pageable);
 
         return productEntityList.stream()
                 .map(Product::fromEntity)
