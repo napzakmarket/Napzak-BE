@@ -44,4 +44,17 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
             TradeType tradeType,
             Long storeId,
             Pageable pageable);
+
+    @Query("""
+            SELECT p
+            FROM ProductEntity p
+            WHERE p.tradeType = :tradeType
+            AND p.storeEntity.id <> :storeID
+            ORDER BY p.interestCount DESC, p.id DESC
+            """)
+    List<ProductEntity> findTopInterestProductsByStoreIDAndTradeType(
+            Long storeId,
+            TradeType tradeType,
+            Pageable pageable
+    );
 }
