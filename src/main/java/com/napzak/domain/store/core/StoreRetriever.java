@@ -16,21 +16,26 @@ public class StoreRetriever {
     private final StoreRepository storeRepository;
 
     @Transactional(readOnly = true)
-    public Store findBySocialTypeAndSocialId(Long socialId, SocialType socialType){
+    public Store findBySocialTypeAndSocialId(Long socialId, SocialType socialType) {
         StoreEntity storeEntity = storeRepository.findBySocialTypeAndSocialId(socialId, socialType)
                 .orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
         return Store.fromEntity(storeEntity);
     }
 
     @Transactional(readOnly = true)
-    public Store findStoreById(Long StoreId){
+    public Store findStoreById(Long StoreId) {
         StoreEntity storeEntity = storeRepository.findById(StoreId)
                 .orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
         return Store.fromEntity(storeEntity);
     }
 
     @Transactional(readOnly = true)
-    public boolean checkStoreExistsBySocialIdAndSocialType(final Long socialId, final SocialType socialType){
+    public boolean existsById(Long StoreId) {
+        return storeRepository.existsById(StoreId);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean checkStoreExistsBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
         return storeRepository.findBySocialTypeAndSocialId(socialId, socialType).isPresent();
     }
 }

@@ -11,4 +11,8 @@ import java.util.Optional;
 public interface GenrePreferenceRepository extends JpaRepository<GenrePreferenceEntity, Long> {
 
    boolean existsByStoreEntityId(Long storeId);
+
+   List<GenrePreferenceEntity> findByStoreEntityId(Long storeId);
 }
+
+
