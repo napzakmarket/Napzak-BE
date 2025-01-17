@@ -30,7 +30,7 @@ public class HomeProductController implements HomeProductApi{
             @CurrentMember final Long storeId
     ){
 
-        if(productStoreFacade.findGenrePreference(storeId)){
+        if(productStoreFacade.existGenrePreference(storeId)){
 
             List<HomeProductResponse> homeProductResponses = homeProductService.getRecommendedProducts(storeId);
             return ResponseEntity.ok()
