@@ -1,7 +1,5 @@
 package com.napzak.domain.chat.core.entity;
 
-import com.napzak.domain.product.core.entity.ProductEntity;
-import com.napzak.domain.store.core.entity.StoreEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,33 +27,19 @@ public class ChatRoomEntity {
     @Column(name = COLUMN_UPDATED_AT, nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = COLUMN_PRODUCT_ID, nullable = false)
-    private ProductEntity productEntity;
+    @Column(name = COLUMN_PRODUCT_ID, nullable = false)
+    private Long productId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = COLUMN_OWNER_ID, nullable = false)
-    private StoreEntity owner;
+    @Column(name = COLUMN_OWNER_ID, nullable = false)
+    private Long ownerId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = COLUMN_REQUESTER_ID, nullable = false)
-    private StoreEntity requester;
+    @Column(name = COLUMN_REQUESTER_ID, nullable = false)
+    private Long requesterId;
 
     @Builder
-    private ChatRoomEntity(ProductEntity productEntity, StoreEntity owner, StoreEntity requester) {
-        this.productEntity = productEntity;
-        this.owner = owner;
-        this.requester = requester;
-    }
-
-    public static ChatRoomEntity create(
-            final ProductEntity productEntity,
-            final StoreEntity owner,
-            final StoreEntity requester) {
-        return ChatRoomEntity.builder()
-                .productEntity(productEntity)
-                .owner(owner)
-                .requester(requester)
-                .build();
+    private ChatRoomEntity(Long productId, Long ownerId, Long requesterId) {
+        this.productId = productId;
+        this.ownerId = ownerId;
+        this.requesterId = requesterId;
     }
 }
