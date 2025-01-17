@@ -51,20 +51,20 @@ public class ProductEntity {
 	@Column(name = COLUMN_TRADE_STATUS, nullable = false)
 	private TradeStatus tradeStatus;
 
-	@Column(name = COLUMN_IS_PRICE_NEGOTIABLE, nullable = true)
-	private Boolean isPriceNegotiable;
+	@Column(name = COLUMN_IS_PRICE_NEGOTIABLE, nullable = false)
+	private Boolean isPriceNegotiable = false;
 
-	@Column(name = COLUMN_IS_DELIVERY_INCLUDED, nullable = true)
-	private Boolean isDeliveryIncluded;
+	@Column(name = COLUMN_IS_DELIVERY_INCLUDED, nullable = false)
+	private Boolean isDeliveryIncluded = false;
 
-	@Column(name = COLUMN_STANDARD_DELIVERY_FEE, nullable = true)
-	private int standardDeliveryFee;
+	@Column(name = COLUMN_STANDARD_DELIVERY_FEE, nullable = false)
+	private int standardDeliveryFee = 0;
 
-	@Column(name = COLUMN_HALF_DELIVERY_FEE, nullable = true)
-	private int halfDeliveryFee;
+	@Column(name = COLUMN_HALF_DELIVERY_FEE, nullable = false)
+	private int halfDeliveryFee = 0;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = COLUMN_PRODUCT_CONDITION, nullable = true)
+	@Column(name = COLUMN_PRODUCT_CONDITION, nullable = false)
 	private ProductCondition productCondition;
 
 	@Column(name = COLUMN_INTEREST_COUNT, nullable = false)
