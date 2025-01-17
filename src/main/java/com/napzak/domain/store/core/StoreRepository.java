@@ -2,7 +2,6 @@ package com.napzak.domain.store.core;
 
 import com.napzak.domain.store.core.entity.StoreEntity;
 import com.napzak.domain.store.core.entity.enums.SocialType;
-import com.napzak.domain.store.core.vo.Store;
 import feign.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

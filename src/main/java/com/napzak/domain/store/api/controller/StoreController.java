@@ -22,14 +22,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
 @RequestMapping("api/v1/store")
 @RequiredArgsConstructor
-public class StoreController implements StoreApi{
+public class StoreController implements StoreApi {
 
     private static final String REFRESH_TOKEN = "refreshToken";
     private static final int COOKIE_MAX_AGE = 7 * 24 * 60 * 60;
