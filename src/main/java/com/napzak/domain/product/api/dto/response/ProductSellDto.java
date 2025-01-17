@@ -13,7 +13,8 @@ public record ProductSellDto(
 	String uploadTime,
 	boolean isInterested,
 	TradeType tradeType,
-	TradeStatus tradeStatus
+	TradeStatus tradeStatus,
+	boolean isOwnedByCurrentUser
 ) {
 	// ProductWithFirstPhoto에서 genreName을 외부에서 전달받는 메서드
 	public static ProductSellDto from(
@@ -21,7 +22,8 @@ public record ProductSellDto(
 		String firstPhoto,
 		String uploadTime,
 		boolean isInterested,
-		String genreName
+		String genreName,
+		boolean isOwnedByCurrentUser
 	) {
 		return new ProductSellDto(
 			product.getId(),
@@ -32,7 +34,8 @@ public record ProductSellDto(
 			uploadTime,
 			isInterested,
 			product.getTradeType(),
-			product.getTradeStatus()
+			product.getTradeStatus(),
+			isOwnedByCurrentUser
 		);
 	}
 
@@ -46,10 +49,11 @@ public record ProductSellDto(
 		String uploadTime,
 		boolean isInterested,
 		TradeType tradeType,
-		TradeStatus tradeStatus
+		TradeStatus tradeStatus,
+		boolean isOwnedByCurrentUser
 	) {
 		return new ProductSellDto(
-			productId, genreName, productName, photo, price, uploadTime, isInterested, tradeType, tradeStatus
+			productId, genreName, productName, photo, price, uploadTime, isInterested, tradeType, tradeStatus, isOwnedByCurrentUser
 		);
 	}
 }
