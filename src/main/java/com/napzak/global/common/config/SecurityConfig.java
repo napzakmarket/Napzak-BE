@@ -33,7 +33,7 @@ public class SecurityConfig {
 		"/swagger-resources/**",
 		"/api/files/**",
 		"/error",
-		"/api/stores/login/**",
+		"/api/v1/store/login/**",
 		"/"
 	};
 
