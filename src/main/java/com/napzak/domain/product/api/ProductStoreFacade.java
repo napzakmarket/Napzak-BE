@@ -11,7 +11,7 @@ public class ProductStoreFacade {
     private final GenrePreferenceRetriever genrePreferenceRetriever;
 
     public Boolean findGenrePreference(Long storeId){
-        return genrePreferenceRetriever.findGenrePreference(storeId);
+        return genrePreferenceRetriever.existGenrePreference(storeId);
     }
 
 }
