@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -68,7 +69,7 @@ public class ProductController {
 
 		// 4. 응답 생성
 		ProductSellListResponse response = ProductSellListResponse.from(
-			parsedSortOption, pagination, interestMap, genreMap
+			parsedSortOption, pagination, interestMap, genreMap, storeId
 		);
 
 		// 5. 응답 반환
@@ -105,7 +106,7 @@ public class ProductController {
 		Map<Long, String> genreMap = fetchGenreMap(pagination);
 
 		ProductBuyListResponse response = ProductBuyListResponse.from(
-			parsedSortOption, pagination, interestMap, genreMap
+			parsedSortOption, pagination, interestMap, genreMap, storeId
 		);
 
 		return ResponseEntity.ok(
@@ -145,7 +146,7 @@ public class ProductController {
 		Map<Long, String> genreMap = fetchGenreMap(pagination);
 
 		ProductSellListResponse response = ProductSellListResponse.from(
-			parsedSortOption, pagination, interestMap, genreMap
+			parsedSortOption, pagination, interestMap, genreMap, storeId
 		);
 
 		return ResponseEntity.ok(
@@ -183,7 +184,85 @@ public class ProductController {
 		Map<Long, String> genreMap = fetchGenreMap(pagination);
 
 		ProductBuyListResponse response = ProductBuyListResponse.from(
-			parsedSortOption, pagination, interestMap, genreMap
+			parsedSortOption, pagination, interestMap, genreMap, storeId
+		);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+				ProductSuccessCode.PRODUCT_LIST_RETRIEVE_SUCCESS,
+				response
+			)
+		);
+	}
+
+	@GetMapping("sell/store/{storeOwnerId}")
+	public ResponseEntity<SuccessResponse<ProductSellListResponse>> getStoreSellProducts(
+		@RequestParam(defaultValue = "RECENT") String sortOption,
+		@RequestParam(defaultValue = "false") Boolean isOnSale,
+		@RequestParam(defaultValue = "false") Boolean isUnopened,
+		@RequestParam(required = false) List<Long> genreId,
+		@RequestParam(required = false) String cursor,
+		@RequestParam(defaultValue = "10") int size,
+		@PathVariable Long storeOwnerId,
+		@CurrentMember Long currentStoreId
+	) {
+		SortOption parsedSortOption = parseSortOption(sortOption);
+		CursorValues cursorValues = parseCursorValues(cursor, parsedSortOption);
+
+		ProductPagination pagination = productService.getStoreSellProducts(
+			storeOwnerId,
+			parsedSortOption,
+			cursorValues.getCursorProductId(),
+			cursorValues.getCursorOptionalValue(),
+			size,
+			isOnSale,
+			isUnopened,
+			genreId
+		);
+
+		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, currentStoreId);
+		Map<Long, String> genreMap = fetchGenreMap(pagination);
+
+		ProductSellListResponse response = ProductSellListResponse.from(
+			parsedSortOption, pagination, interestMap, genreMap, currentStoreId
+		);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+				ProductSuccessCode.PRODUCT_LIST_RETRIEVE_SUCCESS,
+				response
+			)
+		);
+	}
+
+	@GetMapping("/buy/store/{storeOwnerId}")
+	public ResponseEntity<SuccessResponse<ProductBuyListResponse>> getStoreBuyProducts(
+		@RequestParam(defaultValue = "RECENT") String sortOption,
+		@RequestParam(defaultValue = "false") Boolean isOnSale,
+		@RequestParam(required = false) List<Long> genreId,
+		@RequestParam(required = false) String cursor,
+		@RequestParam(defaultValue = "10") int size,
+		@PathVariable Long storeOwnerId,
+		@CurrentMember Long currentStoreId
+	) {
+		SortOption parsedSortOption = parseSortOption(sortOption);
+		CursorValues cursorValues = parseCursorValues(cursor, parsedSortOption);
+
+		ProductPagination pagination = productService.getStoreBuyProducts(
+			storeOwnerId,
+			parsedSortOption,
+			cursorValues.getCursorProductId(),
+			cursorValues.getCursorOptionalValue(),
+			size,
+			isOnSale,
+			genreId
+		);
+
+		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, currentStoreId);
+		Map<Long, String> genreMap = fetchGenreMap(pagination);
+
+		ProductBuyListResponse response = ProductBuyListResponse.from(
+			parsedSortOption, pagination, interestMap, genreMap, currentStoreId
 		);
 
 		return ResponseEntity.ok(

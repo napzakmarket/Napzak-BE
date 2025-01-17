@@ -73,6 +73,32 @@ public class ProductService {
 		);
 	}
 
+	public ProductPagination getStoreSellProducts(
+		Long storeId, SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue,
+		int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds) {
+
+		return retrieveAndPreparePagination(
+			() -> productRetriever.retrieveStoreProducts(
+				storeId, sortOption, cursorProductId, cursorOptionalValue, size,
+				isOnSale, isUnopened, genreIds, TradeType.SELL
+			),
+			size
+		);
+	}
+
+	public ProductPagination getStoreBuyProducts(
+		Long storeId, SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue,
+		int size, Boolean isOnSale, List<Long> genreIds) {
+
+		return retrieveAndPreparePagination(
+			() -> productRetriever.retrieveStoreProducts(
+				storeId, sortOption, cursorProductId, cursorOptionalValue, size,
+				isOnSale, null, genreIds, TradeType.BUY
+			),
+			size
+		);
+	}
+
 	private ProductPagination retrieveAndPreparePagination(
 		ProductRetrieval retrievalLogic,
 		int size

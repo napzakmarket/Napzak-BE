@@ -18,17 +18,19 @@ public record ProductSellListResponse(
 		SortOption sortOption,
 		ProductPagination pagination,
 		Map<Long, Boolean> interestMap,
-		Map<Long, String> genreMap // 추가
+		Map<Long, String> genreMap,
+		Long currentStoreId
 	) {
 		// 1. DTO 생성
 		List<ProductSellDto> productDtos = pagination.getProductList().stream()
 			.map(product -> {
 				String uploadTime = TimeUtils.calculateUploadTime(product.getCreatedAt());
 				boolean isInterested = interestMap.getOrDefault(product.getId(), false);
-				String genreName = genreMap.getOrDefault(product.getGenreId(), "기타"); // genreName 매핑
+				String genreName = genreMap.getOrDefault(product.getGenreId(), "기타");
+				boolean isOwnedByCurrentUser = currentStoreId.equals(product.getStoreId());
 
 				return ProductSellDto.from(
-					product, product.getFirstPhoto(), uploadTime, isInterested, genreName
+					product, product.getFirstPhoto(), uploadTime, isInterested, genreName, isOwnedByCurrentUser
 				);
 			}).toList();
 

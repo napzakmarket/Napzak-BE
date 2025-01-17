@@ -20,7 +20,7 @@ public interface InterestRepository extends JpaRepository<InterestEntity, Long> 
 
 	@Query("SELECT i.productId " +
 		"FROM InterestEntity i " +
-		"WHERE i.productId IN :productIds AND i.productId = :storeId")
+		"WHERE i.productId IN :productIds AND i.storeId = :storeId")
 	List<Long> findLikedProductIdsByStore(@Param("productIds") List<Long> productIds,
 		@Param("storeId") Long storeId);
 

@@ -62,6 +62,24 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 			.fetch();
 	};
 
+	@Override
+	public List<ProductEntity> findProductsByStoreIdAndSortOptionAndFilters(
+		Long storeId, OrderSpecifier<?> orderSpecifier, Long cursorProductId, Integer cursorOptionalValue,
+		int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType) {
+		return queryFactory.selectFrom(productEntity)
+			.where(
+				productEntity.storeId.eq(storeId),
+				genreFilter(genreIds),
+				isUnopenedFilter(isUnopened),
+				tradeTypeFilter(tradeType),
+				isOnSaleFilter(isOnSale),
+				cursorFilter(cursorProductId, cursorOptionalValue, orderSpecifier)
+			)
+			.orderBy(orderSpecifier)
+			.limit(size + 1)
+			.fetch();
+	}
+
 	private BooleanExpression tradeTypeFilter(TradeType tradeType) {
 		if (tradeType != null) {
 			return productEntity.tradeType.eq(tradeType);
@@ -90,12 +108,13 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 		return null;
 	}
 
-	private BooleanExpression cursorFilter(Long cursorProductId, Integer cursorOptionalValue, OrderSpecifier<?> orderSpecifier) {
+	private BooleanExpression cursorFilter(Long cursorProductId, Integer cursorOptionalValue,
+		OrderSpecifier<?> orderSpecifier) {
 		if (cursorProductId == null) {
 			return null;
 		}
 
-		String fieldName = ((PathBuilder<?>) orderSpecifier.getTarget()).getMetadata().getName();
+		String fieldName = ((PathBuilder<?>)orderSpecifier.getTarget()).getMetadata().getName();
 		com.querydsl.core.types.Order direction = orderSpecifier.getOrder();
 
 		if (fieldName.equals("id")) {
@@ -104,7 +123,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 				: productEntity.id.loe(cursorProductId); // RECENT
 		} else if (fieldName.equals("interestCount")) {
 			return productEntity.interestCount.loe(cursorOptionalValue)
-				.or(productEntity.interestCount.eq(cursorOptionalValue).and(productEntity.id.loe(cursorProductId))); // POPULAR
+				.or(productEntity.interestCount.eq(cursorOptionalValue)
+					.and(productEntity.id.loe(cursorProductId))); // POPULAR
 		} else if (fieldName.equals("price")) {
 			return direction == com.querydsl.core.types.Order.ASC
 				? productEntity.price.goe(cursorOptionalValue) // LOW_PRICE

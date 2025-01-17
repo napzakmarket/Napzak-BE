@@ -14,4 +14,8 @@ public interface ProductRepositoryCustom {
 	List<ProductEntity> searchProductsBySearchWordAndSortOptionAndFilters(
 		String searchWord, OrderSpecifier<?> orderSpecifier, Long cursorProductId, Integer cursorOptionalValue, int size,
 		Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType);
+
+	List<ProductEntity> findProductsByStoreIdAndSortOptionAndFilters(
+		Long storeId, OrderSpecifier<?> orderSpecifier, Long cursorProductId, Integer cursorOptionalValue,
+		int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType);
 }

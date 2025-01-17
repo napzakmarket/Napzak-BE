@@ -41,6 +41,19 @@ public class ProductRetriever {
 	}
 
 	@Transactional(readOnly = true)
+	public List<Product> retrieveStoreProducts(
+		Long storeId, SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue,
+		int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType) {
+
+		return productRepository.findProductsByStoreIdAndSortOptionAndFilters(
+				storeId, sortOption.toOrderSpecifier(), cursorProductId, cursorOptionalValue, size,
+				isOnSale, isUnopened, genreIds, tradeType
+			).stream()
+			.map(Product::fromEntity)
+			.toList();
+	}
+
+	@Transactional(readOnly = true)
 	public List<Product> searchProducts(
 		String searchWord, SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue, int size,
 		Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType) {
