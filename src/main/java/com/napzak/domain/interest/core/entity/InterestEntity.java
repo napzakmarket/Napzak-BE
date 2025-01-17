@@ -1,7 +1,5 @@
 package com.napzak.domain.interest.core.entity;
 
-import com.napzak.domain.product.core.entity.ProductEntity;
-import com.napzak.domain.store.core.entity.StoreEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,44 +8,40 @@ import lombok.NoArgsConstructor;
 
 import static com.napzak.domain.interest.core.entity.InterestTableConstants.*;
 
-
 @Table(name = TABLE_INTEREST)
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class InterestEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = COLUMN_ID)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = COLUMN_ID)
+	private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = COLUMN_STORE_ID, nullable = false)
-    private StoreEntity storeEntity;
+	@Column(name = COLUMN_PRODUCT_ID, nullable = false)
+	private Long productId;
 
-    @ManyToOne
-    @JoinColumn(name = COLUMN_PRODUCT_ID, nullable = false)
-    private ProductEntity productEntity;
+	@Column(name = COLUMN_STORE_ID, nullable = false)
+	private Long storeId;
 
-    @Builder
-    public InterestEntity(
-            Long id,
-            StoreEntity storeEntity,
-            ProductEntity productEntity) {
-        this.id = id;
-        this.storeEntity = storeEntity;
-        this.productEntity = productEntity;
-    }
+	@Builder
+	public InterestEntity(
+		Long id,
+		Long productId,
+		Long storeId) {
+		this.id = id;
+		this.productId = productId;
+		this.storeId = storeId;
+	}
 
-
-    public static InterestEntity create(
-            final StoreEntity storeEntity,
-            final ProductEntity productEntity
-            ){
-            return InterestEntity.builder()
-                    .storeEntity(storeEntity)
-                    .productEntity(productEntity)
-                    .build();
-    }
+	public static InterestEntity create(
+		final Long productId,
+		final Long storeId
+	) {
+		return InterestEntity.builder()
+			.productId(productId)
+			.storeId(storeId)
+			.build();
+	}
 }
