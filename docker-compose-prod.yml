@@ -25,6 +25,9 @@ services:
       retries: 3
     networks:
       - napzak-prod-net
+    deploy:
+      restart_policy:
+        condition: none
 
 networks:
   napzak-prod-net:
