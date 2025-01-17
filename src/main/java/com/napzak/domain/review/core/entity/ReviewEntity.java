@@ -1,7 +1,5 @@
 package com.napzak.domain.review.core.entity;
 
-import com.napzak.domain.product.core.entity.ProductEntity;
-import com.napzak.domain.store.core.entity.StoreEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -18,63 +16,38 @@ import static com.napzak.domain.review.core.entity.ReviewTableConstants.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = COLUMN_ID)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = COLUMN_ID)
+	private Long id;
 
-    @Column(name = COLUMN_RATE, nullable = false)
-    private int rate;
+	@Column(name = COLUMN_RATE, nullable = false)
+	private int rate;
 
-    @Column(name = COLUMN_COMMENT, nullable = false)
-    private String comment;
+	@Column(name = COLUMN_COMMENT, nullable = false)
+	private String comment;
 
-    @Column(name = COLUMN_CREATED_AT, nullable = false)
-    private final LocalDateTime createdAt = LocalDateTime.now();
+	@Column(name = COLUMN_CREATED_AT, nullable = false)
+	private final LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = COLUMN_UPDATED_AT, nullable = false)
-    private LocalDateTime updatedAt = LocalDateTime.now();
+	@Column(name = COLUMN_UPDATED_AT, nullable = false)
+	private LocalDateTime updatedAt = LocalDateTime.now();
 
-    @ManyToOne
-    @JoinColumn(name = COLUMN_PRODUCT_ID, nullable = false)
-    private ProductEntity productEntity;
+	@Column(name = COLUMN_PRODUCT_ID, nullable = false)
+	private Long productId;
 
-    @ManyToOne
-    @JoinColumn(name = COLUMN_REVIEWER_ID, nullable = false)
-    private StoreEntity reviewer;
+	@Column(name = COLUMN_REVIEWER_ID, nullable = false)
+	private Long reviewerId;
 
-    @ManyToOne
-    @JoinColumn(name = COLUMN_REVIEWEE_ID, nullable = false)
-    private StoreEntity reviewee;
+	@Column(name = COLUMN_REVIEWEE_ID, nullable = false)
+	private Long revieweeId;
 
-    @Builder
-    private ReviewEntity(
-            int rate,
-            String comment,
-            ProductEntity productEntity,
-            StoreEntity reviewer,
-            StoreEntity reviewee
-    ) {
-        this.rate = rate;
-        this.comment = comment;
-        this.productEntity = productEntity;
-        this.reviewer = reviewer;
-        this.reviewee = reviewee;
-    }
-
-    public static ReviewEntity create(
-            final int rate,
-            final String comment,
-            final ProductEntity productEntity,
-            final StoreEntity reviewer,
-            final StoreEntity reviewee
-    ) {
-        return ReviewEntity.builder()
-                .rate(rate)
-                .comment(comment)
-                .productEntity(productEntity)
-                .reviewer(reviewer)
-                .reviewee(reviewee)
-                .build();
-    }
+	@Builder
+	private ReviewEntity(int rate, String comment, Long productId, Long reviewerId, Long revieweeId) {
+		this.rate = rate;
+		this.comment = comment;
+		this.productId = productId;
+		this.reviewerId = reviewerId;
+		this.revieweeId = revieweeId;
+	}
 }

@@ -14,39 +14,37 @@ import static com.napzak.domain.product.core.entity.ProductPhotoTableConstants.*
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductPhotoEntity {
 
-    @Id
-    @Column(name = COLUMN_ID)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@Column(name = COLUMN_ID)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = COLUMN_PRODUCT_ID, nullable = false)
-    private ProductEntity productEntity;
+	@Column(name = COLUMN_PRODUCT_ID, nullable = false)
+	private Long productId;
 
-    @Column(name = COLUMN_PHOTO_URL, nullable = false)
-    private String photoUrl;
+	@Column(name = COLUMN_PHOTO_URL, nullable = false)
+	private String photoUrl;
 
-    @Column(name = COLUMN_SEQUENCE, nullable = false)
-    private int sequence;
+	@Column(name = COLUMN_SEQUENCE, nullable = false)
+	private int sequence;
 
-    @Builder
-    private ProductPhotoEntity(Long id, ProductEntity productEntity, String photoUrl, int sequence) {
-        this.id = id;
-        this.productEntity = productEntity;
-        this.photoUrl = photoUrl;
-        this.sequence = sequence;
-    }
+	@Builder
+	private ProductPhotoEntity(Long id, Long productId, String photoUrl, int sequence) {
+		this.id = id;
+		this.productId = productId;
+		this.photoUrl = photoUrl;
+		this.sequence = sequence;
+	}
 
-    public static ProductPhotoEntity create(
-            final ProductEntity productEntity,
-            final String photoUrl,
-            final int sequence
-    ) {
-        return ProductPhotoEntity.builder()
-                .productEntity(productEntity)
-                .photoUrl(photoUrl)
-                .sequence(sequence)
-                .build();
-    }
-
+	public static ProductPhotoEntity create(
+		final Long productId,
+		final String photoUrl,
+		final int sequence
+	) {
+		return ProductPhotoEntity.builder()
+			.productId(productId)
+			.photoUrl(photoUrl)
+			.sequence(sequence)
+			.build();
+	}
 }
