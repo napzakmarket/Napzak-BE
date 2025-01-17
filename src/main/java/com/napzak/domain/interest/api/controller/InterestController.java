@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,9 +29,9 @@ public class InterestController {
     private final InterestRetriever interestRetriever;
     private final ProductRetriever productRetriever;
 
-    @PostMapping("/")
+    @PostMapping("/{productId}")
     public ResponseEntity<SuccessResponse<Void>> postInterest(
-            @RequestParam Long productId,
+            @PathVariable("productId") Long productId,
             @CurrentMember final Long storeId
     ) {
 
@@ -48,9 +49,9 @@ public class InterestController {
                 .body(SuccessResponse.of(InterestSuccessCode.POST_INTEREST_SUCCESS));
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping("/{productId}")
     public ResponseEntity<SuccessResponse<Void>> deleteInterest(
-            @RequestParam Long productId,
+            @PathVariable("productId") Long productId,
             @CurrentMember final Long storeId
     ) {
 
