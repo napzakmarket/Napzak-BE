@@ -11,13 +11,13 @@ import com.napzak.domain.product.core.entity.ProductPhotoEntity;
 
 @Repository
 public interface ProductPhotoRepository extends JpaRepository<ProductPhotoEntity, Long> {
-	@Query("SELECT p.productEntity.id AS productId, p.photoUrl AS photoUrl " +
+	@Query("SELECT p.productId AS productId, p.photoUrl AS photoUrl " +
 		"FROM ProductPhotoEntity p " +
-		"WHERE p.sequence = 1 AND p.productEntity.id IN :productIds")
+		"WHERE p.sequence = 1 AND p.productId IN :productIds")
 	List<Object[]> findFirstPhotosByProductIds(@Param("productIds") List<Long> productIds);
 
 	@Query("SELECT p FROM ProductPhotoEntity p " +
-		"WHERE p.productEntity.id = :productId " +
+		"WHERE p.productId = :productId " +
 		"ORDER BY p.sequence ASC")
 	List<ProductPhotoEntity> findAllByProductEntityOrderBySequenceAsc(@Param("productId") Long productId);
 
