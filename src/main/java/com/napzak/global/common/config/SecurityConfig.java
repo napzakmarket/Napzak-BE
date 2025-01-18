@@ -31,9 +31,10 @@ public class SecurityConfig {
 		"/v3/api-docs/**",
 		"/swagger-ui/**",
 		"/swagger-resources/**",
-		"/api/files/**",
+		"/api/v1/files/**",
 		"/error",
-		"/api/stores/login/**",
+		"/api/v1/stores/login/**",
+		"/api/v1/onboarding/**",
 		"/"
 	};
 
