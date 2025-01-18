@@ -1,7 +1,7 @@
 package com.napzak.domain.product.api.dto.request.cursor;
 
-import com.napzak.domain.product.api.exception.ProductErrorCode;
 import com.napzak.global.common.exception.NapzakException;
+import com.napzak.global.common.exception.code.ErrorCode;
 
 public class PopularCursor extends Cursor {
 	private final int interestCount;
@@ -33,24 +33,24 @@ public class PopularCursor extends Cursor {
 			.toString();
 	}
 
-	public static PopularCursor fromString(String cursor){
+	public static PopularCursor fromString(String cursor) {
 		if (!cursor.startsWith("P-")) {
-			throw new NapzakException(ProductErrorCode.INVALID_CURSOR_FORMAT);
+			throw new NapzakException(ErrorCode.INVALID_CURSOR_FORMAT);
 		}
 		String[] split = cursor.split("-");
 
 		if (split.length != 3) {
-			throw new NapzakException(ProductErrorCode.INVALID_CURSOR_FORMAT);
+			throw new NapzakException(ErrorCode.INVALID_CURSOR_FORMAT);
 		}
 
 		final int interestCount;
 		final long id;
 
-		try{
+		try {
 			interestCount = Integer.parseInt(split[1]);
 			id = Long.parseLong(split[2]);
 		} catch (NumberFormatException e) {
-			throw new NapzakException(ProductErrorCode.INVALID_CURSOR_FORMAT);
+			throw new NapzakException(ErrorCode.INVALID_CURSOR_FORMAT);
 		}
 		return new PopularCursor(interestCount, id);
 	}

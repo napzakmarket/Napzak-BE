@@ -1,7 +1,7 @@
 package com.napzak.domain.product.api.dto.request.cursor;
 
-import com.napzak.domain.product.api.exception.ProductErrorCode;
 import com.napzak.global.common.exception.NapzakException;
+import com.napzak.global.common.exception.code.ErrorCode;
 
 public class RecentCursor extends Cursor {
 	private final Long id;
@@ -26,19 +26,19 @@ public class RecentCursor extends Cursor {
 
 	public static RecentCursor fromString(String cursor) {
 		if (!cursor.startsWith("R-")) {
-			throw new NapzakException(ProductErrorCode.INVALID_CURSOR_FORMAT);
+			throw new NapzakException(ErrorCode.INVALID_CURSOR_FORMAT);
 		}
 		String[] split = cursor.split("-");
 
 		if (split.length != 2) {
-			throw new NapzakException(ProductErrorCode.INVALID_CURSOR_FORMAT);
+			throw new NapzakException(ErrorCode.INVALID_CURSOR_FORMAT);
 		}
 		final long id;
 
-		try{
+		try {
 			id = Long.parseLong(split[1]);
 		} catch (NumberFormatException e) {
-			throw new NapzakException(ProductErrorCode.INVALID_CURSOR_FORMAT);
+			throw new NapzakException(ErrorCode.INVALID_CURSOR_FORMAT);
 		}
 		return new RecentCursor(id);
 	}

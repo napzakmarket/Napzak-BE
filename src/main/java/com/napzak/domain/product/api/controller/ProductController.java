@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.napzak.global.common.exception.code.ErrorCode;
 import com.napzak.domain.product.api.dto.request.cursor.HighPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.LowPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.PopularCursor;
 import com.napzak.domain.product.api.dto.request.cursor.RecentCursor;
 import com.napzak.domain.product.api.dto.response.ProductBuyListResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellListResponse;
-import com.napzak.domain.product.api.exception.ProductErrorCode;
 import com.napzak.domain.product.api.exception.ProductSuccessCode;
 import com.napzak.domain.product.api.service.ProductPagination;
 import com.napzak.domain.product.api.service.ProductService;
@@ -293,7 +293,7 @@ public class ProductController {
 		try {
 			return SortOption.valueOf(sortOption.toUpperCase());
 		} catch (IllegalArgumentException e) {
-			throw new NapzakException(ProductErrorCode.INVALID_SORT_OPTION);
+			throw new NapzakException(ErrorCode.INVALID_SORT_OPTION);
 		}
 	}
 
@@ -320,10 +320,10 @@ public class ProductController {
 					HighPriceCursor priceCursor = HighPriceCursor.fromString(cursor);
 					return new CursorValues(priceCursor.getId(), priceCursor.getPrice());
 				}
-				default -> throw new NapzakException(ProductErrorCode.INVALID_SORT_OPTION);
+				default -> throw new NapzakException(ErrorCode.INVALID_SORT_OPTION);
 			}
 		} catch (IllegalArgumentException e) {
-			throw new NapzakException(ProductErrorCode.INVALID_CURSOR_FORMAT);
+			throw new NapzakException(ErrorCode.INVALID_CURSOR_FORMAT);
 		}
 	}
 

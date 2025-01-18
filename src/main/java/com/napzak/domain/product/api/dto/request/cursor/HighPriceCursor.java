@@ -1,13 +1,13 @@
 package com.napzak.domain.product.api.dto.request.cursor;
 
-import com.napzak.domain.product.api.exception.ProductErrorCode;
 import com.napzak.global.common.exception.NapzakException;
+import com.napzak.global.common.exception.code.ErrorCode;
 
-public class HighPriceCursor extends Cursor{
+public class HighPriceCursor extends Cursor {
 	private final int price;
 	private final long id;
 
-	public HighPriceCursor(int price, long id){
+	public HighPriceCursor(int price, long id) {
 		this.price = price;
 		this.id = id;
 	}
@@ -33,24 +33,24 @@ public class HighPriceCursor extends Cursor{
 			.toString();
 	}
 
-	public static HighPriceCursor fromString(String cursor){
+	public static HighPriceCursor fromString(String cursor) {
 		if (!cursor.startsWith("H-")) {
-			throw new NapzakException(ProductErrorCode.INVALID_CURSOR_FORMAT);
+			throw new NapzakException(ErrorCode.INVALID_CURSOR_FORMAT);
 		}
 		String[] split = cursor.split("-");
 
 		if (split.length != 3) {
-			throw new NapzakException(ProductErrorCode.INVALID_CURSOR_FORMAT);
+			throw new NapzakException(ErrorCode.INVALID_CURSOR_FORMAT);
 		}
 
 		final long id;
 		final int price;
 
-		try{
+		try {
 			price = Integer.parseInt(split[1]);
 			id = Long.parseLong(split[2]);
 		} catch (NumberFormatException e) {
-			throw new NapzakException(ProductErrorCode.INVALID_CURSOR_FORMAT);
+			throw new NapzakException(ErrorCode.INVALID_CURSOR_FORMAT);
 		}
 		return new HighPriceCursor(price, id);
 	}
