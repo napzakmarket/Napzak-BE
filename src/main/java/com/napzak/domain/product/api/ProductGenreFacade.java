@@ -15,10 +15,10 @@ public class ProductGenreFacade {
 	private final GenreRetriever genreRetriever;
 
 	public String getGenreName(Long genreId) {
-		return genreRetriever.getGenreNameById(genreId);
+		return genreRetriever.retrieveGenreNameById(genreId);
 	}
 
 	public Map<Long, String> getGenreNames(List<Long> genreIds) {
-		return genreRetriever.getGenreNamesByIds(genreIds);
+		return genreRetriever.retrieveGenreNamesByIds(genreIds);
 	}
 }
