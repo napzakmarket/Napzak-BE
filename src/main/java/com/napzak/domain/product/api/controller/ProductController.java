@@ -3,6 +3,12 @@ package com.napzak.domain.product.api.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.napzak.domain.product.api.ProductStoreFacade;
+import com.napzak.domain.product.api.dto.response.ProductBuyDto;
+import com.napzak.domain.product.api.dto.response.ProductListResponse;
+import com.napzak.domain.product.api.dto.response.ProductSellDto;
+import com.napzak.domain.product.core.entity.enums.TradeType;
+import com.napzak.global.common.util.TimeUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +43,7 @@ public class ProductController {
 	private final ProductService productService;
 	private final ProductInterestFacade productInterestFacade;
 	private final ProductGenreFacade productGenreFacade;
+	private final ProductStoreFacade productStoreFacade;
 
 	@GetMapping("/sell")
 	public ResponseEntity<SuccessResponse<ProductSellListResponse>> getSellProducts(
@@ -272,6 +279,110 @@ public class ProductController {
 			)
 		);
 	}
+
+	@GetMapping("/home/recommend")
+	public ResponseEntity<SuccessResponse<ProductListResponse>> getRecommendProducts(
+			@CurrentMember Long currentStoreId
+	) {
+
+		List<Long> genreIds = productStoreFacade.getGenrePreferenceIds(currentStoreId);
+
+		ProductPagination buyPagination = productService.searchRecommendBuyProducts(
+				currentStoreId,
+				genreIds
+		);
+
+		ProductPagination sellPagination = productService.searchRecommendSellProducts(
+				currentStoreId,
+				genreIds
+		);
+
+		Map<Long, Boolean> interestMap = fetchInterestMap(buyPagination, currentStoreId);
+		interestMap.putAll(fetchInterestMap(buyPagination, currentStoreId));
+
+		Map<Long, String> genreMap = fetchGenreMap(buyPagination);
+		genreMap.putAll(fetchGenreMap(sellPagination));
+
+		List<ProductBuyDto> productBuyDtos = buyPagination.getProductList().stream()
+				.map(product -> {
+					String uploadTime = TimeUtils.calculateUploadTime(product.getCreatedAt());
+					boolean isInterested = interestMap.getOrDefault(product.getId(), false);
+					String genreName = genreMap.getOrDefault(product.getGenreId(), "기타"); // genreName 매핑
+					boolean isOwnedByCurrentUser = currentStoreId.equals(product.getStoreId());
+
+					return ProductBuyDto.from(
+							product, product.getFirstPhoto(), uploadTime, isInterested, genreName, isOwnedByCurrentUser
+					);
+				}).toList();
+
+		List<ProductSellDto> productSellDtos = sellPagination.getProductList().stream()
+				.map(product -> {
+					String uploadTime = TimeUtils.calculateUploadTime(product.getCreatedAt());
+					boolean isInterested = interestMap.getOrDefault(product.getId(), false);
+					String genreName = genreMap.getOrDefault(product.getGenreId(), "기타"); // genreName 매핑
+					boolean isOwnedByCurrentUser = currentStoreId.equals(product.getStoreId());
+
+					return ProductSellDto.from(
+							product, product.getFirstPhoto(), uploadTime, isInterested, genreName, isOwnedByCurrentUser
+					);
+				}).toList();
+
+		ProductListResponse productListResponse = new ProductListResponse(productBuyDtos, productSellDtos);
+
+		return ResponseEntity.ok()
+				.body(SuccessResponse.of(ProductSuccessCode.RECOMMEND_PRODUCT_GET_SUCCESS, productListResponse));
+
+
+	}
+
+	@GetMapping("/home/sell")
+	public ResponseEntity<SuccessResponse<ProductSellListResponse>> getTopSellProducts(
+			@RequestParam(defaultValue = "4") int size,
+			@CurrentMember Long currentStoreId
+	) {
+
+		SortOption parsedSortOption = SortOption.POPULAR;
+
+		ProductPagination pagination = productService.getHomePopularProducts(
+				parsedSortOption, size, TradeType.SELL, currentStoreId);
+
+		// 3. 관심, 장르이름 정보 조회
+		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, currentStoreId);
+		Map<Long, String> genreMap = fetchGenreMap(pagination);
+
+		// 4. 응답 생성
+		ProductSellListResponse response = ProductSellListResponse.from(
+				parsedSortOption, pagination, interestMap, genreMap, currentStoreId
+		);
+
+		return ResponseEntity.ok()
+				.body(SuccessResponse.of(ProductSuccessCode.TOP_SELL_PRODUCT_GET_SUCCESS, response));
+	}
+
+	@GetMapping("/home/buy")
+	public ResponseEntity<SuccessResponse<ProductSellListResponse>> getTopBuyProducts(
+			@RequestParam(defaultValue = "4") int size,
+			@CurrentMember Long currentStoreId
+	) {
+
+		SortOption parsedSortOption = SortOption.POPULAR;
+
+		ProductPagination pagination = productService.getHomePopularProducts(
+				parsedSortOption, size, TradeType.BUY, currentStoreId);
+
+		// 3. 관심, 장르이름 정보 조회
+		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, currentStoreId);
+		Map<Long, String> genreMap = fetchGenreMap(pagination);
+
+		// 4. 응답 생성
+		ProductSellListResponse response = ProductSellListResponse.from(
+				parsedSortOption, pagination, interestMap, genreMap, currentStoreId
+		);
+
+		return ResponseEntity.ok()
+				.body(SuccessResponse.of(ProductSuccessCode.TOP_BUY_PRODUCT_GET_SUCCESS, response));
+	}
+
 
 	private Map<Long, Boolean> fetchInterestMap(ProductPagination pagination, Long storeId) {
 		List<Long> productIds = pagination.getProductList().stream()

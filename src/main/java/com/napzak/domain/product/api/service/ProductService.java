@@ -99,6 +99,17 @@ public class ProductService {
 		);
 	}
 
+	public ProductPagination getHomePopularProducts(
+			SortOption sortOption, int size, TradeType tradeType, Long storeId){
+
+		return retrieveAndPreparePagination(
+				() -> productRetriever.retrieveProductsExcludingCurrentUser(
+						sortOption, size, tradeType, storeId
+				),
+				size
+		);
+	}
+
 	private ProductPagination retrieveAndPreparePagination(
 		ProductRetrieval retrievalLogic,
 		int size
@@ -121,6 +132,28 @@ public class ProductService {
 
 		// 5. ProductPagination 생성
 		return new ProductPagination(size, new ProductWithFirstPhotoList(productWithFirstPhotoList));
+	}
+
+	// 맞춤형 - 구해요
+	public ProductPagination searchRecommendBuyProducts(Long storeId, List<Long> genreIds) {
+
+		return retrieveAndPreparePagination(
+				() -> productRetriever.getRecommendedBuyProducts(
+						storeId, genreIds
+				),
+				2
+		);
+	}
+
+	// 맞춤형 - 팔아요
+	public ProductPagination searchRecommendSellProducts(Long storeId, List<Long> genreIds) {
+
+		return retrieveAndPreparePagination(
+				() -> productRetriever.getRecommendedSellProducts(
+						storeId, genreIds
+				),
+				2
+		);
 	}
 
 	@FunctionalInterface
