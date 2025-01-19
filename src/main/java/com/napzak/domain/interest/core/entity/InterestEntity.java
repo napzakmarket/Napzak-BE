@@ -27,10 +27,8 @@ public class InterestEntity {
 
 	@Builder
 	public InterestEntity(
-		Long id,
 		Long productId,
 		Long storeId) {
-		this.id = id;
 		this.productId = productId;
 		this.storeId = storeId;
 	}

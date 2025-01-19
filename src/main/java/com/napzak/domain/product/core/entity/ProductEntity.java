@@ -64,7 +64,7 @@ public class ProductEntity {
 	private int halfDeliveryFee = 0;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = COLUMN_PRODUCT_CONDITION, nullable = false)
+	@Column(name = COLUMN_PRODUCT_CONDITION, nullable = true)
 	private ProductCondition productCondition;
 
 	@Column(name = COLUMN_INTEREST_COUNT, nullable = false)
@@ -77,11 +77,10 @@ public class ProductEntity {
 	private Long genreId;
 
 	@Builder
-	private ProductEntity(Long id, String title, String description, TradeType tradeType, int price,
+	private ProductEntity(String title, String description, TradeType tradeType, int price,
 		TradeStatus tradeStatus, Boolean isPriceNegotiable, Boolean isDeliveryIncluded,
 		int standardDeliveryFee, int halfDeliveryFee, ProductCondition productCondition,
 		Long storeId, Long genreId) {
-		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.tradeType = tradeType;

@@ -11,6 +11,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ProductErrorCode implements BaseErrorCode {
 	/*
+	400 Bad Request
+	 */
+	PRODUCT_PHOTO_SEQUENCE_DUPLICATED(HttpStatus.BAD_REQUEST, "사진 순서는 중복될 수 없습니다."),
+
+	/*
 	404 Not Found
 	 */
 	PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
