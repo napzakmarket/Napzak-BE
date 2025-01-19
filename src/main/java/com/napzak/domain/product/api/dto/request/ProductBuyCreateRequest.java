@@ -21,11 +21,11 @@ public record ProductBuyCreateRequest(
 	long genreId,
 
 	@NotBlank
-	@Size(max = 48, message = "상품 제목은 자를 초과할 수 없습니다.")
+	@Size(max = 50, message = "상품 제목은 50자를 초과할 수 없습니다.")
 	String title,
 
 	@NotBlank
-	@Size(max = 500, message = "상품 설명은 자를 초과할 수 없습니다.")
+	@Size(max = 250, message = "상품 설명은 250자를 초과할 수 없습니다.")
 	String description,
 
 	@NotNull

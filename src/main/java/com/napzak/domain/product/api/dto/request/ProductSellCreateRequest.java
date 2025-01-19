@@ -24,11 +24,11 @@ public record ProductSellCreateRequest(
 	long genreId,
 
 	@NotBlank(message = "상품 제목을 입력해 주세요.")
-	@Size(max = 48, message = "상품 제목은 자를 초과할 수 없습니다.")
+	@Size(max = 50, message = "상품 제목은 50자를 초과할 수 없습니다.")
 	String title,
 
 	@NotBlank(message = "상품 설명을 입력해 주세요.")
-	@Size(max = 500, message = "상품 설명은 자를 초과할 수 없습니다.")
+	@Size(max = 250, message = "상품 설명은 250자를 초과할 수 없습니다.")
 	String description,
 
 	@NotNull
@@ -46,7 +46,7 @@ public record ProductSellCreateRequest(
 	int standardDeliveryFee,
 
 	@NotNull
-	@PositiveOrZero(message = "반값배송비는 0보다 이상이어야 합니다.")
+	@PositiveOrZero(message = "반값배송비는 0 이상이어야 합니다.")
 	int halfDeliveryFee
 ) {
 }
