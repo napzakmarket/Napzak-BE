@@ -23,7 +23,7 @@ public enum ProductSuccessCode implements BaseSuccessCode {
 	/*
 	201 Created
 	 */
-	PRODUCT_CREATE_SUCCESS(HttpStatus.OK, "상품이 등록되었습니다."),
+	PRODUCT_CREATE_SUCCESS(HttpStatus.CREATED, "상품이 등록되었습니다."),
 	;
 
 	private final HttpStatus httpStatus;
