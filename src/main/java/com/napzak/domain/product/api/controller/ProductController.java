@@ -1,15 +1,26 @@
 package com.napzak.domain.product.api.controller;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.napzak.domain.product.api.dto.request.ProductBuyCreateRequest;
+import com.napzak.domain.product.api.dto.request.ProductPhotoRequestDto;
+import com.napzak.domain.product.api.dto.request.ProductSellCreateRequest;
+import com.napzak.domain.product.api.dto.response.ProductBuyResponse;
+import com.napzak.domain.product.api.dto.response.ProductSellResponse;
+import com.napzak.domain.product.core.vo.Product;
+import com.napzak.domain.product.core.vo.ProductPhoto;
 import com.napzak.global.common.exception.code.ErrorCode;
 import com.napzak.domain.product.api.dto.request.cursor.HighPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.LowPriceCursor;
@@ -28,6 +39,7 @@ import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.common.exception.NapzakException;
 import com.napzak.global.common.exception.dto.SuccessResponse;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -268,6 +280,77 @@ public class ProductController {
 		return ResponseEntity.ok(
 			SuccessResponse.of(
 				ProductSuccessCode.PRODUCT_LIST_RETRIEVE_SUCCESS,
+				response
+			)
+		);
+	}
+
+	@PostMapping("/sell")
+	public ResponseEntity<SuccessResponse<ProductSellResponse>> createSellProduct(
+		@Valid @RequestBody ProductSellCreateRequest productSellCreateRequest,
+		@CurrentMember Long storeId
+	){
+		Product product = productService.createSellProduct(
+			productSellCreateRequest.title(),
+			storeId,
+			productSellCreateRequest.description(),
+			productSellCreateRequest.price(),
+			productSellCreateRequest.isDeliveryIncluded(),
+			productSellCreateRequest.standardDeliveryFee(),
+			productSellCreateRequest.halfDeliveryFee(),
+			productSellCreateRequest.condition(),
+			productSellCreateRequest.genreId()
+		);
+
+		Map<Integer, String> photoData = productSellCreateRequest.productPhotoList().stream()
+			.collect(Collectors.toMap(
+				ProductPhotoRequestDto::sequence,
+				ProductPhotoRequestDto::photoUrl,
+				(existing, replacement) -> existing,  // 중복 키가 발생하면 기존 값 유지
+				LinkedHashMap::new  // 순서 유지
+			));
+
+		List<ProductPhoto> productPhotoList = productService.createProductPhotos(product.getId(), photoData);
+
+		ProductSellResponse response = ProductSellResponse.from(product, productPhotoList);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+				ProductSuccessCode.PRODUCT_CREATE_SUCCESS,
+				response
+			)
+		);
+	}
+
+	@PostMapping("/buy")
+	public ResponseEntity<SuccessResponse<ProductBuyResponse>> createBuyProduct(
+		@Valid @RequestBody ProductBuyCreateRequest productBuyCreateRequest,
+		@CurrentMember Long storeId
+	){
+		Product product = productService.createBuyProduct(
+			productBuyCreateRequest.title(),
+			storeId,
+			productBuyCreateRequest.description(),
+			productBuyCreateRequest.price(),
+			productBuyCreateRequest.isPriceNegotiable(),
+			productBuyCreateRequest.genreId()
+		);
+
+		Map<Integer, String> photoData = productBuyCreateRequest.productPhotoList().stream()
+			.collect(Collectors.toMap(
+				ProductPhotoRequestDto::sequence,
+				ProductPhotoRequestDto::photoUrl,
+				(existing, replacement) -> existing,
+				LinkedHashMap::new
+			));
+
+		List<ProductPhoto> productPhotoList = productService.createProductPhotos(product.getId(), photoData);
+
+		ProductBuyResponse response = ProductBuyResponse.from(product, productPhotoList);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+				ProductSuccessCode.PRODUCT_CREATE_SUCCESS,
 				response
 			)
 		);
