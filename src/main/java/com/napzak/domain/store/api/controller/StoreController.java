@@ -9,6 +9,7 @@ import com.napzak.global.auth.client.dto.StoreSocialLoginRequest;
 import com.napzak.global.auth.jwt.service.TokenService;
 import com.napzak.global.common.exception.dto.SuccessResponse;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("api/v1/store")
+@RequestMapping("api/v1/stores")
 @RequiredArgsConstructor
 public class StoreController implements StoreApi {
 
@@ -30,8 +31,9 @@ public class StoreController implements StoreApi {
     @PostMapping("/login")
     @Override
     public ResponseEntity<SuccessResponse<StoreLoginResponse>> login(
+            @RequestParam final
             String authorizationCode,
-            StoreSocialLoginRequest storeSocialLoginRequest,
+            @Valid @RequestBody final StoreSocialLoginRequest storeSocialLoginRequest,
             HttpServletResponse httpServletResponse
     ){
             LoginSuccessResponse successResponse = loginService.login(authorizationCode, storeSocialLoginRequest);
