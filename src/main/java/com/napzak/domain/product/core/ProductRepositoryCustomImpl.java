@@ -60,7 +60,9 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 			.orderBy(orderSpecifier)
 			.limit(size + 1)
 			.fetch();
-	};
+	}
+
+	;
 
 	@Override
 	public List<ProductEntity> findProductsByStoreIdAndSortOptionAndFilters(
@@ -80,19 +82,19 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 			.fetch();
 	}
 
-    @Override
-    public List<ProductEntity> findProductsBySortOptionExcludingStoreId( // 네이밍 storeId 제외한다는 거 반영해서 바꾸기
-                                                                         OrderSpecifier<?> orderSpecifier, int size, TradeType tradeType, long storeId) {
+	@Override
+	public List<ProductEntity> findProductsBySortOptionExcludingStoreId(
+		OrderSpecifier<?> orderSpecifier, int size, TradeType tradeType, long storeId) {
 
-        return queryFactory.selectFrom(productEntity)
-                .where(
-                        tradeTypeFilter(tradeType),
-                        productEntity.storeId.ne(storeId)
-                )
-                .orderBy(orderSpecifier)
-                .limit(size)
-                .fetch();
-    }
+		return queryFactory.selectFrom(productEntity)
+			.where(
+				tradeTypeFilter(tradeType),
+				productEntity.storeId.ne(storeId)
+			)
+			.orderBy(orderSpecifier)
+			.limit(size)
+			.fetch();
+	}
 
 	private BooleanExpression tradeTypeFilter(TradeType tradeType) {
 		if (tradeType != null) {
