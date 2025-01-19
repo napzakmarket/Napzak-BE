@@ -10,6 +10,12 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ProductErrorCode implements BaseErrorCode {
+    /*
+    400 Bad Request
+    */
+    INVALID_CURSOR_FORMAT(HttpStatus.BAD_REQUEST, "유효하지 않은 커서입니다."),
+    INVALID_SORT_OPTION(HttpStatus.BAD_REQUEST, "유효하지 않은 정렬기준입니다."),
+
 	/*
 	404 Not Found
 	 */
