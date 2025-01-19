@@ -80,6 +80,20 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 			.fetch();
 	}
 
+    @Override
+    public List<ProductEntity> findProductsBySortOptionExcludingStoreId( // 네이밍 storeId 제외한다는 거 반영해서 바꾸기
+                                                                         OrderSpecifier<?> orderSpecifier, int size, TradeType tradeType, long storeId) {
+
+        return queryFactory.selectFrom(productEntity)
+                .where(
+                        tradeTypeFilter(tradeType),
+                        productEntity.storeId.ne(storeId)
+                )
+                .orderBy(orderSpecifier)
+                .limit(size)
+                .fetch();
+    }
+
 	private BooleanExpression tradeTypeFilter(TradeType tradeType) {
 		if (tradeType != null) {
 			return productEntity.tradeType.eq(tradeType);
