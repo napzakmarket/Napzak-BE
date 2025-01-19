@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -29,6 +28,11 @@ public class StoreRetriever {
         StoreEntity storeEntity = storeRepository.findById(StoreId)
                 .orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
         return Store.fromEntity(storeEntity);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existsById(Long StoreId) {
+        return storeRepository.existsById(StoreId);
     }
 
     @Transactional(readOnly = true)
