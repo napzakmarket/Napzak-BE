@@ -298,7 +298,7 @@ public class ProductController {
 			productSellCreateRequest.isDeliveryIncluded(),
 			productSellCreateRequest.standardDeliveryFee(),
 			productSellCreateRequest.halfDeliveryFee(),
-			productSellCreateRequest.condition(),
+			productSellCreateRequest.productCondition(),
 			productSellCreateRequest.genreId()
 		);
 

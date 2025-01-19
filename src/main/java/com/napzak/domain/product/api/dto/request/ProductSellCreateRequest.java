@@ -33,7 +33,7 @@ public record ProductSellCreateRequest(
 
 	@NotNull
 	@ValidEnum(enumClass = ProductCondition.class, message = "유효하지 않은 상품 상태입니다.")
-	ProductCondition condition,
+	ProductCondition productCondition,
 
 	@NotNull
 	@Positive(message = "가격은 0보다 커야합니다.")
