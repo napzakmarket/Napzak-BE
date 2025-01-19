@@ -27,6 +27,11 @@ public class ProductRetriever {
 		return Product.fromEntity(productEntity);
 	}
 
+    @Transactional(readOnly = true)
+    public boolean existsById(Long productId) {
+        return productRepository.existsById(productId);
+    }
+
 	@Transactional(readOnly = true)
 	public List<Product> retrieveProducts(
 		SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue, int size,
