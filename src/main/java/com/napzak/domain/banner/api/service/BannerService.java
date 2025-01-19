@@ -1,30 +1,22 @@
 package com.napzak.domain.banner.api.service;
 
-import com.napzak.domain.banner.core.BannerRetriever;
-import com.napzak.domain.banner.core.vo.Banner;
-import com.napzak.domain.banner.api.dto.response.HomeBannerResponse;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.napzak.domain.banner.core.BannerRetriever;
+import com.napzak.domain.banner.core.vo.Banner;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class BannerService {
 
-    private final BannerRetriever bannerRetriever;
+	private final BannerRetriever bannerRetriever;
 
-    public List<HomeBannerResponse> getAllBanners(){
+	public List<Banner> getAllBanners() {
 
-        List<Banner> allBanners = bannerRetriever.findAllBanners();
-
-        return allBanners.stream()
-                .map(banner -> HomeBannerResponse.of(
-                        banner.getId(),
-                        banner.getPhotoUrl(),
-                        banner.getRedirectUrl(),
-                        banner.getSequence()
-                ))
-                .toList();
-    }
+		return bannerRetriever.findAllBanners();
+	}
 }
