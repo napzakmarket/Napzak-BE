@@ -10,7 +10,7 @@ import java.util.List;
 import com.napzak.domain.genre.core.entity.GenreEntity;
 
 @Repository
-public interface GenreRepository extends JpaRepository<GenreEntity, Long> {
+public interface GenreRepository extends JpaRepository<GenreEntity, Long>, GenreRepositoryCustom {
 	@Query("SELECT g.name FROM GenreEntity g WHERE g.id = :id")
 	String findNameById(@Param("id") Long id);
 

@@ -1,31 +1,31 @@
-package com.napzak.domain.product.api.dto.request.cursor;
+package com.napzak.domain.genre.api.dto.request.cursor;
 
 import com.napzak.global.common.exception.NapzakException;
 import com.napzak.global.common.exception.code.ErrorCode;
 
-public class RecentCursor extends Cursor {
+public class OldestCursor {
 	private final Long id;
 
-	public RecentCursor(Long id) {
+	public OldestCursor(Long id) {
 		this.id = id;
 	}
 
-	public Long getid() {
+	public Long getId() {
 		return id;
 	}
 
-	// R-{id}
+	// O-{id}
 	@Override
 	public String toString() {
 		final StringBuilder stringBuilder = new StringBuilder();
 		return stringBuilder
-			.append("R-")
+			.append("O-")
 			.append(id)
 			.toString();
 	}
 
-	public static RecentCursor fromString(String cursor) {
-		if (!cursor.startsWith("R-")) {
+	public static OldestCursor fromString(String cursor) {
+		if (!cursor.startsWith("O-")) {
 			throw new NapzakException(ErrorCode.INVALID_CURSOR_FORMAT);
 		}
 		String[] split = cursor.split("-");
@@ -35,11 +35,11 @@ public class RecentCursor extends Cursor {
 		}
 		final long id;
 
-		try {
+		try{
 			id = Long.parseLong(split[1]);
 		} catch (NumberFormatException e) {
 			throw new NapzakException(ErrorCode.INVALID_CURSOR_FORMAT);
 		}
-		return new RecentCursor(id);
+		return new OldestCursor(id);
 	}
 }

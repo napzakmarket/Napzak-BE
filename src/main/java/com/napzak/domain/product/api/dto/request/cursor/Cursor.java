@@ -1,6 +1,6 @@
 package com.napzak.domain.product.api.dto.request.cursor;
 
-import com.napzak.domain.product.api.exception.ProductErrorCode;
+import com.napzak.global.common.exception.code.ErrorCode;
 import com.napzak.domain.product.api.service.enums.SortOption;
 import com.napzak.global.common.exception.NapzakException;
 
@@ -18,7 +18,7 @@ public abstract class Cursor {
 			case HIGH_PRICE:
 				return HighPriceCursor.fromString(cursor);
 			default:
-				throw new NapzakException(ProductErrorCode.INVALID_SORT_OPTION);
+				throw new NapzakException(ErrorCode.INVALID_SORT_OPTION);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package com.napzak.domain.product.api.exception;
+package com.napzak.domain.genre.api.exception;
 
 import org.springframework.http.HttpStatus;
 
@@ -9,12 +9,11 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum ProductErrorCode implements BaseErrorCode {
+public enum GenreErrorCode implements BaseErrorCode {
 	/*
 	404 Not Found
 	 */
-	PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
-	PRODUCT_PHOTO_NOT_FOUND(HttpStatus.NOT_FOUND, "상품 사진을 찾을 수 없습니다.")
+	GENRE_NOT_FOUND(HttpStatus.NOT_FOUND, "장르를 찾을 수 없습니다."),
 	;
 
 	private final HttpStatus httpStatus;

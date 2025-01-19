@@ -19,6 +19,8 @@ public enum ErrorCode implements BaseErrorCode {
 	INVALID_REQUEST_BODY(HttpStatus.BAD_REQUEST, "요청 본문이 올바르지 않습니다."),
 	DATA_INTEGRITY_VIOLATION(HttpStatus.BAD_REQUEST, "데이터 무결성 제약 조건을 위반했습니다."),
 	BUSINESS_LOGIC_ERROR(HttpStatus.BAD_REQUEST, "비즈니스 로직 처리 중 오류가 발생했습니다."),
+	INVALID_CURSOR_FORMAT(HttpStatus.BAD_REQUEST, "유효하지 않은 커서입니다."),
+	INVALID_SORT_OPTION(HttpStatus.BAD_REQUEST, "유효하지 않은 정렬기준입니다."),
 
 	/*
 	 404 NOT FOUND

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.napzak.global.common.exception.code.ErrorCode;
 import com.napzak.domain.product.api.dto.request.cursor.HighPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.LowPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.PopularCursor;
@@ -48,7 +49,7 @@ public class ProductPagination {
 			case HIGH_PRICE:
 				return new HighPriceCursor(lastProduct.getPrice(), lastProduct.getId()).toString();
 			default:
-				throw new NapzakException(ProductErrorCode.INVALID_SORT_OPTION);
+				throw new NapzakException(ErrorCode.INVALID_SORT_OPTION);
 		}
 	}
 
