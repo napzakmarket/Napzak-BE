@@ -22,8 +22,8 @@ public record ProductDetailDto(
 ) {
 	public static ProductDetailDto from(
 		Product product,
-		String genreName,
 		String uploadTime,
+		String genreName,
 		boolean OwnedByCurrentUser
 	) {
 		return new ProductDetailDto(
