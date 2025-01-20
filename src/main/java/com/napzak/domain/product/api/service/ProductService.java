@@ -142,6 +142,16 @@ public class ProductService {
 		return productPhotoSaver.saveAll(productId, photoData);
 	}
 
+	public Product getProduct(Long productId) {
+
+		return productRetriever.findById(productId);
+	}
+
+	public List<ProductPhoto> getProductPhotos(Long productId) {
+
+		return productPhotoRetriever.getProductPhotosByProductId(productId);
+	}
+
 	private ProductPagination retrieveAndPreparePagination(
 		ProductRetrieval retrievalLogic,
 		int size

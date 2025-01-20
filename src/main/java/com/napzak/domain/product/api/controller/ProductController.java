@@ -14,30 +14,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.napzak.domain.product.api.ProductGenreFacade;
+import com.napzak.domain.product.api.ProductInterestFacade;
+import com.napzak.domain.product.api.ProductReviewFacade;
+import com.napzak.domain.product.api.ProductStoreFacade;
 import com.napzak.domain.product.api.dto.request.ProductBuyCreateRequest;
 import com.napzak.domain.product.api.dto.request.ProductPhotoRequestDto;
 import com.napzak.domain.product.api.dto.request.ProductSellCreateRequest;
-import com.napzak.domain.product.api.dto.response.ProductBuyResponse;
-import com.napzak.domain.product.api.dto.response.ProductSellResponse;
-import com.napzak.domain.product.core.vo.Product;
-import com.napzak.domain.product.core.vo.ProductPhoto;
-import com.napzak.global.common.exception.code.ErrorCode;
 import com.napzak.domain.product.api.dto.request.cursor.HighPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.LowPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.PopularCursor;
 import com.napzak.domain.product.api.dto.request.cursor.RecentCursor;
 import com.napzak.domain.product.api.dto.response.ProductBuyListResponse;
+import com.napzak.domain.product.api.dto.response.ProductBuyResponse;
+import com.napzak.domain.product.api.dto.response.ProductDetailDto;
+import com.napzak.domain.product.api.dto.response.ProductDetailResponse;
+import com.napzak.domain.product.api.dto.response.ProductPhotoDto;
 import com.napzak.domain.product.api.dto.response.ProductSellListResponse;
+import com.napzak.domain.product.api.dto.response.ProductSellResponse;
 import com.napzak.domain.product.api.exception.ProductSuccessCode;
 import com.napzak.domain.product.api.service.ProductPagination;
 import com.napzak.domain.product.api.service.ProductService;
 import com.napzak.domain.product.api.service.enums.SortOption;
-import com.napzak.domain.product.api.ProductGenreFacade;
-import com.napzak.domain.product.api.ProductInterestFacade;
+import com.napzak.domain.product.core.vo.Product;
+import com.napzak.domain.product.core.vo.ProductPhoto;
 import com.napzak.domain.product.core.vo.ProductWithFirstPhoto;
+import com.napzak.domain.review.api.dto.response.StoreReviewDto;
+import com.napzak.domain.review.core.vo.Review;
+import com.napzak.domain.store.api.dto.StoreStatusDto;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.common.exception.NapzakException;
+import com.napzak.global.common.exception.code.ErrorCode;
 import com.napzak.global.common.exception.dto.SuccessResponse;
+import com.napzak.global.common.util.TimeUtils;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,8 +56,12 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("api/v1/products")
 public class ProductController {
 	private final ProductService productService;
+
 	private final ProductInterestFacade productInterestFacade;
 	private final ProductGenreFacade productGenreFacade;
+	private final ProductReviewFacade productReviewFacade;
+
+	private final ProductStoreFacade productStoreFacade;
 
 	@GetMapping("/sell")
 	public ResponseEntity<SuccessResponse<ProductSellListResponse>> getSellProducts(
@@ -289,7 +302,7 @@ public class ProductController {
 	public ResponseEntity<SuccessResponse<ProductSellResponse>> createSellProduct(
 		@Valid @RequestBody ProductSellCreateRequest productSellCreateRequest,
 		@CurrentMember Long storeId
-	){
+	) {
 		Product product = productService.createSellProduct(
 			productSellCreateRequest.title(),
 			storeId,
@@ -326,7 +339,7 @@ public class ProductController {
 	public ResponseEntity<SuccessResponse<ProductBuyResponse>> createBuyProduct(
 		@Valid @RequestBody ProductBuyCreateRequest productBuyCreateRequest,
 		@CurrentMember Long storeId
-	){
+	) {
 		Product product = productService.createBuyProduct(
 			productBuyCreateRequest.title(),
 			storeId,
@@ -351,6 +364,55 @@ public class ProductController {
 		return ResponseEntity.ok(
 			SuccessResponse.of(
 				ProductSuccessCode.PRODUCT_CREATE_SUCCESS,
+				response
+			)
+		);
+	}
+
+	@GetMapping("/{productId}")
+	public ResponseEntity<SuccessResponse<ProductDetailResponse>> getDetailProductInfo(
+		@PathVariable("productId") Long productId,
+		@CurrentMember final Long currentStoreId
+	) {
+
+		Product product = productService.getProduct(productId);
+		List<Review> reviewList = productReviewFacade.findAllByStoreId(product.getStoreId());
+
+		boolean isInterested = productInterestFacade.getIsInterested(productId, currentStoreId); //좋아요 여부
+		String uploadTime = TimeUtils.calculateUploadTime(product.getCreatedAt()); //업로드 시간
+		String genreName = productGenreFacade.getGenreName(product.getGenreId()); //장르 이름
+		boolean isOwnedByCurrentUser = currentStoreId.equals(product.getStoreId()); //자신의 상품 여부
+
+		//각각의 dto 생성
+		ProductDetailDto productDetailDto = ProductDetailDto.from(product, uploadTime, genreName, isOwnedByCurrentUser);
+
+		List<ProductPhotoDto> photoDtoList = productService.getProductPhotos(productId).stream()
+			.map(ProductPhotoDto::from)
+			.toList();
+
+		StoreStatusDto storeStatus = productStoreFacade.findStoreStatusDtoByStoreId(product.getStoreId());
+
+		List<Long> reviewIds = reviewList.stream()
+			.map(Review::getId)
+			.toList();
+
+		Map<Long, String> reviewerNicknames = productReviewFacade.findReviewerNamesByReviewId(product.getStoreId(),
+			reviewIds);
+
+		List<StoreReviewDto> storeReviewDtoList = reviewList.stream()
+			.map(review -> {
+				String reviewerNickname = reviewerNicknames.get(review.getId());
+				return StoreReviewDto.from(review, reviewerNickname, product);
+			})
+			.toList();
+
+		ProductDetailResponse response = new ProductDetailResponse(isInterested, productDetailDto, photoDtoList,
+			storeStatus,
+			storeReviewDtoList);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+				ProductSuccessCode.PRODUCT_DETAIL_SUCCESS,
 				response
 			)
 		);
