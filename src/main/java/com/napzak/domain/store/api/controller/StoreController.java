@@ -79,8 +79,7 @@ public class StoreController {
 		@CurrentMember final Long currentStoreId
 	) {
 		Store store = storeService.getStore(currentStoreId);
-		MyPageResponse myPageResponse = MyPageResponse.of(store.getId(), store.getNickname(), store.getPhoto(),
-			store.getCover());
+		MyPageResponse myPageResponse = MyPageResponse.of(store.getId(), store.getNickname(), store.getPhoto());
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_MYPAGE_INFO_SUCCESS, myPageResponse));
 	}
 
@@ -103,7 +102,7 @@ public class StoreController {
 			.toList();
 
 		StoreInfoResponse storeInfoResponse = StoreInfoResponse.of(store.getId(), store.getNickname(),
-			store.getDescription(), store.getPhoto(), genrePreferenceResponses);
+			store.getDescription(), store.getPhoto(), store.getCover(), genrePreferenceResponses);
 
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_STORE_INFO_SUCCESS, storeInfoResponse));
 	}
