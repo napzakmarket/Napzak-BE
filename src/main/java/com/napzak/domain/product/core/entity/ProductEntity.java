@@ -71,7 +71,7 @@ public class ProductEntity {
 	private int halfDeliveryFee = 0;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = COLUMN_PRODUCT_CONDITION, nullable = false)
+	@Column(name = COLUMN_PRODUCT_CONDITION, nullable = true)
 	private ProductCondition productCondition;
 
 	@Column(name = COLUMN_INTEREST_COUNT, nullable = false)
