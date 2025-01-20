@@ -16,18 +16,17 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ProductRetriever {
 
 	private final ProductRepository productRepository;
 
-	@Transactional(readOnly = true)
 	public Product findById(Long id) {
 		ProductEntity productEntity = productRepository.findById(id)
 			.orElseThrow(() -> new NapzakException(ProductErrorCode.PRODUCT_NOT_FOUND));
 		return Product.fromEntity(productEntity);
 	}
 
-	@Transactional(readOnly = true)
 	public List<Product> retrieveProducts(
 		SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue, int size,
 		Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType) {
@@ -40,7 +39,6 @@ public class ProductRetriever {
 			.toList();
 	}
 
-	@Transactional(readOnly = true)
 	public List<Product> retrieveStoreProducts(
 		Long storeId, SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue,
 		int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType) {
@@ -53,7 +51,6 @@ public class ProductRetriever {
 			.toList();
 	}
 
-	@Transactional(readOnly = true)
 	public List<Product> searchProducts(
 		String searchWord, SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue, int size,
 		Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType) {
