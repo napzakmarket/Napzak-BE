@@ -456,76 +456,77 @@ public class ProductController {
 
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(ProductSuccessCode.TOP_BUY_PRODUCT_GET_SUCCESS, response));
+	}
 
-		private Map<Long, Boolean> fetchInterestMap (ProductPagination pagination, Long storeId){
-			List<Long> productIds = pagination.getProductList().stream()
-				.map(ProductWithFirstPhoto::getId)
-				.distinct()
-				.toList();
-			return productInterestFacade.getIsInterestedMap(productIds, storeId);
-		}
+	private Map<Long, Boolean> fetchInterestMap(ProductPagination pagination, Long storeId) {
+		List<Long> productIds = pagination.getProductList().stream()
+			.map(ProductWithFirstPhoto::getId)
+			.distinct()
+			.toList();
+		return productInterestFacade.getIsInterestedMap(productIds, storeId);
+	}
 
-		private Map<Long, String> fetchGenreMap (ProductPagination pagination){
-			List<Long> genreIds = pagination.getProductList().stream()
-				.map(ProductWithFirstPhoto::getGenreId)
-				.distinct()
-				.toList();
-			return productGenreFacade.getGenreNames(genreIds);
-		}
+	private Map<Long, String> fetchGenreMap(ProductPagination pagination) {
+		List<Long> genreIds = pagination.getProductList().stream()
+			.map(ProductWithFirstPhoto::getGenreId)
+			.distinct()
+			.toList();
+		return productGenreFacade.getGenreNames(genreIds);
+	}
 
-		private SortOption parseSortOption (String sortOption){
-			try {
-				return SortOption.valueOf(sortOption.toUpperCase());
-			} catch (IllegalArgumentException e) {
-				throw new NapzakException(ErrorCode.INVALID_SORT_OPTION);
-			}
-		}
-
-		private CursorValues parseCursorValues (String cursor, SortOption sortOption){
-			if (cursor == null || cursor.isBlank()) {
-				return new CursorValues(null, null);
-			}
-
-			try {
-				switch (sortOption) {
-					case RECENT -> {
-						Long id = RecentCursor.fromString(cursor).getid();
-						return new CursorValues(id, null);
-					}
-					case POPULAR -> {
-						PopularCursor popularCursor = PopularCursor.fromString(cursor);
-						return new CursorValues(popularCursor.getId(), popularCursor.getInterestCount());
-					}
-					case LOW_PRICE -> {
-						LowPriceCursor priceCursor = LowPriceCursor.fromString(cursor);
-						return new CursorValues(priceCursor.getId(), priceCursor.getPrice());
-					}
-					case HIGH_PRICE -> {
-						HighPriceCursor priceCursor = HighPriceCursor.fromString(cursor);
-						return new CursorValues(priceCursor.getId(), priceCursor.getPrice());
-					}
-					default -> throw new NapzakException(ErrorCode.INVALID_SORT_OPTION);
-				}
-			} catch (IllegalArgumentException e) {
-				throw new NapzakException(ErrorCode.INVALID_CURSOR_FORMAT);
-			}
-		}
-
-		private static class CursorValues {
-			private final Long cursorProductId;
-			private final Integer cursorOptionalValue;
-
-			public CursorValues(Long cursorProductId, Integer cursorOptionalValue) {
-				this.cursorProductId = cursorProductId;
-				this.cursorOptionalValue = cursorOptionalValue;
-			}
-
-			public Long getCursorProductId() {
-				return cursorProductId;
-			}
-
-			public Integer getCursorOptionalValue() {
-				return cursorOptionalValue;
-			}
+	private SortOption parseSortOption(String sortOption) {
+		try {
+			return SortOption.valueOf(sortOption.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			throw new NapzakException(ErrorCode.INVALID_SORT_OPTION);
 		}
 	}
+
+	private CursorValues parseCursorValues(String cursor, SortOption sortOption) {
+		if (cursor == null || cursor.isBlank()) {
+			return new CursorValues(null, null);
+		}
+
+		try {
+			switch (sortOption) {
+				case RECENT -> {
+					Long id = RecentCursor.fromString(cursor).getid();
+					return new CursorValues(id, null);
+				}
+				case POPULAR -> {
+					PopularCursor popularCursor = PopularCursor.fromString(cursor);
+					return new CursorValues(popularCursor.getId(), popularCursor.getInterestCount());
+				}
+				case LOW_PRICE -> {
+					LowPriceCursor priceCursor = LowPriceCursor.fromString(cursor);
+					return new CursorValues(priceCursor.getId(), priceCursor.getPrice());
+				}
+				case HIGH_PRICE -> {
+					HighPriceCursor priceCursor = HighPriceCursor.fromString(cursor);
+					return new CursorValues(priceCursor.getId(), priceCursor.getPrice());
+				}
+				default -> throw new NapzakException(ErrorCode.INVALID_SORT_OPTION);
+			}
+		} catch (IllegalArgumentException e) {
+			throw new NapzakException(ErrorCode.INVALID_CURSOR_FORMAT);
+		}
+	}
+
+	private static class CursorValues {
+		private final Long cursorProductId;
+		private final Integer cursorOptionalValue;
+
+		public CursorValues(Long cursorProductId, Integer cursorOptionalValue) {
+			this.cursorProductId = cursorProductId;
+			this.cursorOptionalValue = cursorOptionalValue;
+		}
+
+		public Long getCursorProductId() {
+			return cursorProductId;
+		}
+
+		public Integer getCursorOptionalValue() {
+			return cursorOptionalValue;
+		}
+	}
+}
