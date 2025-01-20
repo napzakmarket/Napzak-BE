@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.domain.store.api.dto.StoreNormalRegisterRequest;
+import com.napzak.domain.store.core.GenrePreferenceRemover;
 import com.napzak.domain.store.core.GenrePreferenceSaver;
 import com.napzak.domain.store.core.StoreSaver;
 import com.napzak.domain.store.core.StoreUpdater;
@@ -25,6 +26,7 @@ public class StoreRegistrationService {
 	private final StoreSaver storeSaver;
 	private final StoreUpdater storeUpdater;
 	private final GenrePreferenceSaver genrePreferenceSaver;
+	private final GenrePreferenceRemover genrePreferenceRemover;
 
 	public Long registerStoreWithStoreInfo(final StoreSocialInfoResponse storeSocialInfoResponse) {
 
@@ -43,6 +45,8 @@ public class StoreRegistrationService {
 		Long currentStoreId,
 		final StoreNormalRegisterRequest storeNormalRegisterRequest
 	) {
+		
+		genrePreferenceRemover.removeGenrePreference(currentStoreId);
 
 		String nickname = storeNormalRegisterRequest.nickname();
 		String phoneNumber = storeNormalRegisterRequest.phoneNumber();
