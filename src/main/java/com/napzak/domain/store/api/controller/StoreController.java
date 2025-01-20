@@ -47,7 +47,9 @@ public class StoreController {
 	@PostMapping("/login")
 	public ResponseEntity<SuccessResponse<StoreLoginResponse>> login(
 		@RequestParam("authorizationCode") String authorizationCode,
-		@RequestBody StoreSocialLoginRequest storeSocialLoginRequest, HttpServletResponse httpServletResponse) {
+		@RequestBody StoreSocialLoginRequest storeSocialLoginRequest,
+		HttpServletResponse httpServletResponse
+	) {
 		LoginSuccessResponse successResponse = loginService.login(authorizationCode, storeSocialLoginRequest);
 		ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN, successResponse.refreshToken())
 			.maxAge(COOKIE_MAX_AGE)
@@ -65,20 +67,26 @@ public class StoreController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<SuccessResponse<Void>> logOut(@CurrentMember final Long currentStoreId) {
+	public ResponseEntity<SuccessResponse<Void>> logOut(
+		@CurrentMember final Long currentStoreId
+	) {
 		tokenService.deleteRefreshToken(currentStoreId);
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.LOGOUT_SUCCESS, null));
 	}
 
 	@GetMapping("/mypage")
-	public ResponseEntity<SuccessResponse<MyPageResponse>> getMyPageInfo(@CurrentMember final Long currentStoreId) {
+	public ResponseEntity<SuccessResponse<MyPageResponse>> getMyPageInfo(
+		@CurrentMember final Long currentStoreId
+	) {
 		MyPageResponse myPageResponse = storeService.getMyPageInfo(currentStoreId);
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_MYPAGE_INFO_SUCCESS, myPageResponse));
 	}
 
 	@GetMapping("/{storeId}")
-	public ResponseEntity<SuccessResponse<StoreInfoResponse>> getStoreInfo(@PathVariable("storeId") Long OnwerId,
-		@CurrentMember final Long currentStoreId) {
+	public ResponseEntity<SuccessResponse<StoreInfoResponse>> getStoreInfo(
+		@PathVariable("storeId") Long OnwerId,
+		@CurrentMember final Long currentStoreId
+	) {
 
 		List<GenrePreference> genreList = storeService.getGenrePreferenceList(OnwerId);
 		Store store = storeService.getStore(OnwerId);
