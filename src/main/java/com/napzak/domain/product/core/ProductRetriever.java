@@ -24,23 +24,21 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ProductRetriever {
 
 	private final ProductRepository productRepository;
 
-	@Transactional(readOnly = true)
 	public boolean existsById(Long productId) {
 		return productRepository.existsById(productId);
 	}
 
-	@Transactional(readOnly = true)
 	public Product findById(Long id) {
 		ProductEntity productEntity = productRepository.findById(id)
 			.orElseThrow(() -> new NapzakException(ProductErrorCode.PRODUCT_NOT_FOUND));
 		return Product.fromEntity(productEntity);
 	}
 
-	@Transactional(readOnly = true)
 	public List<Product> retrieveProducts(SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue,
 		int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType) {
 
@@ -51,7 +49,6 @@ public class ProductRetriever {
 			.toList();
 	}
 
-	@Transactional(readOnly = true)
 	public List<Product> retrieveProductsExcludingCurrentUser(SortOption sortOption, int size, TradeType tradeType,
 		long storeId) {
 
@@ -59,7 +56,6 @@ public class ProductRetriever {
 			tradeType, storeId).stream().map(Product::fromEntity).toList();
 	}
 
-	@Transactional(readOnly = true)
 	public List<Product> retrieveStoreProducts(Long storeId, SortOption sortOption, Long cursorProductId,
 		Integer cursorOptionalValue, int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds,
 		TradeType tradeType) {
@@ -71,7 +67,6 @@ public class ProductRetriever {
 			.toList();
 	}
 
-	@Transactional(readOnly = true)
 	public List<Product> searchProducts(String searchWord, SortOption sortOption, Long cursorProductId,
 		Integer cursorOptionalValue, int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds,
 		TradeType tradeType) {
@@ -82,7 +77,6 @@ public class ProductRetriever {
 	}
 
 	//선호장르를 받아 선호장르 우선으로 buy product를 2개씩 구성. 부족하다면 default 장르에서 중복없이 가져오기.
-	@Transactional(readOnly = true)
 	public List<Product> getRecommendedBuyProducts(Long storeId, List<Long> genreIds) {
 
 		List<ProductEntity> products = getPreferenceProducts(genreIds, TradeType.BUY, storeId);
@@ -91,7 +85,6 @@ public class ProductRetriever {
 	}
 
 	//선호장르를 받아 선호장르 우선으로 sell product를 2개씩 구성. 부족하다면 default 장르에서 중복없이 가져오기.
-	@Transactional(readOnly = true)
 	public List<Product> getRecommendedSellProducts(Long storeId, List<Long> genreIds) {
 
 		Collections.reverse(genreIds);
@@ -101,7 +94,6 @@ public class ProductRetriever {
 		return products.stream().map(Product::fromEntity).toList();
 	}
 
-	@Transactional(readOnly = true)
 	public List<ProductEntity> getPreferenceProducts(List<Long> genreIds, TradeType tradeType, Long storeId) {
 
 		//정렬 기준 : 최신순
