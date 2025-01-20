@@ -101,7 +101,7 @@ public class ProductRetriever {
 		//정렬 기준 : 인기순
 		Sort interestSort = Sort.by(Sort.Order.desc("interestCount"));
 
-		final List<Long> DEFAULT_GENRE_IDS = new ArrayList<>(List.of(2L, 8L, 5L, 6L));
+		final List<Long> DEFAULT_GENRE_IDS = new ArrayList<>(List.of(1L, 7L, 4L, 5L));
 		Set<Long> addedProductIds = new HashSet<>(); // 추가된 상품의 ID를 추적하기 위한 Set
 
 		log.info("default 장르: {}", DEFAULT_GENRE_IDS);
