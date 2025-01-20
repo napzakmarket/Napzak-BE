@@ -78,7 +78,9 @@ public class StoreController {
 	public ResponseEntity<SuccessResponse<MyPageResponse>> getMyPageInfo(
 		@CurrentMember final Long currentStoreId
 	) {
-		MyPageResponse myPageResponse = storeService.getMyPageInfo(currentStoreId);
+		Store store = storeService.getStore(currentStoreId);
+		MyPageResponse myPageResponse = MyPageResponse.of(store.getId(), store.getNickname(), store.getPhoto(),
+			store.getCover());
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_MYPAGE_INFO_SUCCESS, myPageResponse));
 	}
 

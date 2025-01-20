@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.napzak.domain.store.api.dto.MyPageResponse;
 import com.napzak.domain.store.api.exception.StoreErrorCode;
 import com.napzak.domain.store.core.GenrePreferenceRetriever;
 import com.napzak.domain.store.core.StoreRetriever;
@@ -33,12 +32,6 @@ public class StoreService {
 	@Transactional(readOnly = true)
 	public Store findStoreBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
 		return storeRetriever.findBySocialTypeAndSocialId(socialId, socialType);
-	}
-
-	@Transactional(readOnly = true)
-	public MyPageResponse getMyPageInfo(final Long storeId) {
-		Store store = storeRetriever.findStoreByStoreId(storeId);
-		return new MyPageResponse(store.getId(), store.getNickname(), store.getPhoto());
 	}
 
 	@Transactional(readOnly = true)
