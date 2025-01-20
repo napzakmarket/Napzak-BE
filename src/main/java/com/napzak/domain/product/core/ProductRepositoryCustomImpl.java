@@ -60,7 +60,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 			.orderBy(orderSpecifier)
 			.limit(size + 1)
 			.fetch();
-	};
+	}
 
 	@Override
 	public List<ProductEntity> findProductsByStoreIdAndSortOptionAndFilters(
@@ -77,6 +77,20 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 			)
 			.orderBy(orderSpecifier)
 			.limit(size + 1)
+			.fetch();
+	}
+
+	@Override
+	public List<ProductEntity> findProductsBySortOptionExcludingStoreId(
+		OrderSpecifier<?> orderSpecifier, int size, TradeType tradeType, long storeId) {
+
+		return queryFactory.selectFrom(productEntity)
+			.where(
+				tradeTypeFilter(tradeType),
+				productEntity.storeId.ne(storeId)
+			)
+			.orderBy(orderSpecifier)
+			.limit(size)
 			.fetch();
 	}
 

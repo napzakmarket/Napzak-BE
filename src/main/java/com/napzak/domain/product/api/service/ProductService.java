@@ -142,6 +142,41 @@ public class ProductService {
 		return productPhotoSaver.saveAll(productId, photoData);
 	}
 
+	public ProductPagination getHomePopularProducts(
+		SortOption sortOption, int size, TradeType tradeType, Long storeId) {
+
+		return retrieveAndPreparePagination(
+			() -> productRetriever.retrieveProductsExcludingCurrentUser(
+				sortOption, size, tradeType, storeId
+			),
+			size
+		);
+	}
+
+	public ProductPagination searchRecommendBuyProducts(Long storeId, List<Long> genreIds) {
+
+		int size = 2;
+
+		return retrieveAndPreparePagination(
+			() -> productRetriever.getRecommendedBuyProducts(
+				storeId, genreIds
+			),
+			size
+		);
+	}
+
+	public ProductPagination searchRecommendSellProducts(Long storeId, List<Long> genreIds) {
+
+		int size = 2;
+
+		return retrieveAndPreparePagination(
+			() -> productRetriever.getRecommendedSellProducts(
+				storeId, genreIds
+			),
+			size
+		);
+	}
+
 	private ProductPagination retrieveAndPreparePagination(
 		ProductRetrieval retrievalLogic,
 		int size

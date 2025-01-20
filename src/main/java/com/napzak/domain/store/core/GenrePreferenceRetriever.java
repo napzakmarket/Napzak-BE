@@ -16,11 +16,18 @@ public class GenrePreferenceRetriever {
 
 	private final GenrePreferenceRepository genrePreferenceRepository;
 
+	public Boolean existGenrePreference(Long storeId) {
+		return genrePreferenceRepository.existsByStoreId(storeId);
+	}
+
 	public List<GenrePreference> getGenrePreferences(Long storeId) {
 		List<GenrePreferenceEntity> genrePreferenceEntityList = genrePreferenceRepository.findByStoreId(storeId);
 		return genrePreferenceEntityList.stream()
 			.map(GenrePreference::fromEntity)
-			.collect(Collectors.toList());
+			.toList();
 	}
 
+	public List<Long> getGenrePreferenceIds(Long storeId) {
+		return genrePreferenceRepository.findGenreIdsByStoreId(storeId);
+	}
 }

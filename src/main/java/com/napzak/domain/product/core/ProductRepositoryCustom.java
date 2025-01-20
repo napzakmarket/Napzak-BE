@@ -18,4 +18,7 @@ public interface ProductRepositoryCustom {
 	List<ProductEntity> findProductsByStoreIdAndSortOptionAndFilters(
 		Long storeId, OrderSpecifier<?> orderSpecifier, Long cursorProductId, Integer cursorOptionalValue,
 		int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType);
+
+	List<ProductEntity> findProductsBySortOptionExcludingStoreId(
+			OrderSpecifier<?> orderSpecifier, int size, TradeType tradeType, long storeId);
 }

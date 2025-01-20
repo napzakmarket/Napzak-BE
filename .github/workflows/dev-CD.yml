@@ -28,13 +28,15 @@ jobs:
 
       - name: Create secret config file
         run: |
-          cd src/main/resources
-          echo "${{ secrets.APPLICATION_DEV }}" > ./application-dev.yml
+          mkdir -p src/main/resources
+          echo "${{ secrets.APPLICATION_DEV }}" > src/main/resources/application-dev.yml
+          ls -la src/main/resources
+          cat src/main/resources/application-dev.yml
 
       - name: Build with Gradle
         run: |
           chmod +x gradlew
-          ./gradlew clean build -x test --no-daemon --info
+          ./gradlew clean build -x test
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.9.1
