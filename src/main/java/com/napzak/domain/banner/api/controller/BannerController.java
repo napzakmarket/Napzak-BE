@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.napzak.domain.banner.api.dto.response.BannerResponseList;
 import com.napzak.domain.banner.api.dto.response.HomeBannerResponse;
 import com.napzak.domain.banner.api.exception.BannerSuccessCode;
 import com.napzak.domain.banner.api.service.BannerService;
@@ -22,7 +23,7 @@ public class BannerController {
 	private final BannerService bannerService;
 
 	@GetMapping("/home")
-	public ResponseEntity<SuccessResponse<List<HomeBannerResponse>>> getBanners() {
+	public ResponseEntity<SuccessResponse<BannerResponseList>> getBanners() {
 
 		List<HomeBannerResponse> bannerResponse = bannerService.getAllBanners().stream()
 			.map(banner -> HomeBannerResponse.of(
@@ -33,8 +34,10 @@ public class BannerController {
 			))
 			.toList();
 
+		BannerResponseList response = BannerResponseList.of(bannerResponse);
+
 		return ResponseEntity.ok()
-			.body(SuccessResponse.of(BannerSuccessCode.BANNER_GET_SUCCESS, bannerResponse));
+			.body(SuccessResponse.of(BannerSuccessCode.BANNER_GET_SUCCESS, response));
 	}
 
 }
