@@ -1,10 +1,10 @@
 package com.napzak.domain.product.api.dto.response;
 
-import com.napzak.domain.product.core.entity.enums.TradeType;
+import com.napzak.domain.product.core.vo.Product;
 
 public record ProductDetailDto(
 	Long productId,
-	TradeType tradeType,
+	String tradeType,
 	String genreName,
 	String productName,
 	int price,
@@ -18,24 +18,32 @@ public record ProductDetailDto(
 	boolean is_delivery_included,
 	boolean isPriceNegotiable,
 	String tradeStatus,
-	boolean isOwnedByCurrentUser
+	boolean OwnedByCurrentUser
 ) {
 	public static ProductDetailDto from(
+		Product product,
+		String genreName,
+		String uploadTime,
+		boolean OwnedByCurrentUser
+	) {
+		return new ProductDetailDto(
+			product.getId(),
+			product.getTradeType().toString(),
+			genreName,
+			product.getTitle(),
+			product.getPrice(),
+			uploadTime,
+			product.getViewCount(),
+			product.getInterestCount(),
+			product.getDescription(),
+			product.getProductCondition().toString(),
+			product.getStandardDeliveryFee(),
+			product.getHalfDeliveryFee(),
+			product.getIsDeliveryIncluded(),
+			product.getIsPriceNegotiable(),
+			product.getTradeStatus().toString(),
+			OwnedByCurrentUser
+		);
 
-	)
+	}
 }
-
-/*
-public record StoreLoginResponse(
-        String accessToken,
-        String nickname,
-        Role role
-) {
-    public static StoreLoginResponse of(
-            final String accessToken,
-            String nickname,
-            final Role role
-    ) {
-        return new StoreLoginResponse(accessToken, nickname, role);
-    }
- */
