@@ -4,12 +4,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.domain.product.api.service.enums.SortOption;
 import com.napzak.domain.product.core.ProductPhotoRetriever;
+import com.napzak.domain.product.core.ProductPhotoSaver;
 import com.napzak.domain.product.core.ProductRetriever;
+import com.napzak.domain.product.core.ProductSaver;
+import com.napzak.domain.product.core.entity.enums.ProductCondition;
+import com.napzak.domain.product.core.entity.enums.TradeStatus;
 import com.napzak.domain.product.core.entity.enums.TradeType;
 import com.napzak.domain.product.core.vo.Product;
+import com.napzak.domain.product.core.vo.ProductPhoto;
 import com.napzak.domain.product.core.vo.ProductWithFirstPhoto;
 import com.napzak.domain.product.core.vo.ProductWithFirstPhotoList;
 
@@ -20,6 +26,8 @@ import lombok.RequiredArgsConstructor;
 public class ProductService {
 	private final ProductRetriever productRetriever;
 	private final ProductPhotoRetriever productPhotoRetriever;
+	private final ProductSaver productSaver;
+	private final ProductPhotoSaver productPhotoSaver;
 
 	public ProductPagination getSellProducts(
 		SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue, int size,
@@ -99,6 +107,41 @@ public class ProductService {
 		);
 	}
 
+	@Transactional
+	public Product createSellProduct(
+		String title, Long storeId, String description,
+		int price, Boolean isDeliveryIncluded, int standardDeliveryFee, int halfDeliveryFee,
+		ProductCondition productCondition, Long genreId
+	) {
+		Product product = productSaver.save(
+			title, storeId, description, TradeType.SELL, TradeStatus.BEFORE_TRADE, price,
+			false, isDeliveryIncluded, standardDeliveryFee,
+			halfDeliveryFee, productCondition, genreId
+		);
+
+		return product;
+	}
+
+	@Transactional
+	public Product createBuyProduct(
+		String title, Long storeId, String description,
+		int price, Boolean isPriceNegotiable, Long genreId
+	) {
+		Product product = productSaver.save(
+			title, storeId, description, TradeType.BUY, TradeStatus.BEFORE_TRADE, price,
+			isPriceNegotiable, false, 0,
+			0, null, genreId
+		);
+
+		return product;
+	}
+
+	@Transactional
+	public List<ProductPhoto> createProductPhotos(Long productId, Map<Integer, String> photoData) {
+
+		return productPhotoSaver.saveAll(productId, photoData);
+	}
+
 	public ProductPagination getHomePopularProducts(
 		SortOption sortOption, int size, TradeType tradeType, Long storeId) {
 
@@ -107,6 +150,26 @@ public class ProductService {
 				sortOption, size, tradeType, storeId
 			),
 			size
+		);
+	}
+
+	public ProductPagination searchRecommendBuyProducts(Long storeId, List<Long> genreIds) {
+
+		return retrieveAndPreparePagination(
+			() -> productRetriever.getRecommendedBuyProducts(
+				storeId, genreIds
+			),
+			2
+		);
+	}
+  
+	public ProductPagination searchRecommendSellProducts(Long storeId, List<Long> genreIds) {
+
+		return retrieveAndPreparePagination(
+			() -> productRetriever.getRecommendedSellProducts(
+				storeId, genreIds
+			),
+			2
 		);
 	}
 
@@ -132,28 +195,6 @@ public class ProductService {
 
 		// 5. ProductPagination 생성
 		return new ProductPagination(size, new ProductWithFirstPhotoList(productWithFirstPhotoList));
-	}
-
-	// 맞춤형 - 구해요
-	public ProductPagination searchRecommendBuyProducts(Long storeId, List<Long> genreIds) {
-
-		return retrieveAndPreparePagination(
-			() -> productRetriever.getRecommendedBuyProducts(
-				storeId, genreIds
-			),
-			2
-		);
-	}
-
-	// 맞춤형 - 팔아요
-	public ProductPagination searchRecommendSellProducts(Long storeId, List<Long> genreIds) {
-
-		return retrieveAndPreparePagination(
-			() -> productRetriever.getRecommendedSellProducts(
-				storeId, genreIds
-			),
-			2
-		);
 	}
 
 	@FunctionalInterface

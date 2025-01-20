@@ -3,3 +3,5 @@ build/
 *.iml
 .idea/
 .vscode/
+!docker-compose-*.yml
+!Dockerfile-*

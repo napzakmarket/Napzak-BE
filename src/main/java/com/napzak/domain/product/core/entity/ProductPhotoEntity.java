@@ -29,8 +29,7 @@ public class ProductPhotoEntity {
 	private int sequence;
 
 	@Builder
-	private ProductPhotoEntity(Long id, Long productId, String photoUrl, int sequence) {
-		this.id = id;
+	private ProductPhotoEntity(Long productId, String photoUrl, int sequence) {
 		this.productId = productId;
 		this.photoUrl = photoUrl;
 		this.sequence = sequence;
