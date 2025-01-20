@@ -10,13 +10,11 @@ import lombok.RequiredArgsConstructor;
 public class InterestRemover {
 
 	private final InterestRepository interestRepository;
-	private final InterestProductFacade interestProductFacade;
 
 	@Transactional
 	public void deleteInterest(Long productId, Long storeId) {
 
 		interestRepository.deleteByProductIdAndStoreId(productId, storeId);
-		interestProductFacade.decrementInterestCount(productId);
 
 	}
 }
