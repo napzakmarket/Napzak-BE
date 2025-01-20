@@ -1,18 +1,25 @@
 package com.napzak.domain.product.core.entity;
 
+import static com.napzak.domain.product.core.entity.ProductTableConstants.*;
+
+import java.time.LocalDateTime;
+
 import com.napzak.domain.product.core.entity.enums.ProductCondition;
 import com.napzak.domain.product.core.entity.enums.TradeStatus;
 import com.napzak.domain.product.core.entity.enums.TradeType;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-
-import static com.napzak.domain.product.core.entity.ProductTableConstants.*;
 
 @Table(name = TABLE_PRODUCT)
 @Entity
@@ -25,10 +32,10 @@ public class ProductEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = COLUMN_TITLE, nullable = false)
+	@Column(name = COLUMN_TITLE, nullable = false, columnDefinition = "varchar(50)")
 	private String title;
 
-	@Column(name = COLUMN_DESCRIPTION, nullable = false)
+	@Column(name = COLUMN_DESCRIPTION, nullable = false, columnDefinition = "varchar(250)")
 	private String description;
 
 	@Enumerated(EnumType.STRING)
@@ -41,8 +48,8 @@ public class ProductEntity {
 	@Column(name = COLUMN_CREATED_AT, nullable = false)
 	private final LocalDateTime createdAt = LocalDateTime.now();
 
-	@Column(name = COLUMN_UPDATED_AT, nullable = false)
-	private LocalDateTime updatedAt = LocalDateTime.now();
+	@Column(name = COLUMN_UPDATED_AT, nullable = true)
+	private LocalDateTime updatedAt;
 
 	@Column(name = COLUMN_VIEW_COUNT, nullable = false)
 	private int viewCount = 0;
@@ -64,7 +71,7 @@ public class ProductEntity {
 	private int halfDeliveryFee = 0;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = COLUMN_PRODUCT_CONDITION, nullable = true)
+	@Column(name = COLUMN_PRODUCT_CONDITION, nullable = false)
 	private ProductCondition productCondition;
 
 	@Column(name = COLUMN_INTEREST_COUNT, nullable = false)
