@@ -155,21 +155,25 @@ public class ProductService {
 
 	public ProductPagination searchRecommendBuyProducts(Long storeId, List<Long> genreIds) {
 
+		int size = 2;
+
 		return retrieveAndPreparePagination(
 			() -> productRetriever.getRecommendedBuyProducts(
 				storeId, genreIds
 			),
-			2
+			size
 		);
 	}
-  
+
 	public ProductPagination searchRecommendSellProducts(Long storeId, List<Long> genreIds) {
+
+		int size = 2;
 
 		return retrieveAndPreparePagination(
 			() -> productRetriever.getRecommendedSellProducts(
 				storeId, genreIds
 			),
-			2
+			size
 		);
 	}
 
