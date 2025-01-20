@@ -23,4 +23,8 @@ public class GenrePreferenceRetriever {
 			.collect(Collectors.toList());
 	}
 
+	public boolean existsGenrePreference(Long storeId) {
+		return genrePreferenceRepository.existsByStoreId(storeId);
+	}
+
 }
