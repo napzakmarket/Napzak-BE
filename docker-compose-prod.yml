@@ -18,6 +18,8 @@ services:
     command: ["redis-server", "--requirepass", "napzakprod"]
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "napzakprod", "ping"]
       interval: 10s
@@ -25,9 +27,7 @@ services:
       retries: 3
     networks:
       - napzak-prod-net
-    deploy:
-      restart_policy:
-        condition: none
+    restart: always  # 컨테이너가 종료되면 자동 재시작
 
 networks:
   napzak-prod-net:
