@@ -30,6 +30,7 @@ import com.napzak.global.auth.jwt.service.TokenService;
 import com.napzak.global.common.exception.dto.SuccessResponse;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -105,4 +106,49 @@ public class StoreController {
 
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_STORE_INFO_SUCCESS, storeInfoResponse));
 	}
+
+public class StoreController implements StoreApi {
+
+    private final LoginService loginService;
+    private final TokenService tokenService;
+
+    private static final String REFRESH_TOKEN = "refreshToken";
+    private static final int COOKIE_MAX_AGE = 7 * 24 * 60 * 60;
+
+    @PostMapping("/login")
+    @Override
+    public ResponseEntity<SuccessResponse<StoreLoginResponse>> login(
+            @RequestParam final
+            String authorizationCode,
+            @Valid @RequestBody final StoreSocialLoginRequest storeSocialLoginRequest,
+            HttpServletResponse httpServletResponse
+    ){
+            LoginSuccessResponse successResponse = loginService.login(authorizationCode, storeSocialLoginRequest);
+            ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN, successResponse.refreshToken())
+                    .maxAge(COOKIE_MAX_AGE)
+                    .path("/")
+                    .secure(true)
+                    .sameSite("None")
+                    .httpOnly(true)
+                    .build();
+            httpServletResponse.setHeader("Set-Cookie", cookie.toString());
+
+            StoreLoginResponse response = StoreLoginResponse.of(
+                    successResponse.accessToken(),
+                    successResponse.nickname(),
+                    successResponse.role());
+
+            return ResponseEntity.ok()
+                    .body(SuccessResponse.of(StoreSuccessCode.LOGIN_SUCCESS, response));
+        }
+
+    @PostMapping("/logout")
+    @Override
+    public ResponseEntity<SuccessResponse<Void>> logOut(
+            @CurrentMember final Long storeId
+    ){
+        tokenService.deleteRefreshToken(storeId);
+        return ResponseEntity.ok()
+                .body(SuccessResponse.of(StoreSuccessCode.LOGOUT_SUCCESS, null));
+    }
 }
