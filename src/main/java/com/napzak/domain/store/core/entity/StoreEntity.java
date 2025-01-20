@@ -44,6 +44,9 @@ public class StoreEntity {
 	@Column(name = COLUMN_PHOTO, nullable = true)
 	private String photo;
 
+	@Column(name = COLUMN_COVER, nullable = true)
+	private String cover;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = COLUMN_ROLE, nullable = false, columnDefinition = "varchar(10) default 'STORE'")
 	private Role role;
@@ -63,10 +66,11 @@ public class StoreEntity {
 
 	@Builder
 	private StoreEntity(String nickname, String phoneNumber, Role role, String description, Long socialId,
-		SocialType socialType, String photo) {
+		SocialType socialType, String photo, String cover) {
 		this.nickname = nickname;
 		this.phoneNumber = phoneNumber;
 		this.photo = photo;
+		this.cover = cover;
 		this.role = role;
 		this.description = description;
 		this.socialId = socialId;
@@ -74,7 +78,8 @@ public class StoreEntity {
 	}
 
 	public static StoreEntity create(final String nickname, final String phoneNumber, final Role role,
-		final String description, final Long socialId, final SocialType socialType, final String photo) {
+		final String description, final Long socialId, final SocialType socialType, final String photo,
+		final String cover) {
 		return StoreEntity.builder().
 			nickname(nickname).
 			phoneNumber(phoneNumber).
@@ -82,6 +87,7 @@ public class StoreEntity {
 			description(description).
 			socialId(socialId).
 			socialType(socialType).
-			photo(photo).build();
+			photo(photo).
+			cover(cover).build();
 	}
 }
