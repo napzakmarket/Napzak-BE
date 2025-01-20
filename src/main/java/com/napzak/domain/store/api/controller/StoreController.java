@@ -24,7 +24,6 @@ import com.napzak.domain.store.api.exception.StoreSuccessCode;
 import com.napzak.domain.store.api.service.LoginService;
 import com.napzak.domain.store.api.service.StoreRegistrationService;
 import com.napzak.domain.store.api.service.StoreService;
-import com.napzak.domain.store.core.GenrePreferenceRepository;
 import com.napzak.domain.store.core.vo.GenrePreference;
 import com.napzak.domain.store.core.vo.Store;
 import com.napzak.global.auth.annotation.CurrentMember;
@@ -49,7 +48,6 @@ public class StoreController {
 	private final LoginService loginService;
 	private final TokenService tokenService;
 	private final StoreRegistrationService storeRegistrationService;
-	private final GenrePreferenceRepository genrePreferenceRepository;
 
 	private final StoreGenreFacade storeGenreFacade;
 	private final StoreService storeService;
