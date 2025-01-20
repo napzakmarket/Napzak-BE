@@ -10,19 +10,19 @@ import com.napzak.domain.product.core.entity.ProductEntity;
 
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, Long>, ProductRepositoryCustom {
-    @Modifying
-    @Query("""
-            UPDATE ProductEntity p
-            SET p.interestCount = p.interestCount + 1 
-            WHERE p.id = :productId
-            """)
-    void incrementInterestCount(@Param("productId") Long productId);
+	@Modifying
+	@Query("""
+		UPDATE ProductEntity p
+		SET p.interestCount = p.interestCount + 1 
+		WHERE p.id = :productId
+		""")
+	void incrementInterestCount(@Param("productId") Long productId);
 
-    @Modifying
-    @Query("""
-            UPDATE ProductEntity p
-            SET p.interestCount = p.interestCount - 1
-            WHERE p.id = :productId
-            AND p.interestCount > 0""")
-    void decrementInterestCount(@Param("productId") Long productId);
+	@Modifying
+	@Query("""
+		UPDATE ProductEntity p
+		SET p.interestCount = p.interestCount - 1
+		WHERE p.id = :productId
+		AND p.interestCount > 0""")
+	void decrementInterestCount(@Param("productId") Long productId);
 }

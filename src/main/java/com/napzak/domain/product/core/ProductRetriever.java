@@ -27,47 +27,41 @@ public class ProductRetriever {
 		return Product.fromEntity(productEntity);
 	}
 
-    @Transactional(readOnly = true)
-    public boolean existsById(Long productId) {
-        return productRepository.existsById(productId);
-    }
-
 	@Transactional(readOnly = true)
-	public List<Product> retrieveProducts(
-		SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue, int size,
-		Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType) {
-
-		return productRepository.findProductsBySortOptionAndFilters(
-				sortOption.toOrderSpecifier(), cursorProductId, cursorOptionalValue, size,
-				isOnSale, isUnopened, genreIds, tradeType
-			).stream()
-			.map(Product::fromEntity)
-			.toList();
+	public boolean existsById(Long productId) {
+		return productRepository.existsById(productId);
 	}
 
 	@Transactional(readOnly = true)
-	public List<Product> retrieveStoreProducts(
-		Long storeId, SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue,
+	public List<Product> retrieveProducts(SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue,
 		int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType) {
 
-		return productRepository.findProductsByStoreIdAndSortOptionAndFilters(
-				storeId, sortOption.toOrderSpecifier(), cursorProductId, cursorOptionalValue, size,
-				isOnSale, isUnopened, genreIds, tradeType
-			).stream()
+		return productRepository.findProductsBySortOptionAndFilters(sortOption.toOrderSpecifier(), cursorProductId,
+				cursorOptionalValue, size, isOnSale, isUnopened, genreIds, tradeType)
+			.stream()
 			.map(Product::fromEntity)
 			.toList();
 	}
 
 	@Transactional(readOnly = true)
-	public List<Product> searchProducts(
-		String searchWord, SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue, int size,
-		Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType) {
+	public List<Product> retrieveStoreProducts(Long storeId, SortOption sortOption, Long cursorProductId,
+		Integer cursorOptionalValue, int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds,
+		TradeType tradeType) {
 
-		return productRepository.searchProductsBySearchWordAndSortOptionAndFilters(
-				searchWord, sortOption.toOrderSpecifier(), cursorProductId, cursorOptionalValue, size,
-				isOnSale, isUnopened, genreIds, tradeType
-			).stream()
+		return productRepository.findProductsByStoreIdAndSortOptionAndFilters(storeId, sortOption.toOrderSpecifier(),
+				cursorProductId, cursorOptionalValue, size, isOnSale, isUnopened, genreIds, tradeType)
+			.stream()
 			.map(Product::fromEntity)
 			.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public List<Product> searchProducts(String searchWord, SortOption sortOption, Long cursorProductId,
+		Integer cursorOptionalValue, int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds,
+		TradeType tradeType) {
+
+		return productRepository.searchProductsBySearchWordAndSortOptionAndFilters(searchWord,
+			sortOption.toOrderSpecifier(), cursorProductId, cursorOptionalValue, size, isOnSale, isUnopened, genreIds,
+			tradeType).stream().map(Product::fromEntity).toList();
 	}
 }
