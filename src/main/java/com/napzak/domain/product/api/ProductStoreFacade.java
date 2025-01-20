@@ -1,16 +1,20 @@
 package com.napzak.domain.product.api;
 
-import com.napzak.domain.store.core.GenrePreferenceRetriever;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import com.napzak.domain.store.core.GenrePreferenceRetriever;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class ProductStoreFacade {
 
-    private final GenrePreferenceRetriever genrePreferenceRetriever;
+	private final GenrePreferenceRetriever genrePreferenceRetriever;
 
-    public List<Long> getGenrePreferenceIds(Long storeId) { return genrePreferenceRetriever.getGenrePreferenceIds(storeId);}
+	public List<Long> getGenrePreferenceIds(Long storeId) {
+		return genrePreferenceRetriever.getGenrePreferenceIds(storeId);
+	}
 }

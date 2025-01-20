@@ -41,23 +41,23 @@ public record ProductBuyListResponse(
 	}
 
 	public static ProductBuyListResponse fromWithoutCursor(
-			ProductPagination pagination,
-			Map<Long, Boolean> interestMap,
-			Map<Long, String> genreMap,
-			Long currentStoreId
+		ProductPagination pagination,
+		Map<Long, Boolean> interestMap,
+		Map<Long, String> genreMap,
+		Long currentStoreId
 	) {
 
 		List<ProductBuyDto> productDtos = pagination.getProductList().stream()
-				.map(product -> {
-					String uploadTime = TimeUtils.calculateUploadTime(product.getCreatedAt());
-					boolean isInterested = interestMap.getOrDefault(product.getId(), false);
-					String genreName = genreMap.getOrDefault(product.getGenreId(), "기타"); // genreName 매핑
-					boolean isOwnedByCurrentUser = currentStoreId.equals(product.getStoreId());
+			.map(product -> {
+				String uploadTime = TimeUtils.calculateUploadTime(product.getCreatedAt());
+				boolean isInterested = interestMap.getOrDefault(product.getId(), false);
+				String genreName = genreMap.getOrDefault(product.getGenreId(), "기타"); // genreName 매핑
+				boolean isOwnedByCurrentUser = currentStoreId.equals(product.getStoreId());
 
-					return ProductBuyDto.from(
-							product, product.getFirstPhoto(), uploadTime, isInterested, genreName, isOwnedByCurrentUser
-					);
-				}).toList();
+				return ProductBuyDto.from(
+					product, product.getFirstPhoto(), uploadTime, isInterested, genreName, isOwnedByCurrentUser
+				);
+			}).toList();
 
 		return new ProductBuyListResponse(productDtos, null);
 	}

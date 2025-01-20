@@ -59,8 +59,6 @@ public class ProductRetriever {
 			tradeType, storeId).stream().map(Product::fromEntity).toList();
 	}
 
-	;
-
 	@Transactional(readOnly = true)
 	public List<Product> retrieveStoreProducts(Long storeId, SortOption sortOption, Long cursorProductId,
 		Integer cursorOptionalValue, int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds,

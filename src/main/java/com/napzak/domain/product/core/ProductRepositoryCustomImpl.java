@@ -62,8 +62,6 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 			.fetch();
 	}
 
-	;
-
 	@Override
 	public List<ProductEntity> findProductsByStoreIdAndSortOptionAndFilters(
 		Long storeId, OrderSpecifier<?> orderSpecifier, Long cursorProductId, Integer cursorOptionalValue,

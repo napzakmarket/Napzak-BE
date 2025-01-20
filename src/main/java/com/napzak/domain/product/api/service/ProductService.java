@@ -100,13 +100,13 @@ public class ProductService {
 	}
 
 	public ProductPagination getHomePopularProducts(
-			SortOption sortOption, int size, TradeType tradeType, Long storeId){
+		SortOption sortOption, int size, TradeType tradeType, Long storeId) {
 
 		return retrieveAndPreparePagination(
-				() -> productRetriever.retrieveProductsExcludingCurrentUser(
-						sortOption, size, tradeType, storeId
-				),
-				size
+			() -> productRetriever.retrieveProductsExcludingCurrentUser(
+				sortOption, size, tradeType, storeId
+			),
+			size
 		);
 	}
 
@@ -138,10 +138,10 @@ public class ProductService {
 	public ProductPagination searchRecommendBuyProducts(Long storeId, List<Long> genreIds) {
 
 		return retrieveAndPreparePagination(
-				() -> productRetriever.getRecommendedBuyProducts(
-						storeId, genreIds
-				),
-				2
+			() -> productRetriever.getRecommendedBuyProducts(
+				storeId, genreIds
+			),
+			2
 		);
 	}
 
@@ -149,10 +149,10 @@ public class ProductService {
 	public ProductPagination searchRecommendSellProducts(Long storeId, List<Long> genreIds) {
 
 		return retrieveAndPreparePagination(
-				() -> productRetriever.getRecommendedSellProducts(
-						storeId, genreIds
-				),
-				2
+			() -> productRetriever.getRecommendedSellProducts(
+				storeId, genreIds
+			),
+			2
 		);
 	}
 
