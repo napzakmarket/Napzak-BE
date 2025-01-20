@@ -1,7 +1,6 @@
 package com.napzak.domain.store.core;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -24,7 +23,7 @@ public class GenrePreferenceRetriever {
 		List<GenrePreferenceEntity> genrePreferenceEntityList = genrePreferenceRepository.findByStoreId(storeId);
 		return genrePreferenceEntityList.stream()
 			.map(GenrePreference::fromEntity)
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	public List<Long> getGenrePreferenceIds(Long storeId) {

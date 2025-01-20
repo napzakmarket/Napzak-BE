@@ -1,7 +1,6 @@
 package com.napzak.domain.banner.core;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -22,6 +21,6 @@ public class BannerRetriever {
 
 		return bannerEntityList.stream()
 			.map(Banner::fromEntity)
-			.collect(Collectors.toList());
+			.toList();
 	}
 }
