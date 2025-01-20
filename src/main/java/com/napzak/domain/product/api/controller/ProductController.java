@@ -64,7 +64,7 @@ public class ProductController {
 		@RequestParam(defaultValue = "false") Boolean isUnopened,
 		@RequestParam(required = false) List<Long> genreId,
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(defaultValue = "100") int size,
 		@CurrentMember Long storeId
 	) {
 		// 1. 요청 파라미터 파싱
@@ -106,7 +106,7 @@ public class ProductController {
 		@RequestParam(defaultValue = "false") Boolean isOnSale,
 		@RequestParam(required = false) List<Long> genreId,
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(defaultValue = "100") int size,
 		@CurrentMember Long storeId
 	) {
 		SortOption parsedSortOption = parseSortOption(sortOption);
@@ -144,7 +144,7 @@ public class ProductController {
 		@RequestParam(defaultValue = "false") Boolean isUnopened,
 		@RequestParam(required = false) List<Long> genreId,
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(defaultValue = "100") int size,
 		@CurrentMember Long storeId
 	) {
 		SortOption parsedSortOption = parseSortOption(sortOption);
@@ -183,7 +183,7 @@ public class ProductController {
 		@RequestParam(defaultValue = "false") Boolean isOnSale,
 		@RequestParam(required = false) List<Long> genreId,
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(defaultValue = "100") int size,
 		@CurrentMember Long storeId
 	) {
 		SortOption parsedSortOption = parseSortOption(sortOption);
@@ -214,14 +214,14 @@ public class ProductController {
 		);
 	}
 
-	@GetMapping("sell/store/{storeOwnerId}")
+	@GetMapping("sell/stores/{storeOwnerId}")
 	public ResponseEntity<SuccessResponse<ProductSellListResponse>> getStoreSellProducts(
 		@RequestParam(defaultValue = "RECENT") String sortOption,
 		@RequestParam(defaultValue = "false") Boolean isOnSale,
 		@RequestParam(defaultValue = "false") Boolean isUnopened,
 		@RequestParam(required = false) List<Long> genreId,
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(defaultValue = "100") int size,
 		@PathVariable Long storeOwnerId,
 		@CurrentMember Long currentStoreId
 	) {
@@ -254,13 +254,13 @@ public class ProductController {
 		);
 	}
 
-	@GetMapping("/buy/store/{storeOwnerId}")
+	@GetMapping("/buy/stores/{storeOwnerId}")
 	public ResponseEntity<SuccessResponse<ProductBuyListResponse>> getStoreBuyProducts(
 		@RequestParam(defaultValue = "RECENT") String sortOption,
 		@RequestParam(defaultValue = "false") Boolean isOnSale,
 		@RequestParam(required = false) List<Long> genreId,
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "10") int size,
+		@RequestParam(defaultValue = "100") int size,
 		@PathVariable Long storeOwnerId,
 		@CurrentMember Long currentStoreId
 	) {
