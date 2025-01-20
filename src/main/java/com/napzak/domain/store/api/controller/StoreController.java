@@ -1,6 +1,7 @@
 package com.napzak.domain.store.api.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -46,9 +47,7 @@ public class StoreController {
 	@PostMapping("/login")
 	public ResponseEntity<SuccessResponse<StoreLoginResponse>> login(
 		@RequestParam("authorizationCode") String authorizationCode,
-		@RequestBody StoreSocialLoginRequest storeSocialLoginRequest,
-		HttpServletResponse httpServletResponse
-	) {
+		@RequestBody StoreSocialLoginRequest storeSocialLoginRequest, HttpServletResponse httpServletResponse) {
 		LoginSuccessResponse successResponse = loginService.login(authorizationCode, storeSocialLoginRequest);
 		ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN, successResponse.refreshToken())
 			.maxAge(COOKIE_MAX_AGE)
@@ -59,58 +58,43 @@ public class StoreController {
 			.build();
 		httpServletResponse.setHeader("Set-Cookie", cookie.toString());
 
-		StoreLoginResponse response = StoreLoginResponse.of(
-			successResponse.accessToken(),
-			successResponse.nickname(),
+		StoreLoginResponse response = StoreLoginResponse.of(successResponse.accessToken(), successResponse.nickname(),
 			successResponse.role());
 
-		return ResponseEntity.ok()
-			.body(SuccessResponse.of(StoreSuccessCode.LOGIN_SUCCESS, response));
+		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.LOGIN_SUCCESS, response));
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<SuccessResponse<Void>> logOut(
-		@CurrentMember final Long currentStoreId
-	) {
+	public ResponseEntity<SuccessResponse<Void>> logOut(@CurrentMember final Long currentStoreId) {
 		tokenService.deleteRefreshToken(currentStoreId);
-		return ResponseEntity.ok()
-			.body(SuccessResponse.of(StoreSuccessCode.LOGOUT_SUCCESS, null));
+		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.LOGOUT_SUCCESS, null));
 	}
 
 	@GetMapping("/mypage")
-	public ResponseEntity<SuccessResponse<MyPageResponse>> getMyPageInfo(
-		@CurrentMember final Long currentStoreId
-	) {
+	public ResponseEntity<SuccessResponse<MyPageResponse>> getMyPageInfo(@CurrentMember final Long currentStoreId) {
 		MyPageResponse myPageResponse = storeService.getMyPageInfo(currentStoreId);
-		return ResponseEntity.ok()
-			.body(SuccessResponse.of(StoreSuccessCode.GET_MYPAGE_INFO_SUCCESS, myPageResponse));
+		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_MYPAGE_INFO_SUCCESS, myPageResponse));
 	}
 
 	@GetMapping("/{storeId}")
-	public ResponseEntity<SuccessResponse<StoreInfoResponse>> getStoreInfo(
-		@PathVariable("storeId") Long OnwerId,
-		@CurrentMember final Long currentStoreId
-	) {
+	public ResponseEntity<SuccessResponse<StoreInfoResponse>> getStoreInfo(@PathVariable("storeId") Long OnwerId,
+		@CurrentMember final Long currentStoreId) {
 
 		List<GenrePreference> genreList = storeService.getGenrePreferenceList(OnwerId);
 		Store store = storeService.getStore(OnwerId);
 
+		List<Long> genreIds = genreList.stream().map(GenrePreference::getGenreId).toList();
+
+		Map<Long, String> genreNamesMap = storeGenreFacade.getGenreNames(genreIds);
+
 		List<GenrePreferenceResponse> genrePreferenceResponses = genreList.stream()
-			.map(genrePreference -> GenrePreferenceResponse.of(
-				genrePreference.getGenreId(),
-				storeGenreFacade.getGenreName(genrePreference.getGenreId())
-			))
+			.map(genrePreference -> GenrePreferenceResponse.of(genrePreference.getGenreId(),
+				genreNamesMap.getOrDefault(genrePreference.getGenreId(), "기타")))
 			.toList();
 
-		StoreInfoResponse storeInfoResponse = StoreInfoResponse.of(
-			store.getId(),
-			store.getNickname(),
-			store.getDescription(),
-			store.getPhoto(),
-			genrePreferenceResponses
-		);
+		StoreInfoResponse storeInfoResponse = StoreInfoResponse.of(store.getId(), store.getNickname(),
+			store.getDescription(), store.getPhoto(), genrePreferenceResponses);
 
-		return ResponseEntity.ok()
-			.body(SuccessResponse.of(StoreSuccessCode.GET_STORE_INFO_SUCCESS, storeInfoResponse));
+		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_STORE_INFO_SUCCESS, storeInfoResponse));
 	}
 }
