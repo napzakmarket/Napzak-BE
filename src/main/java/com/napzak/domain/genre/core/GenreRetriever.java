@@ -1,14 +1,14 @@
 package com.napzak.domain.genre.core;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.napzak.domain.genre.core.vo.Genre;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.napzak.domain.genre.api.service.enums.SortOption;
+import com.napzak.domain.genre.core.vo.Genre;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,4 +50,10 @@ public class GenreRetriever {
 			.map(Genre::fromEntity)
 			.toList();
 	}
+
+	@Transactional(readOnly = true)
+	public boolean existById(Long genreId) {
+		return genreRepository.existsById(genreId);
+	}
+
 }
