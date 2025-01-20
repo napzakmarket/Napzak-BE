@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.napzak.domain.store.api.StoreGenreFacade;
@@ -32,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("api/v1/stores")
 @RequiredArgsConstructor
-public class StoreController implements StoreApi {
+public class StoreController {
 
 	private static final String REFRESH_TOKEN = "refreshToken";
 	private static final int COOKIE_MAX_AGE = 7 * 24 * 60 * 60;
@@ -42,10 +44,9 @@ public class StoreController implements StoreApi {
 	private final StoreGenreFacade storeGenreFacade;
 
 	@PostMapping("/login")
-	@Override
 	public ResponseEntity<SuccessResponse<StoreLoginResponse>> login(
-		String authorizationCode,
-		StoreSocialLoginRequest storeSocialLoginRequest,
+		@RequestParam("authorizationCode") String authorizationCode,
+		@RequestBody StoreSocialLoginRequest storeSocialLoginRequest,
 		HttpServletResponse httpServletResponse
 	) {
 		LoginSuccessResponse successResponse = loginService.login(authorizationCode, storeSocialLoginRequest);
@@ -68,33 +69,31 @@ public class StoreController implements StoreApi {
 	}
 
 	@PostMapping("/logout")
-	@Override
 	public ResponseEntity<SuccessResponse<Void>> logOut(
-		@CurrentMember final Long storeId
+		@CurrentMember final Long currentStoreId
 	) {
-		tokenService.deleteRefreshToken(storeId);
+		tokenService.deleteRefreshToken(currentStoreId);
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(StoreSuccessCode.LOGOUT_SUCCESS, null));
 	}
 
 	@GetMapping("/mypage")
-	@Override
 	public ResponseEntity<SuccessResponse<MyPageResponse>> getMyPageInfo(
-		@CurrentMember final Long storeId
+		@CurrentMember final Long currentStoreId
 	) {
-		MyPageResponse myPageResponse = storeService.getMyPageInfo(storeId);
+		MyPageResponse myPageResponse = storeService.getMyPageInfo(currentStoreId);
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(StoreSuccessCode.GET_MYPAGE_INFO_SUCCESS, myPageResponse));
 	}
 
 	@GetMapping("/{storeId}")
-	@Override
 	public ResponseEntity<SuccessResponse<StoreInfoResponse>> getStoreInfo(
-		@PathVariable("storeId") Long storeId
+		@PathVariable("storeId") Long OnwerId,
+		@CurrentMember final Long currentStoreId
 	) {
 
-		List<GenrePreference> genreList = storeService.getGenrePreferenceList(storeId);
-		Store store = storeService.getStore(storeId);
+		List<GenrePreference> genreList = storeService.getGenrePreferenceList(OnwerId);
+		Store store = storeService.getStore(OnwerId);
 
 		List<GenrePreferenceResponse> genrePreferenceResponses = genreList.stream()
 			.map(genrePreference -> GenrePreferenceResponse.of(
