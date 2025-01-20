@@ -2,9 +2,7 @@ FROM gradle:8.8-jdk17 AS builder
 WORKDIR /usr/src
 
 # 로컬에 있는 모든 소스 복사
-COPY docker-compose-*.yml Dockerfile-* /usr/src/
-COPY gradlew gradlew.bat build.gradle settings.gradle /usr/src/
-COPY src /usr/src/src
+COPY . /usr/src
 
 # 빌드 (테스트 스킵)
 RUN chmod +x ./gradlew
