@@ -20,11 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("api/v1/interest")
-public class InterestController {
+public class InterestController implements InterestApi {
 
 	private final InterestService interestService;
 	private final InterestProductFacade interestProductFacade;
 
+	@Override
 	@PostMapping("/{productId}")
 	public ResponseEntity<SuccessResponse<Void>> postInterest(
 		@PathVariable("productId") Long productId,
@@ -38,6 +39,7 @@ public class InterestController {
 		return ResponseEntity.ok().body(SuccessResponse.of(InterestSuccessCode.POST_INTEREST_SUCCESS));
 	}
 
+	@Override
 	@DeleteMapping("/{productId}")
 	public ResponseEntity<SuccessResponse<Void>> deleteInterest(
 		@PathVariable("productId") Long productId,
