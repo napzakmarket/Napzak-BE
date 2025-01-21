@@ -1,7 +1,9 @@
 package com.napzak.domain.store.api.controller;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -13,23 +15,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.napzak.domain.genre.api.dto.response.GenreNameDto;
+import com.napzak.domain.genre.api.dto.response.GenreNameListResponse;
+import com.napzak.domain.genre.api.exception.GenreErrorCode;
 import com.napzak.domain.store.api.StoreGenreFacade;
 import com.napzak.domain.store.api.dto.GenrePreferenceDto;
+import com.napzak.domain.store.api.dto.GenrePreferenceRequest;
 import com.napzak.domain.store.api.dto.LoginSuccessResponse;
 import com.napzak.domain.store.api.dto.MyPageResponse;
 import com.napzak.domain.store.api.dto.StoreInfoResponse;
 import com.napzak.domain.store.api.dto.StoreLoginResponse;
+import com.napzak.domain.store.api.exception.StoreErrorCode;
 import com.napzak.domain.store.api.exception.StoreSuccessCode;
 import com.napzak.domain.store.api.service.LoginService;
+import com.napzak.domain.store.api.service.StoreRegistrationService;
 import com.napzak.domain.store.api.service.StoreService;
 import com.napzak.domain.store.core.vo.GenrePreference;
 import com.napzak.domain.store.core.vo.Store;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.auth.client.dto.StoreSocialLoginRequest;
 import com.napzak.global.auth.jwt.service.TokenService;
+import com.napzak.global.common.exception.NapzakException;
 import com.napzak.global.common.exception.dto.SuccessResponse;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -43,6 +53,7 @@ public class StoreController {
 	private final TokenService tokenService;
 	private final StoreService storeService;
 	private final StoreGenreFacade storeGenreFacade;
+	private final StoreRegistrationService storeRegistrationService;
 
 	@PostMapping("/login")
 	public ResponseEntity<SuccessResponse<StoreLoginResponse>> login(
@@ -106,4 +117,47 @@ public class StoreController {
 
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_STORE_INFO_SUCCESS, storeInfoResponse));
 	}
+
+	@PostMapping("/register")
+	public ResponseEntity<SuccessResponse<GenreNameListResponse>> register(
+		@CurrentMember final Long currentMemberId,
+		@Valid @RequestBody final GenrePreferenceRequest genrePreferenceList
+	) {
+
+		//최대 장르 수 제한을 초과하면 예외
+		int maximum_genre_count = 4;
+		if (genrePreferenceList.genreIds().size() > maximum_genre_count) {
+			throw new NapzakException(StoreErrorCode.INVALID_GENRE_PREFERENCE_COUNT);
+		}
+
+		//입력한 선호 장르 내 중복이 있으면 예외
+		Set<Long> uniqueGenres = new HashSet<>(genrePreferenceList.genreIds());
+		if (uniqueGenres.size() != genrePreferenceList.genreIds().size()) {
+			throw new NapzakException(StoreErrorCode.DUPLICATE_GENRE_PREFERENCES);
+		}
+
+		genrePreferenceList.genreIds().forEach(genreId -> {
+			if (!storeGenreFacade.existsGenre(genreId)) {
+				throw new NapzakException(GenreErrorCode.GENRE_NOT_FOUND);
+			}
+		});
+
+		storeRegistrationService.registerGenrePreference(currentMemberId,
+			genrePreferenceList.genreIds());
+
+		List<GenrePreference> genreList = storeService.getGenrePreferenceList(currentMemberId);
+		List<Long> genreIds = genreList.stream().map(GenrePreference::getGenreId).toList();
+
+		Map<Long, String> genreNamesMap = storeGenreFacade.getGenreNames(genreIds);
+
+		List<GenreNameDto> genrePreferenceResponse = genreList.stream()
+			.map(genrePreference -> GenreNameDto.from(genrePreference.getGenreId(),
+				genreNamesMap.getOrDefault(genrePreference.getGenreId(), "기타")))
+			.toList(); //
+
+		GenreNameListResponse response = GenreNameListResponse.fromWithoutCursor(genrePreferenceResponse);
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(StoreSuccessCode.GENRE_PREPERENCE_REGISTER_SUCCESS, response));
+	}
+
 }

@@ -22,4 +22,8 @@ public class StoreGenreFacade {
 	public Map<Long, String> getGenreNames(List<Long> genreIds) {
 		return genreRetriever.retrieveGenreNamesByIds(genreIds);
 	}
+
+	public boolean existsGenre(Long genreId) {
+		return genreRetriever.existsGenre(genreId);
+	}
 }

@@ -26,6 +26,10 @@ public class GenrePreferenceRetriever {
 			.toList();
 	}
 
+	public boolean existsGenrePreference(Long storeId) {
+		return genrePreferenceRepository.existsByStoreId(storeId);
+	}
+
 	public List<Long> getGenrePreferenceIds(Long storeId) {
 		return genrePreferenceRepository.findGenreIdsByStoreId(storeId);
 	}

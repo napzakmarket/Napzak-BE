@@ -26,6 +26,12 @@ public record GenreNameListResponse(
 		return new GenreNameListResponse(genreNameDtos, nextCursor);
 	}
 
+	public static GenreNameListResponse fromWithoutCursor(
+		List<GenreNameDto> genreList
+	) {
+		return new GenreNameListResponse(genreList, null);
+	}
+
 	public List<GenreNameDto> getGenreList() {
 		return genreList;
 	}
