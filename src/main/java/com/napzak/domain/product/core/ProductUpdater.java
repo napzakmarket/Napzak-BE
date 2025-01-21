@@ -15,4 +15,10 @@ public class ProductUpdater {
 	public void incrementInterestCount(Long productId) {
 		productRepository.incrementInterestCount(productId);
 	}
+
+	@Transactional
+	public void decrementInterestCount(Long productId) {
+
+		productRepository.decrementInterestCount(productId);
+	}
 }
