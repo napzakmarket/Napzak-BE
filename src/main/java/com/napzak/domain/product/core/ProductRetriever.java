@@ -39,6 +39,7 @@ public class ProductRetriever {
 		return Product.fromEntity(productEntity);
 	}
 
+	@Transactional(readOnly = true)
 	public List<Product> retrieveProducts(SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue,
 		int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType) {
 
