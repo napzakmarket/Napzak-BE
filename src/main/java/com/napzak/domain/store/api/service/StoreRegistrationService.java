@@ -1,15 +1,15 @@
 package com.napzak.domain.store.api.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.napzak.domain.store.api.dto.StoreNormalRegisterRequest;
 import com.napzak.domain.store.core.GenrePreferenceRemover;
 import com.napzak.domain.store.core.GenrePreferenceRetriever;
 import com.napzak.domain.store.core.GenrePreferenceSaver;
 import com.napzak.domain.store.core.StoreSaver;
 import com.napzak.domain.store.core.StoreUpdater;
-import com.napzak.domain.store.core.entity.GenrePreferenceEntity;
 import com.napzak.domain.store.core.entity.enums.Role;
 import com.napzak.domain.store.core.entity.enums.SocialType;
 import com.napzak.domain.store.core.vo.Store;
@@ -45,8 +45,7 @@ public class StoreRegistrationService {
 
 	public Store registerStoreWithNormalInfo(
 		Long currentStoreId,
-		List<Long> genrePreferenceList(),
-		//final StoreNormalRegisterRequest storeNormalRegisterRequest
+		List<Long> genrePreferenceList,
 		String nickname,
 		String phoneNumber,
 		String description,
@@ -59,11 +58,8 @@ public class StoreRegistrationService {
 		}
 		Store store = storeUpdater.updateStoreInfo(currentStoreId, nickname, phoneNumber, description, photo);
 
-		if (!storeNormalRegisterRequest.genrePreferenceList().isEmpty()) {
-			storeNormalRegisterRequest.genrePreferenceList().forEach(genreId -> {
-				GenrePreferenceEntity genrePreferenceEntity = GenrePreferenceEntity.create(currentStoreId, genreId);
-				genrePreferenceSaver.save(genrePreferenceEntity);
-			});
+		if (!genrePreferenceList.isEmpty()) {
+			genrePreferenceSaver.save(genrePreferenceList, currentStoreId);
 		}
 
 		return store;
