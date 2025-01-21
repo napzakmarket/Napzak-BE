@@ -17,16 +17,16 @@ public record ProductDetailDto(
 	String productCondition,
 	int standardDeliveryFee,
 	int halfDeliveryFee,
-	boolean is_delivery_included,
+	boolean isDeliveryIncluded,
 	boolean isPriceNegotiable,
 	String tradeStatus,
-	boolean OwnedByCurrentUser
+	boolean isOwnedByCurrentUser
 ) {
 	public static ProductDetailDto from(
 		Product product,
 		String uploadTime,
 		String genreName,
-		boolean OwnedByCurrentUser
+		boolean isOwnedByCurrentUser
 	) {
 		return new ProductDetailDto(
 			product.getId(),
@@ -44,7 +44,7 @@ public record ProductDetailDto(
 			product.getIsDeliveryIncluded(),
 			product.getIsPriceNegotiable(),
 			product.getTradeStatus().toString(),
-			OwnedByCurrentUser
+			isOwnedByCurrentUser
 		);
 
 	}
