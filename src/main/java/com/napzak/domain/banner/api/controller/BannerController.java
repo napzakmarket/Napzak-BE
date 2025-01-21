@@ -18,10 +18,11 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/banners")
-public class BannerController {
+public class BannerController implements BannerApi {
 
 	private final BannerService bannerService;
 
+	@Override
 	@GetMapping("/home")
 	public ResponseEntity<SuccessResponse<BannerResponseList>> getBanners() {
 

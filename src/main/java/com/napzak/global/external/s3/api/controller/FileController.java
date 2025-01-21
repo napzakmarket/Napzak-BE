@@ -18,10 +18,11 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/v1/presigned-url")
 @RequiredArgsConstructor
-public class FileController {
+public class FileController implements FileApi {
 
 	private final FileService fileService;
 
+	@Override
 	@GetMapping("/product")
 	public ResponseEntity<SuccessResponse<ProductPresignedUrlFindAllResponse>> generateAllPresignedUrls(
 		@RequestParam List<String> productImages) {

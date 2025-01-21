@@ -25,9 +25,10 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1")
-public class GenreController {
+public class GenreController implements GenreApi {
 	private final GenreService genreService;
 
+	@Override
 	@GetMapping("/onboarding/genres")
 	public ResponseEntity<SuccessResponse<GenreListResponse>> getGenres(
 		@RequestParam(required = false) String cursor,
@@ -45,6 +46,7 @@ public class GenreController {
 		);
 	}
 
+	@Override
 	@GetMapping("/onboarding/genres/search")
 	public ResponseEntity<SuccessResponse<GenreListResponse>> searchGenres(
 		@RequestParam String searchWord,
@@ -63,6 +65,7 @@ public class GenreController {
 		);
 	}
 
+	@Override
 	@GetMapping("/genres")
 	public ResponseEntity<SuccessResponse<GenreNameListResponse>> getGenreNames(
 		@RequestParam(required = false) String cursor,
@@ -81,6 +84,7 @@ public class GenreController {
 		);
 	}
 
+	@Override
 	@GetMapping("genres/search")
 	public ResponseEntity<SuccessResponse<GenreNameListResponse>> searchGenreNames(
 		@RequestParam String searchWord,

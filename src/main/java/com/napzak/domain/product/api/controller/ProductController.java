@@ -59,7 +59,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/products")
-public class ProductController {
+public class ProductController implements ProductApi {
 	private final ProductService productService;
 
 	private final ProductInterestFacade productInterestFacade;
@@ -67,6 +67,7 @@ public class ProductController {
 	private final ProductReviewFacade productReviewFacade;
 	private final ProductStoreFacade productStoreFacade;
 
+	@Override
 	@GetMapping("/sell")
 	public ResponseEntity<SuccessResponse<ProductSellListResponse>> getSellProducts(
 		@RequestParam(defaultValue = "RECENT") String sortOption,
@@ -110,6 +111,7 @@ public class ProductController {
 		);
 	}
 
+	@Override
 	@GetMapping("/buy")
 	public ResponseEntity<SuccessResponse<ProductBuyListResponse>> getBuyProducts(
 		@RequestParam(defaultValue = "RECENT") String sortOption,
@@ -146,6 +148,7 @@ public class ProductController {
 		);
 	}
 
+	@Override
 	@GetMapping("/sell/search")
 	public ResponseEntity<SuccessResponse<ProductSellListResponse>> searchSellProducts(
 		@RequestParam String searchWord,
@@ -186,6 +189,7 @@ public class ProductController {
 		);
 	}
 
+	@Override
 	@GetMapping("/buy/search")
 	public ResponseEntity<SuccessResponse<ProductBuyListResponse>> searchBuyProducts(
 		@RequestParam String searchWord,
@@ -224,6 +228,7 @@ public class ProductController {
 		);
 	}
 
+	@Override
 	@GetMapping("sell/stores/{storeOwnerId}")
 	public ResponseEntity<SuccessResponse<ProductSellListResponse>> getStoreSellProducts(
 		@RequestParam(defaultValue = "RECENT") String sortOption,
@@ -264,6 +269,7 @@ public class ProductController {
 		);
 	}
 
+	@Override
 	@GetMapping("/buy/stores/{storeOwnerId}")
 	public ResponseEntity<SuccessResponse<ProductBuyListResponse>> getStoreBuyProducts(
 		@RequestParam(defaultValue = "RECENT") String sortOption,
@@ -302,6 +308,7 @@ public class ProductController {
 		);
 	}
 
+	@Override
 	@PostMapping("/sell")
 	public ResponseEntity<SuccessResponse<ProductSellResponse>> createSellProduct(
 		@Valid @RequestBody ProductSellCreateRequest productSellCreateRequest,
@@ -339,6 +346,7 @@ public class ProductController {
 		);
 	}
 
+	@Override
 	@PostMapping("/buy")
 	public ResponseEntity<SuccessResponse<ProductBuyResponse>> createBuyProduct(
 		@Valid @RequestBody ProductBuyCreateRequest productBuyCreateRequest,
@@ -373,6 +381,7 @@ public class ProductController {
 		);
 	}
 
+	@Override
 	@GetMapping("/{productId}")
 	public ResponseEntity<SuccessResponse<ProductDetailResponse>> getDetailProductInfo(
 		@PathVariable("productId") Long productId,
@@ -423,6 +432,7 @@ public class ProductController {
 		);
 	}
 
+	@Override
 	@GetMapping("/home/recommend")
 	public ResponseEntity<SuccessResponse<ProductListResponse>> getRecommendProducts(
 		@CurrentMember Long currentStoreId
@@ -470,6 +480,7 @@ public class ProductController {
 
 	}
 
+	@Override
 	@GetMapping("/home/sell")
 	public ResponseEntity<SuccessResponse<ProductSellListResponse>> getTopSellProducts(
 		@RequestParam(defaultValue = "4") int size,
@@ -494,6 +505,7 @@ public class ProductController {
 			.body(SuccessResponse.of(ProductSuccessCode.TOP_SELL_PRODUCT_GET_SUCCESS, response));
 	}
 
+	@Override
 	@GetMapping("/home/buy")
 	public ResponseEntity<SuccessResponse<ProductBuyListResponse>> getTopBuyProducts(
 		@RequestParam(defaultValue = "4") int size,
@@ -518,6 +530,7 @@ public class ProductController {
 			.body(SuccessResponse.of(ProductSuccessCode.TOP_BUY_PRODUCT_GET_SUCCESS, response));
 	}
 
+	@Override
 	@GetMapping("/chat/{productId}")
 	public ResponseEntity<SuccessResponse<ProductChatResponse>> getProductChatInfo(
 		@PathVariable Long productId,
