@@ -27,6 +27,7 @@ import com.napzak.domain.product.api.dto.request.cursor.RecentCursor;
 import com.napzak.domain.product.api.dto.response.ProductBuyDto;
 import com.napzak.domain.product.api.dto.response.ProductBuyListResponse;
 import com.napzak.domain.product.api.dto.response.ProductBuyResponse;
+import com.napzak.domain.product.api.dto.response.ProductChatResponse;
 import com.napzak.domain.product.api.dto.response.ProductListResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellDto;
 import com.napzak.domain.product.api.dto.response.ProductSellListResponse;
@@ -387,7 +388,7 @@ public class ProductController {
 				boolean isOwnedByCurrentUser = currentStoreId.equals(product.getStoreId());
 
 				return ProductBuyDto.from(
-					product, product.getFirstPhoto(), uploadTime, isInterested, genreName, isOwnedByCurrentUser
+					product, uploadTime, isInterested, genreName, isOwnedByCurrentUser
 				);
 			}).toList();
 
@@ -399,7 +400,7 @@ public class ProductController {
 				boolean isOwnedByCurrentUser = currentStoreId.equals(product.getStoreId());
 
 				return ProductSellDto.from(
-					product, product.getFirstPhoto(), uploadTime, isInterested, genreName, isOwnedByCurrentUser
+					product, uploadTime, isInterested, genreName, isOwnedByCurrentUser
 				);
 			}).toList();
 
@@ -456,6 +457,19 @@ public class ProductController {
 
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(ProductSuccessCode.TOP_BUY_PRODUCT_GET_SUCCESS, response));
+	}
+
+	@GetMapping("/chat/{productId}")
+	public ResponseEntity<SuccessResponse<ProductChatResponse>> getProductChatInfo(
+		@PathVariable Long productId,
+		@CurrentMember Long storeId
+	) {
+		ProductWithFirstPhoto product = productService.getProductChatInfo(productId);
+		String nickname = productStoreFacade.getStoreNickname(storeId);
+		ProductChatResponse productChatResponse = ProductChatResponse.from(product, nickname);
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productChatResponse));
 	}
 
 	private Map<Long, Boolean> fetchInterestMap(ProductPagination pagination, Long storeId) {
