@@ -8,7 +8,7 @@ public record StoreInfoResponse(
 	String storeDescription,
 	String storePhoto,
 	String storeCover,
-	List<GenrePreferenceResponse> genrePreferences
+	List<GenrePreferenceDto> genrePreferences
 ) {
 	public static StoreInfoResponse of(
 		final Long storeId,
@@ -16,9 +16,9 @@ public record StoreInfoResponse(
 		final String storeDescription,
 		final String storePhoto,
 		final String storeCover,
-		final List<GenrePreferenceResponse> genrePreferenceList
+		final List<GenrePreferenceDto> genrePreferenceDto
 	) {
 		return new StoreInfoResponse(storeId, storeNickName, storeDescription, storePhoto, storeCover,
-			genrePreferenceList);
+			genrePreferenceDto);
 	}
 }
