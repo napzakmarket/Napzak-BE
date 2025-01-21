@@ -25,15 +25,13 @@ import com.napzak.domain.product.api.dto.request.cursor.HighPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.LowPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.PopularCursor;
 import com.napzak.domain.product.api.dto.request.cursor.RecentCursor;
-import com.napzak.domain.product.api.dto.response.ProductBuyDto;
 import com.napzak.domain.product.api.dto.response.ProductBuyListResponse;
 import com.napzak.domain.product.api.dto.response.ProductBuyResponse;
 import com.napzak.domain.product.api.dto.response.ProductChatResponse;
 import com.napzak.domain.product.api.dto.response.ProductDetailDto;
 import com.napzak.domain.product.api.dto.response.ProductDetailResponse;
-import com.napzak.domain.product.api.dto.response.ProductListResponse;
 import com.napzak.domain.product.api.dto.response.ProductPhotoDto;
-import com.napzak.domain.product.api.dto.response.ProductSellDto;
+import com.napzak.domain.product.api.dto.response.ProductRecommendListResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellListResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellResponse;
 import com.napzak.domain.product.api.exception.ProductSuccessCode;
@@ -434,50 +432,24 @@ public class ProductController implements ProductApi {
 
 	@Override
 	@GetMapping("/home/recommend")
-	public ResponseEntity<SuccessResponse<ProductListResponse>> getRecommendProducts(
+	public ResponseEntity<SuccessResponse<ProductRecommendListResponse>> getRecommendProducts(
 		@CurrentMember Long currentStoreId
 	) {
-
 		List<Long> genreIds = productStoreFacade.getGenrePreferenceIds(currentStoreId);
 
-		ProductPagination buyPagination = productService.searchRecommendBuyProducts(currentStoreId, genreIds);
-		ProductPagination sellPagination = productService.searchRecommendSellProducts(currentStoreId, genreIds);
+		ProductPagination pagination = productService.getHomeRecommendProducts(currentStoreId, genreIds);
 
-		Map<Long, Boolean> interestMap = fetchInterestMap(buyPagination, currentStoreId);
-		interestMap.putAll(fetchInterestMap(buyPagination, currentStoreId));
+		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, currentStoreId);
+		interestMap.putAll(fetchInterestMap(pagination, currentStoreId));
 
-		Map<Long, String> genreMap = fetchGenreMap(buyPagination);
-		genreMap.putAll(fetchGenreMap(sellPagination));
+		Map<Long, String> genreMap = fetchGenreMap(pagination);
+		genreMap.putAll(fetchGenreMap(pagination));
 
-		List<ProductBuyDto> productBuyDtos = buyPagination.getProductList().stream()
-			.map(product -> {
-				String uploadTime = TimeUtils.calculateUploadTime(product.getCreatedAt());
-				boolean isInterested = interestMap.getOrDefault(product.getId(), false);
-				String genreName = genreMap.getOrDefault(product.getGenreId(), "기타"); // genreName 매핑
-				boolean isOwnedByCurrentUser = currentStoreId.equals(product.getStoreId());
-
-				return ProductBuyDto.from(
-					product, uploadTime, isInterested, genreName, isOwnedByCurrentUser
-				);
-			}).toList();
-
-		List<ProductSellDto> productSellDtos = sellPagination.getProductList().stream()
-			.map(product -> {
-				String uploadTime = TimeUtils.calculateUploadTime(product.getCreatedAt());
-				boolean isInterested = interestMap.getOrDefault(product.getId(), false);
-				String genreName = genreMap.getOrDefault(product.getGenreId(), "기타"); // genreName 매핑
-				boolean isOwnedByCurrentUser = currentStoreId.equals(product.getStoreId());
-
-				return ProductSellDto.from(
-					product, uploadTime, isInterested, genreName, isOwnedByCurrentUser
-				);
-			}).toList();
-
-		ProductListResponse productListResponse = new ProductListResponse(productBuyDtos, productSellDtos);
+		ProductRecommendListResponse productListResponse = ProductRecommendListResponse.from(pagination, interestMap,
+			genreMap, currentStoreId);
 
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(ProductSuccessCode.RECOMMEND_PRODUCT_GET_SUCCESS, productListResponse));
-
 	}
 
 	@Override

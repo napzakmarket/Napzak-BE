@@ -116,7 +116,7 @@ public interface ProductApi {
 
 	@Operation(summary = "추천 상품 조회", description = "사용자의 관심 기반 추천 상품 조회")
 	@GetMapping("/home/recommend")
-	ResponseEntity<SuccessResponse<ProductListResponse>> getRecommendProducts(
+	ResponseEntity<SuccessResponse<ProductRecommendListResponse>> getRecommendProducts(
 		@CurrentMember Long currentStoreId
 	);
 
