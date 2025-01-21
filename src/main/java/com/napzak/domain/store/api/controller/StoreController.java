@@ -153,7 +153,7 @@ public class StoreController {
 		List<GenreNameDto> genrePreferenceResponse = genreList.stream()
 			.map(genrePreference -> GenreNameDto.from(genrePreference.getGenreId(),
 				genreNamesMap.getOrDefault(genrePreference.getGenreId(), "기타")))
-			.toList(); //
+			.toList();
 
 		GenreNameListResponse response = GenreNameListResponse.fromWithoutCursor(genrePreferenceResponse);
 		return ResponseEntity.ok()
