@@ -163,27 +163,10 @@ public class ProductService {
 		);
 	}
 
-	public ProductPagination searchRecommendBuyProducts(Long storeId, List<Long> genreIds) {
-
-		int size = 2;
-
+	public ProductPagination getHomeRecommendProducts(Long storeId, List<Long> genreIds) {
 		return retrieveAndPreparePagination(
-			() -> productRetriever.getRecommendedBuyProducts(
-				storeId, genreIds
-			),
-			size
-		);
-	}
-
-	public ProductPagination searchRecommendSellProducts(Long storeId, List<Long> genreIds) {
-
-		int size = 2;
-
-		return retrieveAndPreparePagination(
-			() -> productRetriever.getRecommendedSellProducts(
-				storeId, genreIds
-			),
-			size
+			() -> productRetriever.retrieveRecommendedProducts(storeId, genreIds),
+			4
 		);
 	}
 
