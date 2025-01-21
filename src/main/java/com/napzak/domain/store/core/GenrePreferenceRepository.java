@@ -18,5 +18,3 @@ public interface GenrePreferenceRepository extends JpaRepository<GenrePreference
 	@Query("SELECT gp.genreId FROM GenrePreferenceEntity gp WHERE gp.storeId = :storeId")
 	List<Long> findGenreIdsByStoreId(@Param("storeId") Long storeId);
 }
-
-
