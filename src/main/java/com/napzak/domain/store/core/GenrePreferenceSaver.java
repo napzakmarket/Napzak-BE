@@ -1,11 +1,10 @@
 package com.napzak.domain.store.core;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
-import com.napzak.domain.genre.api.exception.GenreErrorCode;
-import com.napzak.domain.store.api.StoreGenreFacade;
 import com.napzak.domain.store.core.entity.GenrePreferenceEntity;
-import com.napzak.global.common.exception.NapzakException;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,14 +15,16 @@ import lombok.RequiredArgsConstructor;
 public class GenrePreferenceSaver {
 
 	private final GenrePreferenceRepository genrePreferenceRepository;
-	private final StoreGenreFacade storeGenreFacade;
 
 	public void save(
-		final GenrePreferenceEntity genrePreferenceEntity
+		final List<Long> genrePreferenceList,
+		final Long currentStoreId
 	) {
-		if (!storeGenreFacade.existById(genrePreferenceEntity.getGenreId())) {
-			throw new NapzakException(GenreErrorCode.GENRE_NOT_FOUND);
-		}
-		genrePreferenceRepository.save(genrePreferenceEntity);
+		genrePreferenceList.forEach(genreId -> {
+
+			GenrePreferenceEntity genrePreferenceEntity = GenrePreferenceEntity.create(currentStoreId, genreId);
+			genrePreferenceRepository.save(genrePreferenceEntity);
+		});
+
 	}
 }

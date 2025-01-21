@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.napzak.domain.genre.api.exception.GenreErrorCode;
 import com.napzak.domain.store.api.StoreGenreFacade;
 import com.napzak.domain.store.api.dto.GenrePreferenceDto;
 import com.napzak.domain.store.api.dto.LoginSuccessResponse;
@@ -104,7 +105,20 @@ public class StoreController {
 			throw new NapzakException(StoreErrorCode.DUPLICATE_GENRE_PREFERENCES);
 		}
 
-		Store store = storeRegistrationService.registerStoreWithNormalInfo(currentMemberId, registerRequest);
+		registerRequest.genrePreferenceList().forEach(genreId -> {
+			if (!storeGenreFacade.existById(genreId)) {
+				throw new NapzakException(GenreErrorCode.GENRE_NOT_FOUND);
+			}
+		});
+
+		String nickname = registerRequest.nickname();
+		String phoneNumber = registerRequest.phoneNumber();
+		String description = registerRequest.description();
+		String photo = registerRequest.photo();
+		List<Long> genrePreferenceList = registerRequest.genrePreferenceList();
+
+		Store store = storeRegistrationService.registerStoreWithNormalInfo(currentMemberId, genrePreferenceList,
+			phoneNumber, description, photo, nickname);
 
 		// #74에서 미리 구현해둔 코드. 머지 이후 메서드로 리팩토링 예정입니다.
 		List<GenrePreference> genreList = storeService.getGenrePreferenceList(currentMemberId);
@@ -112,14 +126,13 @@ public class StoreController {
 
 		Map<Long, String> genreNamesMap = storeGenreFacade.getGenreNames(genreIds);
 
-		List<GenrePreferenceDto> genrePreferenceRespons = genreList.stream()
+		List<GenrePreferenceDto> genrePreferenceResponse = genreList.stream()
 			.map(genrePreference -> GenrePreferenceDto.of(genrePreference.getGenreId(),
 				genreNamesMap.getOrDefault(genrePreference.getGenreId(), "기타")))
 			.toList(); //
 
 		StoreNormalRegisterResponse response = StoreNormalRegisterResponse.from(currentMemberId, store.getNickname(),
-			genrePreferenceRespons);
-		return ResponseEntity.ok()
-			.body(SuccessResponse.of(StoreSuccessCode.NORMAL_INFO_REGISTER_SUCCESS, response));
+			genrePreferenceResponse);
+		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.NORMAL_INFO_REGISTER_SUCCESS, response));
 	}
 }
