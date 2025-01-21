@@ -67,7 +67,7 @@ public class ProductRetriever {
 			.map(Product::fromEntity)
 			.toList();
 	}
-
+	
 	public List<Product> searchProducts(String searchWord, SortOption sortOption, Long cursorProductId,
 		Integer cursorOptionalValue, int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds,
 		TradeType tradeType) {

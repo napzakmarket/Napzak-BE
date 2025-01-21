@@ -25,13 +25,19 @@ public class StoreService {
 	private final GenrePreferenceRetriever genrePreferenceRetriever;
 
 	@Transactional(readOnly = true)
+	public Store findStoreByStoreId(Long StoreId) {
+		return storeRetriever.retrieveStoreByStoreId(StoreId);
+
+	}
+
+	@Transactional(readOnly = true)
 	public boolean checkStoreExistsBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
 		return storeRetriever.checkStoreExistsBySocialIdAndSocialType(socialId, socialType);
 	}
 
 	@Transactional(readOnly = true)
 	public Store findStoreBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
-		return storeRetriever.findBySocialTypeAndSocialId(socialId, socialType);
+		return storeRetriever.retrieveBySocialTypeAndSocialId(socialId, socialType);
 	}
 
 	@Transactional(readOnly = true)

@@ -142,6 +142,16 @@ public class ProductService {
 		return productPhotoSaver.saveAll(productId, photoData);
 	}
 
+	public Product getProduct(Long productId) {
+
+		return productRetriever.findById(productId);
+	}
+
+	public List<ProductPhoto> getProductPhotos(Long productId) {
+
+		return productPhotoRetriever.getProductPhotosByProductId(productId);
+	}
+
 	public ProductPagination getHomePopularProducts(
 		SortOption sortOption, int size, TradeType tradeType, Long storeId) {
 
@@ -182,6 +192,7 @@ public class ProductService {
 		String firstPhoto = productPhotoRetriever.getFirstProductPhoto(productId);
 
 		return ProductWithFirstPhoto.from(product, firstPhoto);
+
 	}
 
 	private ProductPagination retrieveAndPreparePagination(

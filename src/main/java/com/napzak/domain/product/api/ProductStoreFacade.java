@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.napzak.domain.store.api.dto.StoreStatusDto;
 import com.napzak.domain.store.core.GenrePreferenceRetriever;
 import com.napzak.domain.store.core.StoreRetriever;
 
@@ -16,6 +17,11 @@ public class ProductStoreFacade {
 	private final StoreRetriever storeRetriever;
 	private final GenrePreferenceRetriever genrePreferenceRetriever;
 
+	public StoreStatusDto findStoreStatusDtoByStoreId(Long storeId) {
+
+		return storeRetriever.getStoreStatusDtoById(storeId);
+	}
+
 	public List<Long> getGenrePreferenceIds(Long storeId) {
 		return genrePreferenceRetriever.getGenrePreferenceIds(storeId);
 	}
@@ -24,3 +30,4 @@ public class ProductStoreFacade {
 		return storeRetriever.findNicknameByStoreId(storeId);
 	}
 }
+
