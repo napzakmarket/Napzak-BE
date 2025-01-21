@@ -30,7 +30,7 @@ public record ProductBuyListResponse(
 				boolean isOwnedByCurrentUser = currentStoreId.equals(product.getStoreId());
 
 				return ProductBuyDto.from(
-					product, product.getFirstPhoto(), uploadTime, isInterested, genreName, isOwnedByCurrentUser
+					product, uploadTime, isInterested, genreName, isOwnedByCurrentUser
 				);
 			}).toList();
 
@@ -55,7 +55,7 @@ public record ProductBuyListResponse(
 				boolean isOwnedByCurrentUser = currentStoreId.equals(product.getStoreId());
 
 				return ProductBuyDto.from(
-					product, product.getFirstPhoto(), uploadTime, isInterested, genreName, isOwnedByCurrentUser
+					product, uploadTime, isInterested, genreName, isOwnedByCurrentUser
 				);
 			}).toList();
 
