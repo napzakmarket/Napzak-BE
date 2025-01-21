@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.napzak.domain.store.api.StoreGenreFacade;
-import com.napzak.domain.store.api.dto.GenrePreferenceResponse;
+import com.napzak.domain.store.api.dto.GenrePreferenceDto;
 import com.napzak.domain.store.api.dto.LoginSuccessResponse;
 import com.napzak.domain.store.api.dto.StoreLoginResponse;
 import com.napzak.domain.store.api.dto.StoreNormalRegisterRequest;
@@ -112,13 +112,13 @@ public class StoreController {
 
 		Map<Long, String> genreNamesMap = storeGenreFacade.getGenreNames(genreIds);
 
-		List<GenrePreferenceResponse> genrePreferenceResponses = genreList.stream()
-			.map(genrePreference -> GenrePreferenceResponse.of(genrePreference.getGenreId(),
+		List<GenrePreferenceDto> genrePreferenceRespons = genreList.stream()
+			.map(genrePreference -> GenrePreferenceDto.of(genrePreference.getGenreId(),
 				genreNamesMap.getOrDefault(genrePreference.getGenreId(), "기타")))
 			.toList(); //
 
 		StoreNormalRegisterResponse response = StoreNormalRegisterResponse.from(currentMemberId, store.getNickname(),
-			genrePreferenceResponses);
+			genrePreferenceRespons);
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(StoreSuccessCode.NORMAL_INFO_REGISTER_SUCCESS, response));
 	}

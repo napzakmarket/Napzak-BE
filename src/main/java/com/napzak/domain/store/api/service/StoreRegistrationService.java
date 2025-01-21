@@ -45,19 +45,18 @@ public class StoreRegistrationService {
 
 	public Store registerStoreWithNormalInfo(
 		Long currentStoreId,
-		final StoreNormalRegisterRequest storeNormalRegisterRequest
+		List<Long> genrePreferenceList(),
+		//final StoreNormalRegisterRequest storeNormalRegisterRequest
+		String nickname,
+		String phoneNumber,
+		String description,
+		String photo
 	) {
 
 		if (genrePreferenceRetriever.existsGenrePreference(currentStoreId)) {
 			genrePreferenceRemover.removeGenrePreference(currentStoreId);
 
 		}
-
-		String nickname = storeNormalRegisterRequest.nickname();
-		String phoneNumber = storeNormalRegisterRequest.phoneNumber();
-		String description = storeNormalRegisterRequest.description();
-		String photo = storeNormalRegisterRequest.photo();
-
 		Store store = storeUpdater.updateStoreInfo(currentStoreId, nickname, phoneNumber, description, photo);
 
 		if (!storeNormalRegisterRequest.genrePreferenceList().isEmpty()) {
