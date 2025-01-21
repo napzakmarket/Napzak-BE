@@ -435,7 +435,7 @@ public class ProductController {
 	}
 
 	@GetMapping("/home/buy")
-	public ResponseEntity<SuccessResponse<ProductSellListResponse>> getTopBuyProducts(
+	public ResponseEntity<SuccessResponse<ProductBuyListResponse>> getTopBuyProducts(
 		@RequestParam(defaultValue = "4") int size,
 		@CurrentMember Long currentStoreId
 	) {
@@ -450,7 +450,7 @@ public class ProductController {
 		Map<Long, String> genreMap = fetchGenreMap(pagination);
 
 		// 4. 응답 생성
-		ProductSellListResponse response = ProductSellListResponse.from(
+		ProductBuyListResponse response = ProductBuyListResponse.from(
 			parsedSortOption, pagination, interestMap, genreMap, currentStoreId
 		);
 
