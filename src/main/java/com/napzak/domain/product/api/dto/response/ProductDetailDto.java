@@ -1,5 +1,6 @@
 package com.napzak.domain.product.api.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.napzak.domain.product.core.vo.Product;
 
 public record ProductDetailDto(
@@ -12,6 +13,7 @@ public record ProductDetailDto(
 	int viewCount,
 	int interestCount,
 	String description,
+	@JsonInclude(JsonInclude.Include.NON_NULL)
 	String productCondition,
 	int standardDeliveryFee,
 	int halfDeliveryFee,
@@ -36,7 +38,7 @@ public record ProductDetailDto(
 			product.getViewCount(),
 			product.getInterestCount(),
 			product.getDescription(),
-			product.getProductCondition().toString(),
+			product.getProductCondition() != null ? product.getProductCondition().toString() : null,
 			product.getStandardDeliveryFee(),
 			product.getHalfDeliveryFee(),
 			product.getIsDeliveryIncluded(),
