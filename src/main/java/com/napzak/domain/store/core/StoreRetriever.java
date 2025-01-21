@@ -39,4 +39,9 @@ public class StoreRetriever {
     public boolean checkStoreExistsBySocialIdAndSocialType(final Long socialId, final SocialType socialType){
         return storeRepository.findBySocialTypeAndSocialId(socialId, socialType).isPresent();
     }
+
+    @Transactional(readOnly = true)
+    public String findNicknameByStoreId(Long storeId){
+        return storeRepository.findNicknameById(storeId);
+    }
 }

@@ -31,6 +31,11 @@ public class ProductPhotoRetriever {
 	}
 
 	@Transactional(readOnly = true)
+	public String getFirstProductPhoto(Long productId) {
+		return productPhotoRepository.findFirstPhotoByProductId(productId);
+	}
+
+	@Transactional(readOnly = true)
 	public List<ProductPhoto> getProductPhotosByProductId(Long productId) {
 		List <ProductPhotoEntity> productPhotoEntityList = productPhotoRepository.findAllByProductEntityOrderBySequenceAsc(productId);
 		return productPhotoEntityList.stream().map(ProductPhoto::fromEntity).toList();
