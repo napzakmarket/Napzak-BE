@@ -20,24 +20,31 @@ public class TokenService {
 
 	@Transactional
 	public void saveRefreshToken(final Long memberId, final String refreshToken) {
+		log.info("Saving refresh token for memberId: {}", memberId);
 		tokenRepository.save(Token.of(memberId, refreshToken));
+		log.info("Successfully saved refresh token for memberId: {}", memberId);
 	}
 
 	public Long findIdByRefreshToken(final String refreshToken) {
-		Token token = tokenRepository.findByRefreshToken(refreshToken)
-			.orElseThrow(() -> new NapzakException(TokenErrorCode.REFRESH_TOKEN_NOT_FOUND) {
-			});
-
-		return token.getId();
-	}
+    log.info("Searching for memberId using refresh token: {}", refreshToken);
+	Token token = tokenRepository.findByRefreshToken(refreshToken)
+		.orElseThrow(() -> {
+			log.error("Refresh token not found in Redis: {}", refreshToken);
+			return new NapzakException(TokenErrorCode.REFRESH_TOKEN_NOT_FOUND);
+		});
+    log.info("Found memberId: {} for refresh token", token.getId());
+    return token.getId();
+}
 
 	@Transactional
 	public void deleteRefreshToken(final Long memberId) {
+		log.info("Deleting refresh token for memberId: {}", memberId);
 		Token token = tokenRepository.findById(memberId)
-			.orElseThrow(() -> new NapzakException(TokenErrorCode.REFRESH_TOKEN_NOT_FOUND) {
+			.orElseThrow(() -> {
+				log.error("No refresh token found in Redis for memberId: {}", memberId);
+				return new NapzakException(TokenErrorCode.REFRESH_TOKEN_NOT_FOUND);
 			});
-
 		tokenRepository.delete(token);
-		log.info("Deleted refresh token: {}", token);
+		log.info("Successfully deleted refresh token for memberId: {}", memberId);
 	}
 }

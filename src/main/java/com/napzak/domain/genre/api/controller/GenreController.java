@@ -63,11 +63,29 @@ public class GenreController {
 		);
 	}
 
+	@GetMapping("/genres")
+	public ResponseEntity<SuccessResponse<GenreNameListResponse>> getGenreNames(
+		@RequestParam(required = false) String cursor,
+		@RequestParam(defaultValue = "43") int size,
+		@CurrentMember Long storeId
+	) {
+		SortOption sortOption = SortOption.OLDEST;
+
+		GenrePagination pagination = genreService.getGenres(
+			sortOption, parseCursorValues(cursor, sortOption), size);
+
+		GenreNameListResponse response = GenreNameListResponse.from(sortOption, pagination);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(GenreSuccessCode.GENRE_LIST_RETRIEVE_SUCCESS, response)
+		);
+	}
+
 	@GetMapping("genres/search")
 	public ResponseEntity<SuccessResponse<GenreNameListResponse>> searchGenreNames(
 		@RequestParam String searchWord,
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "39") int size,
+		@RequestParam(defaultValue = "43") int size,
 		@CurrentMember Long storeId
 	) {
 		SortOption sortOption = SortOption.OLDEST;

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum StoreErrorCode implements BaseErrorCode {
+
 	/*
 	404 Not Found
 	 */

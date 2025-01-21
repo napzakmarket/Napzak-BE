@@ -7,6 +7,8 @@ import java.util.Set;
 
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +19,8 @@ import com.napzak.domain.genre.api.exception.GenreErrorCode;
 import com.napzak.domain.store.api.StoreGenreFacade;
 import com.napzak.domain.store.api.dto.GenrePreferenceDto;
 import com.napzak.domain.store.api.dto.LoginSuccessResponse;
+import com.napzak.domain.store.api.dto.MyPageResponse;
+import com.napzak.domain.store.api.dto.StoreInfoResponse;
 import com.napzak.domain.store.api.dto.StoreLoginResponse;
 import com.napzak.domain.store.api.dto.StoreNormalRegisterRequest;
 import com.napzak.domain.store.api.dto.StoreNormalRegisterResponse;
@@ -81,11 +85,43 @@ public class StoreController {
 
 	@PostMapping("/logout")
 	public ResponseEntity<SuccessResponse<Void>> logOut(
-		@CurrentMember final Long storeId
+		@CurrentMember final Long currentStoreId
 	) {
-		tokenService.deleteRefreshToken(storeId);
-		return ResponseEntity.ok()
-			.body(SuccessResponse.of(StoreSuccessCode.LOGOUT_SUCCESS, null));
+		tokenService.deleteRefreshToken(currentStoreId);
+		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.LOGOUT_SUCCESS, null));
+	}
+
+	@GetMapping("/mypage")
+	public ResponseEntity<SuccessResponse<MyPageResponse>> getMyPageInfo(
+		@CurrentMember final Long currentStoreId
+	) {
+		Store store = storeService.getStore(currentStoreId);
+		MyPageResponse myPageResponse = MyPageResponse.of(store.getId(), store.getNickname(), store.getPhoto());
+		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_MYPAGE_INFO_SUCCESS, myPageResponse));
+	}
+
+	@GetMapping("/{storeId}")
+	public ResponseEntity<SuccessResponse<StoreInfoResponse>> getStoreInfo(
+		@PathVariable("storeId") Long OnwerId,
+		@CurrentMember final Long currentStoreId
+	) {
+
+		List<GenrePreference> genreList = storeService.getGenrePreferenceList(OnwerId);
+		Store store = storeService.getStore(OnwerId);
+
+		List<Long> genreIds = genreList.stream().map(GenrePreference::getGenreId).toList();
+
+		Map<Long, String> genreNamesMap = storeGenreFacade.getGenreNames(genreIds);
+
+		List<GenrePreferenceDto> genrePreferenceDto = genreList.stream()
+			.map(genrePreference -> GenrePreferenceDto.of(genrePreference.getGenreId(),
+				genreNamesMap.getOrDefault(genrePreference.getGenreId(), "기타")))
+			.toList();
+
+		StoreInfoResponse storeInfoResponse = StoreInfoResponse.of(store.getId(), store.getNickname(),
+			store.getDescription(), store.getPhoto(), store.getCover(), genrePreferenceDto);
+
+		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_STORE_INFO_SUCCESS, storeInfoResponse));
 	}
 
 	@PostMapping("/register")
@@ -131,8 +167,11 @@ public class StoreController {
 				genreNamesMap.getOrDefault(genrePreference.getGenreId(), "기타")))
 			.toList(); //
 
-		StoreNormalRegisterResponse response = StoreNormalRegisterResponse.from(currentMemberId, store.getNickname(),
+		StoreNormalRegisterResponse response = StoreNormalRegisterResponse.from(currentMemberId,
+			store.getNickname(),
 			genrePreferenceResponse);
-		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.NORMAL_INFO_REGISTER_SUCCESS, response));
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(StoreSuccessCode.NORMAL_INFO_REGISTER_SUCCESS, response));
 	}
 }
+
