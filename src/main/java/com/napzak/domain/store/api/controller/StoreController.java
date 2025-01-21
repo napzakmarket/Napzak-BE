@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.napzak.domain.store.api.StoreGenreFacade;
-import com.napzak.domain.store.api.dto.GenrePreferenceResponse;
+import com.napzak.domain.store.api.dto.GenrePreferenceDto;
 import com.napzak.domain.store.api.dto.LoginSuccessResponse;
 import com.napzak.domain.store.api.dto.MyPageResponse;
 import com.napzak.domain.store.api.dto.StoreInfoResponse;
@@ -96,13 +96,13 @@ public class StoreController {
 
 		Map<Long, String> genreNamesMap = storeGenreFacade.getGenreNames(genreIds);
 
-		List<GenrePreferenceResponse> genrePreferenceResponses = genreList.stream()
-			.map(genrePreference -> GenrePreferenceResponse.of(genrePreference.getGenreId(),
+		List<GenrePreferenceDto> genrePreferenceDto = genreList.stream()
+			.map(genrePreference -> GenrePreferenceDto.of(genrePreference.getGenreId(),
 				genreNamesMap.getOrDefault(genrePreference.getGenreId(), "기타")))
 			.toList();
 
 		StoreInfoResponse storeInfoResponse = StoreInfoResponse.of(store.getId(), store.getNickname(),
-			store.getDescription(), store.getPhoto(), store.getCover(), genrePreferenceResponses);
+			store.getDescription(), store.getPhoto(), store.getCover(), genrePreferenceDto);
 
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_STORE_INFO_SUCCESS, storeInfoResponse));
 	}
