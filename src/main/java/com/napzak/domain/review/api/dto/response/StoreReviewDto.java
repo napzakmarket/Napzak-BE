@@ -6,7 +6,7 @@ import com.napzak.domain.review.core.vo.Review;
 public record StoreReviewDto(
 	Long reviewId,
 	String reviewerNickname,
-	float rating,
+	int rating,
 	String comment,
 	Long relatedProductId,
 	String relatedProductName
