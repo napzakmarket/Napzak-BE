@@ -12,13 +12,18 @@ public interface ProductRepositoryCustom {
 		Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType);
 
 	List<ProductEntity> searchProductsBySearchWordAndSortOptionAndFilters(
-		String searchWord, OrderSpecifier<?> orderSpecifier, Long cursorProductId, Integer cursorOptionalValue, int size,
-		Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType);
+		String searchWord, OrderSpecifier<?> orderSpecifier, Long cursorProductId, Integer cursorOptionalValue,
+		int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType);
 
 	List<ProductEntity> findProductsByStoreIdAndSortOptionAndFilters(
 		Long storeId, OrderSpecifier<?> orderSpecifier, Long cursorProductId, Integer cursorOptionalValue,
 		int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType);
 
 	List<ProductEntity> findProductsBySortOptionExcludingStoreId(
-			OrderSpecifier<?> orderSpecifier, int size, TradeType tradeType, long storeId);
+		OrderSpecifier<?> orderSpecifier, int size, TradeType tradeType, long storeId);
+
+	List<ProductEntity> findProductsByGenreAndTradeTypeExcludingStoreId(Long genreId, Long excludeStoreId,
+		TradeType tradeType, int limit);
+
+	List<ProductEntity> findLatestProductsExcludingStoreId(Long excludeStoreId, TradeType tradeType, int limit);
 }
