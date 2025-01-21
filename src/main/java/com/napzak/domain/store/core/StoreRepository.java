@@ -18,18 +18,21 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
 		@Param("socialType") SocialType socialType);
 
 	@Query("""
-		    SELECT new com.napzak.domain.store.api.dto.StoreStatusDto(
-		        s.id,
-		        s.photo,
-		        s.nickname,
-		        COUNT(p.id),
-		        SUM(CASE WHEN p.tradeStatus = 'COMPLETED' THEN 1 ELSE 0 END)
-		    )
-		    FROM StoreEntity s
-		    LEFT JOIN ProductEntity p ON s.id = p.storeId
-		    WHERE s.id = :storeId
-		    GROUP BY s.id, s.nickname
+			SELECT new com.napzak.domain.store.api.dto.StoreStatusDto(
+			s.id,
+			s.photo,
+			s.nickname,
+			COUNT(p.id),
+			SUM(CASE WHEN p.tradeStatus = 'COMPLETED' THEN 1 ELSE 0 END)
+				    )
+			FROM StoreEntity s
+			LEFT JOIN ProductEntity p ON s.id = p.storeId
+			WHERE s.id = :storeId
+			GROUP BY s.id, s.nickname
 		""")
 	StoreStatusDto findStoreStatusById(@Param("storeId") Long storeId);
+
+	@Query("SELECT u.nickname FROM StoreEntity u WHERE u.id = :storeId")
+	String findNicknameById(@Param("storeId") Long storeId);
 
 }

@@ -19,7 +19,6 @@ public record ProductSellDto(
 	// ProductWithFirstPhoto에서 genreName을 외부에서 전달받는 메서드
 	public static ProductSellDto from(
 		ProductWithFirstPhoto product,
-		String firstPhoto,
 		String uploadTime,
 		boolean isInterested,
 		String genreName,
@@ -27,9 +26,9 @@ public record ProductSellDto(
 	) {
 		return new ProductSellDto(
 			product.getId(),
-			genreName, // 외부에서 전달받은 genreName
+			genreName,
 			product.getTitle(),
-			firstPhoto,
+			product.getFirstPhoto(),
 			product.getPrice(),
 			uploadTime,
 			isInterested,

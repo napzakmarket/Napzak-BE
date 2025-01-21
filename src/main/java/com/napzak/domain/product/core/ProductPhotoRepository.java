@@ -16,6 +16,11 @@ public interface ProductPhotoRepository extends JpaRepository<ProductPhotoEntity
 		"WHERE p.sequence = 1 AND p.productId IN :productIds")
 	List<Object[]> findFirstPhotosByProductIds(@Param("productIds") List<Long> productIds);
 
+	@Query("SELECT p.photoUrl " +
+		"FROM ProductPhotoEntity p " +
+		"WHERE p.sequence = 1 AND p.productId = :productId")
+	String findFirstPhotoByProductId(@Param("productId") Long productId);
+
 	@Query("SELECT p FROM ProductPhotoEntity p " +
 		"WHERE p.productId = :productId " +
 		"ORDER BY p.sequence ASC")

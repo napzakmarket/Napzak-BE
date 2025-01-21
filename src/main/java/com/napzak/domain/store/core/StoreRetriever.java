@@ -46,4 +46,20 @@ public class StoreRetriever {
 		return storeRepository.findStoreStatusById(storeId);
 	}
 
+	@Transactional(readOnly = true)
+	public Store findBySocialTypeAndSocialId(Long socialId, SocialType socialType){
+		StoreEntity storeEntity = storeRepository.findBySocialTypeAndSocialId(socialId, socialType)
+			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
+		return Store.fromEntity(storeEntity);
+	}
+
+	@Transactional(readOnly = true)
+	public boolean existsById(Long StoreId) {
+		return storeRepository.existsById(StoreId);
+	}
+
+	@Transactional(readOnly = true)
+	public String findNicknameByStoreId(Long storeId){
+		return storeRepository.findNicknameById(storeId);
+	}
 }

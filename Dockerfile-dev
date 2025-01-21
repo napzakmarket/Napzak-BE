@@ -4,6 +4,9 @@ WORKDIR /usr/src
 # 로컬에 있는 모든 소스 복사
 COPY . /usr/src
 
+# application-dev.yml을 명확히 복사
+COPY src/main/resources/application-dev.yml /usr/src/src/main/resources/application-dev.yml
+
 # 빌드 (테스트 스킵)
 RUN chmod +x ./gradlew
 RUN ./gradlew clean build -x test
@@ -11,5 +14,6 @@ RUN ./gradlew clean build -x test
 FROM openjdk:17-jdk-alpine
 WORKDIR /app
 COPY --from=builder /usr/src/build/libs/napzak-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY --from=builder /usr/src/src/main/resources/application-dev.yml /app/application-dev.yml
 
 ENTRYPOINT ["java", "-jar", "/app/app.jar", "--spring.profiles.active=dev"]

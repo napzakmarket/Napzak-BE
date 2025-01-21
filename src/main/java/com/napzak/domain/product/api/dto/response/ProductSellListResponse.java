@@ -30,7 +30,7 @@ public record ProductSellListResponse(
 				boolean isOwnedByCurrentUser = currentStoreId.equals(product.getStoreId());
 
 				return ProductSellDto.from(
-					product, product.getFirstPhoto(), uploadTime, isInterested, genreName, isOwnedByCurrentUser
+					product, uploadTime, isInterested, genreName, isOwnedByCurrentUser
 				);
 			}).toList();
 
@@ -38,6 +38,28 @@ public record ProductSellListResponse(
 		String nextCursor = pagination.generateNextCursor(sortOption);
 
 		return new ProductSellListResponse(productDtos, nextCursor);
+	}
+
+	public static ProductSellListResponse fromWithoutCursor(
+		ProductPagination pagination,
+		Map<Long, Boolean> interestMap,
+		Map<Long, String> genreMap,
+		Long currentStoreId
+	) {
+
+		List<ProductSellDto> productDtos = pagination.getProductList().stream()
+			.map(product -> {
+				String uploadTime = TimeUtils.calculateUploadTime(product.getCreatedAt());
+				boolean isInterested = interestMap.getOrDefault(product.getId(), false);
+				String genreName = genreMap.getOrDefault(product.getGenreId(), "기타"); // genreName 매핑
+				boolean isOwnedByCurrentUser = currentStoreId.equals(product.getStoreId());
+
+				return ProductSellDto.from(
+					product, uploadTime, isInterested, genreName, isOwnedByCurrentUser
+				);
+			}).toList();
+
+		return new ProductSellListResponse(productDtos, null);
 	}
 
 	public List<ProductSellDto> getProductSellList() {

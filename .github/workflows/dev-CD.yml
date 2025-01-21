@@ -13,15 +13,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Cache Gradle
+      - name: Cache Gradle dependencies
         uses: actions/cache@v3
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          path: ~/.gradle/caches
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -31,8 +28,10 @@ jobs:
 
       - name: Create secret config file
         run: |
-          cd src/main/resources
-          echo "${{ secrets.APPLICATION_DEV }}" > ./application-dev.yml
+          mkdir -p src/main/resources
+          echo "${{ secrets.APPLICATION_DEV }}" > src/main/resources/application-dev.yml
+          ls -la src/main/resources
+          cat src/main/resources/application-dev.yml
 
       - name: Build with Gradle
         run: |
