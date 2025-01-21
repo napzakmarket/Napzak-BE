@@ -177,6 +177,13 @@ public class ProductService {
 		);
 	}
 
+	public ProductWithFirstPhoto getProductChatInfo(Long productId) {
+		Product product = productRetriever.findById(productId);
+		String firstPhoto = productPhotoRetriever.getFirstProductPhoto(productId);
+
+		return ProductWithFirstPhoto.from(product, firstPhoto);
+	}
+
 	private ProductPagination retrieveAndPreparePagination(
 		ProductRetrieval retrievalLogic,
 		int size
