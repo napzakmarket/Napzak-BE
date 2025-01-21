@@ -81,7 +81,6 @@ public class StoreEntity {
 	public static StoreEntity create(final String nickname, final String phoneNumber, final Role role,
 		final String description, final Long socialId, final SocialType socialType, final String photo, final String cover) {
 
-		final String cover) 
 		return StoreEntity.builder().
 			nickname(nickname).
 			phoneNumber(phoneNumber).
