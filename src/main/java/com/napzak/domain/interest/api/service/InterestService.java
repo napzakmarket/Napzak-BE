@@ -22,7 +22,7 @@ public class InterestService {
 
 	public void postInterest(Long productId, Long storeId) {
 
-		log.info("now in interestServce. productId : {}, storeId : {}");
+		log.info("Now in interestServce. **productId : {}, **storeId : {}", productId, storeId);
 
 		if (interestRetriever.getIsInterested(productId, storeId)) {//이미 좋아요가 눌러져 있음
 			throw new NapzakException(InterestErrorCode.INTEREST_ALREADY_POSTED);

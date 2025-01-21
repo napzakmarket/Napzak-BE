@@ -28,9 +28,9 @@ public class InterestController {
 	@PostMapping("/{productId}")
 	public ResponseEntity<SuccessResponse<Void>> postInterest(
 		@PathVariable("productId") Long productId,
-		@CurrentMember final Long storeId) {
+		@CurrentMember Long storeId) {
 
-		log.info("productId: {}, currentUserId: {}", productId, storeId);
+		log.info("now in InterestController. **productId: {}, **currentUserId: {}", productId, storeId);
 
 		interestService.postInterest(productId, storeId);
 		interestProductFacade.incrementInterestCount(productId);
