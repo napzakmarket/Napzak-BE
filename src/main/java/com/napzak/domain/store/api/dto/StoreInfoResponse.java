@@ -4,7 +4,7 @@ import java.util.List;
 
 public record StoreInfoResponse(
 	Long storeId,
-	String storeNickName,
+	String storeNickname,
 	String storeDescription,
 	String storePhoto,
 	String storeCover,
@@ -12,13 +12,13 @@ public record StoreInfoResponse(
 ) {
 	public static StoreInfoResponse of(
 		final Long storeId,
-		final String storeNickName,
+		final String storeNickname,
 		final String storeDescription,
 		final String storePhoto,
 		final String storeCover,
 		final List<GenrePreferenceDto> genrePreferenceDto
 	) {
-		return new StoreInfoResponse(storeId, storeNickName, storeDescription, storePhoto, storeCover,
+		return new StoreInfoResponse(storeId, storeNickname, storeDescription, storePhoto, storeCover,
 			genrePreferenceDto);
 	}
 }
