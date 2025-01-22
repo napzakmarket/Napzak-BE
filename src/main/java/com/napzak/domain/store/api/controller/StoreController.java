@@ -45,7 +45,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("api/v1/stores")
 @RequiredArgsConstructor
-public class StoreController {
+public class StoreController implements StoreApi {
 
 	private static final String REFRESH_TOKEN = "refreshToken";
 	private static final int COOKIE_MAX_AGE = 7 * 24 * 60 * 60;
