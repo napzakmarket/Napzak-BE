@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum StoreSuccessCode implements BaseSuccessCode {
 	/*
-	200 Created
+	200 Ok
 	 */
 	LOGIN_SUCCESS(HttpStatus.OK, "로그인 성공"),
 	LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃 성공"),

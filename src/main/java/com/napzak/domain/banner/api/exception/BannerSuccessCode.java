@@ -10,8 +10,10 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum BannerSuccessCode implements BaseSuccessCode {
-
-	BANNER_GET_SUCCESS(HttpStatus.OK, "배너 정보 불러오기 성공"),
+	/*
+	200 Ok
+	 */
+	BANNER_GET_SUCCESS(HttpStatus.OK, "배너 정보를 불러왔습니다."),
 	;
 
 	private final HttpStatus httpStatus;
