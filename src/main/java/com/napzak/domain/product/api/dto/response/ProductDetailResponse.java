@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.napzak.domain.review.api.dto.response.StoreReviewDto;
-import com.napzak.domain.store.api.dto.StoreStatusDto;
+import com.napzak.domain.store.api.dto.response.StoreStatusDto;
 
 public record ProductDetailResponse(
 	boolean isInterested,

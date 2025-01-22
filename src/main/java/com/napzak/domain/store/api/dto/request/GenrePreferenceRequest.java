@@ -1,4 +1,4 @@
-package com.napzak.domain.store.api.dto;
+package com.napzak.domain.store.api.dto.request;
 
 import java.util.List;
 

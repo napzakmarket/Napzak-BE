@@ -1,6 +1,8 @@
-package com.napzak.domain.store.api.dto;
+package com.napzak.domain.store.api.dto.response;
 
 import java.util.List;
+
+import com.napzak.domain.genre.api.dto.response.GenreNameDto;
 
 public record StoreInfoResponse(
 	Long storeId,
@@ -8,7 +10,7 @@ public record StoreInfoResponse(
 	String storeDescription,
 	String storePhoto,
 	String storeCover,
-	List<GenrePreferenceDto> genrePreferences
+	List<GenreNameDto> genrePreferences
 ) {
 	public static StoreInfoResponse of(
 		final Long storeId,
@@ -16,9 +18,9 @@ public record StoreInfoResponse(
 		final String storeDescription,
 		final String storePhoto,
 		final String storeCover,
-		final List<GenrePreferenceDto> genrePreferenceDto
+		final List<GenreNameDto> GenreNameDto
 	) {
 		return new StoreInfoResponse(storeId, storeNickName, storeDescription, storePhoto, storeCover,
-			genrePreferenceDto);
+			GenreNameDto);
 	}
 }
