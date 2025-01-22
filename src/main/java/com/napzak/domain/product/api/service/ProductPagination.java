@@ -9,7 +9,6 @@ import com.napzak.domain.product.api.dto.request.cursor.HighPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.LowPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.PopularCursor;
 import com.napzak.domain.product.api.dto.request.cursor.RecentCursor;
-import com.napzak.domain.product.api.exception.ProductErrorCode;
 import com.napzak.domain.product.api.service.enums.SortOption;
 import com.napzak.domain.product.core.vo.ProductWithFirstPhoto;
 import com.napzak.domain.product.core.vo.ProductWithFirstPhotoList;
@@ -21,10 +20,11 @@ public class ProductPagination {
 
 	public ProductPagination(int needSize, ProductWithFirstPhotoList productList) {
 		this.needSize = needSize;
-		if (productList == null || productList.isEmpty()) {
-			throw new NapzakException(ProductErrorCode.PRODUCT_NOT_FOUND);
+		if (productList == null) {
+			this.productList = new ProductWithFirstPhotoList(List.of()); // 빈 리스트 반환
+		} else {
+			this.productList = productList;
 		}
-		this.productList = productList;
 	}
 
 	// 다음 페이지 데이터가 있는지 여부 확인
