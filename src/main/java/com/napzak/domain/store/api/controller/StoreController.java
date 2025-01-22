@@ -20,7 +20,6 @@ import com.napzak.domain.genre.api.dto.response.GenreNameListResponse;
 import com.napzak.domain.genre.api.exception.GenreErrorCode;
 import com.napzak.domain.store.api.StoreGenreFacade;
 import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
-import com.napzak.domain.store.api.dto.response.GenrePreferenceDto;
 import com.napzak.domain.store.api.dto.response.LoginSuccessResponse;
 import com.napzak.domain.store.api.dto.response.MyPageResponse;
 import com.napzak.domain.store.api.dto.response.StoreInfoResponse;
@@ -103,14 +102,7 @@ public class StoreController implements StoreApi {
 		List<GenrePreference> genreList = storeService.getGenrePreferenceList(OnwerId);
 		Store store = storeService.getStore(OnwerId);
 
-		List<Long> genreIds = genreList.stream().map(GenrePreference::getGenreId).toList();
-
-		Map<Long, String> genreNamesMap = storeGenreFacade.getGenreNames(genreIds);
-
-		List<GenrePreferenceDto> genrePreferenceDto = genreList.stream()
-			.map(genrePreference -> GenrePreferenceDto.of(genrePreference.getGenreId(),
-				genreNamesMap.getOrDefault(genrePreference.getGenreId(), "기타")))
-			.toList();
+		List<GenreNameDto> genrePreferenceDto = genrePreferenceResponseGenerator(genreList);
 
 		StoreInfoResponse storeInfoResponse = StoreInfoResponse.of(store.getId(), store.getNickname(),
 			store.getDescription(), store.getPhoto(), store.getCover(), genrePreferenceDto);
@@ -124,40 +116,43 @@ public class StoreController implements StoreApi {
 		@Valid @RequestBody final GenrePreferenceRequest genrePreferenceList
 	) {
 
-		//최대 장르 수 제한을 초과하면 예외
+		List<Long> genreIds = genrePreferenceList.genreIds();
+
 		int maximum_genre_count = 4;
 		if (genrePreferenceList.genreIds().size() > maximum_genre_count) {
 			throw new NapzakException(StoreErrorCode.INVALID_GENRE_PREFERENCE_COUNT);
 		}
 
-		//입력한 선호 장르 내 중복이 있으면 예외
-		Set<Long> uniqueGenres = new HashSet<>(genrePreferenceList.genreIds());
-		if (uniqueGenres.size() != genrePreferenceList.genreIds().size()) {
+		Set<Long> uniqueGenres = new HashSet<>(genreIds);
+		if (uniqueGenres.size() != genreIds.size()) {
 			throw new NapzakException(StoreErrorCode.DUPLICATE_GENRE_PREFERENCES);
 		}
 
-		genrePreferenceList.genreIds().forEach(genreId -> {
+		genreIds.forEach(genreId -> {
 			if (!storeGenreFacade.existsGenre(genreId)) {
 				throw new NapzakException(GenreErrorCode.GENRE_NOT_FOUND);
 			}
 		});
 
-		storeRegistrationService.registerGenrePreference(currentMemberId,
-			genrePreferenceList.genreIds());
+		storeRegistrationService.registerGenrePreference(currentMemberId, genreIds);
 
 		List<GenrePreference> genreList = storeService.getGenrePreferenceList(currentMemberId);
-		List<Long> genreIds = genreList.stream().map(GenrePreference::getGenreId).toList();
+		List<GenreNameDto> genrePreferenceDto = genrePreferenceResponseGenerator(genreList);
 
+		GenreNameListResponse response = GenreNameListResponse.fromWithoutCursor(genrePreferenceDto);
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(StoreSuccessCode.GENRE_PREPERENCE_REGISTER_SUCCESS, response));
+	}
+
+	private List<GenreNameDto> genrePreferenceResponseGenerator(List<GenrePreference> genreList) {
+
+		List<Long> genreIds = genreList.stream().map(GenrePreference::getGenreId).toList();
 		Map<Long, String> genreNamesMap = storeGenreFacade.getGenreNames(genreIds);
 
-		List<GenreNameDto> genrePreferenceResponse = genreList.stream()
+		return genreList.stream()
 			.map(genrePreference -> GenreNameDto.from(genrePreference.getGenreId(),
 				genreNamesMap.getOrDefault(genrePreference.getGenreId(), "기타")))
 			.toList();
-
-		GenreNameListResponse response = GenreNameListResponse.fromWithoutCursor(genrePreferenceResponse);
-		return ResponseEntity.ok()
-			.body(SuccessResponse.of(StoreSuccessCode.GENRE_PREPERENCE_REGISTER_SUCCESS, response));
 	}
 
 }
