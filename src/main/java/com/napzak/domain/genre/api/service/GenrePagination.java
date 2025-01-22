@@ -18,10 +18,11 @@ public class GenrePagination {
 
 	public GenrePagination(int needSize, GenreList genreList) {
 		this.needSize = needSize;
-		if (genreList == null || genreList.isEmpty()) {
-			throw new NapzakException(GenreErrorCode.GENRE_NOT_FOUND);
+		if (genreList == null) {
+			this.genreList = new GenreList(List.of());
+		} else {
+			this.genreList = genreList;
 		}
-		this.genreList = genreList;
 	}
 
 	private boolean hasMoreData() {
