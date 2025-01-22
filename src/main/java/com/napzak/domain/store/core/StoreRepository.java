@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.napzak.domain.store.api.dto.StoreStatusDto;
+import com.napzak.domain.store.api.dto.response.StoreStatusDto;
 import com.napzak.domain.store.core.entity.StoreEntity;
 import com.napzak.domain.store.core.entity.enums.SocialType;
 

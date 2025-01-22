@@ -1,10 +1,18 @@
 package com.napzak.domain.store.api.controller;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.napzak.domain.genre.api.dto.response.GenreNameListResponse;
-import com.napzak.domain.store.api.dto.GenrePreferenceRequest;
-import com.napzak.domain.store.api.dto.MyPageResponse;
-import com.napzak.domain.store.api.dto.StoreInfoResponse;
-import com.napzak.domain.store.api.dto.StoreLoginResponse;
+import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
+import com.napzak.domain.store.api.dto.response.MyPageResponse;
+import com.napzak.domain.store.api.dto.response.StoreInfoResponse;
+import com.napzak.domain.store.api.dto.response.StoreLoginResponse;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.auth.client.dto.StoreSocialLoginRequest;
 import com.napzak.global.common.exception.dto.SuccessResponse;
@@ -17,12 +25,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Store", description = "스토어 관련 API")
 @RequestMapping("api/v1/stores")

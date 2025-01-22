@@ -1,4 +1,4 @@
-package com.napzak.domain.store.api.dto;
+package com.napzak.domain.store.api.dto.response;
 
 public record GenrePreferenceDto(
 	Long genreId,

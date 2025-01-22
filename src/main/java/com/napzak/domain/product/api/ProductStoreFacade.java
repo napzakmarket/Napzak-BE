@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.napzak.domain.store.api.dto.StoreStatusDto;
+import com.napzak.domain.store.api.dto.response.StoreStatusDto;
 import com.napzak.domain.store.core.GenrePreferenceRetriever;
 import com.napzak.domain.store.core.StoreRetriever;
 

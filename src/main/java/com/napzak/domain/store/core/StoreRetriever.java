@@ -3,7 +3,7 @@ package com.napzak.domain.store.core;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.napzak.domain.store.api.dto.StoreStatusDto;
+import com.napzak.domain.store.api.dto.response.StoreStatusDto;
 import com.napzak.domain.store.api.exception.StoreErrorCode;
 import com.napzak.domain.store.core.entity.StoreEntity;
 import com.napzak.domain.store.core.entity.enums.SocialType;
@@ -47,7 +47,7 @@ public class StoreRetriever {
 	}
 
 	@Transactional(readOnly = true)
-	public Store findBySocialTypeAndSocialId(Long socialId, SocialType socialType){
+	public Store findBySocialTypeAndSocialId(Long socialId, SocialType socialType) {
 		StoreEntity storeEntity = storeRepository.findBySocialTypeAndSocialId(socialId, socialType)
 			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
 		return Store.fromEntity(storeEntity);
@@ -59,7 +59,7 @@ public class StoreRetriever {
 	}
 
 	@Transactional(readOnly = true)
-	public String findNicknameByStoreId(Long storeId){
+	public String findNicknameByStoreId(Long storeId) {
 		return storeRepository.findNicknameById(storeId);
 	}
 }

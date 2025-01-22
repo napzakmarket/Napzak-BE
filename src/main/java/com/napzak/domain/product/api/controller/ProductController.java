@@ -44,7 +44,7 @@ import com.napzak.domain.product.core.vo.ProductPhoto;
 import com.napzak.domain.product.core.vo.ProductWithFirstPhoto;
 import com.napzak.domain.review.api.dto.response.StoreReviewDto;
 import com.napzak.domain.review.core.vo.Review;
-import com.napzak.domain.store.api.dto.StoreStatusDto;
+import com.napzak.domain.store.api.dto.response.StoreStatusDto;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.common.exception.NapzakException;
 import com.napzak.global.common.exception.code.ErrorCode;
