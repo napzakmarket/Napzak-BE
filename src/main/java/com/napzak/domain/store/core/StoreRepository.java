@@ -18,7 +18,7 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
 		@Param("socialType") SocialType socialType);
 
 	@Query("""
-			SELECT new com.napzak.domain.store.api.dto.StoreStatusDto(
+			SELECT new com.napzak.domain.store.api.dto.response.StoreStatusDto(
 			s.id,
 			s.photo,
 			s.nickname,
