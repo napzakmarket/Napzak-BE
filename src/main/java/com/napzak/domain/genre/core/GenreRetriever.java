@@ -52,7 +52,7 @@ public class GenreRetriever {
 	}
 
 	@Transactional(readOnly = true)
-	public boolean existsGenre(Long genreId) {
-		return genreRepository.existsById(genreId);
+	public List<Long> findExistingGenreIds(List<Long> genreIds) {
+		return genreRepository.findExistingGenreIds(genreIds);
 	}
 }

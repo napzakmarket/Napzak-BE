@@ -23,7 +23,8 @@ public class StoreGenreFacade {
 		return genreRetriever.retrieveGenreNamesByIds(genreIds);
 	}
 
-	public boolean existsGenre(Long genreId) {
-		return genreRetriever.existsGenre(genreId);
+	public List<Long> findNonExistGenreIds(List<Long> genreIds) {
+		List<Long> existingGenreIds = genreRetriever.findExistingGenreIds(genreIds);
+		return genreIds.stream().filter(genreId -> !existingGenreIds.contains(genreId)).toList();
 	}
 }

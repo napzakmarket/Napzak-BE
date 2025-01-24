@@ -121,18 +121,17 @@ public class StoreController implements StoreApi {
 		int maximum_genre_count = 4;
 		if (genrePreferenceList.genreIds().size() > maximum_genre_count) {
 			throw new NapzakException(StoreErrorCode.INVALID_GENRE_PREFERENCE_COUNT);
-		}
+		} //선호장르를 4개이상 등록하려고 했을 때 예외 발생
 
 		Set<Long> uniqueGenres = new HashSet<>(genreIds);
 		if (uniqueGenres.size() != genreIds.size()) {
 			throw new NapzakException(StoreErrorCode.DUPLICATE_GENRE_PREFERENCES);
-		}
+		} //입력한 선호장르 리스트에 중복이 있으면 예외 발생
 
-		genreIds.forEach(genreId -> {
-			if (!storeGenreFacade.existsGenre(genreId)) {
-				throw new NapzakException(GenreErrorCode.GENRE_NOT_FOUND);
-			}
-		});
+		List<Long> nonExistGenreIds = storeGenreFacade.findNonExistGenreIds(genreIds);
+		if (!nonExistGenreIds.isEmpty()) {
+			throw new NapzakException(GenreErrorCode.GENRE_NOT_FOUND);
+		} //입력한 선호장르 리스트 중 존재하지 않는 장르가 있으면 예외 발생
 
 		storeRegistrationService.registerGenrePreference(currentMemberId, genreIds);
 
