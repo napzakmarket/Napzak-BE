@@ -24,16 +24,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ProductRetriever {
 
 	private final ProductRepository productRepository;
 	private static final List<Long> FALLBACK_GENRES = List.of(1L, 7L, 4L, 5L);
 
+	@Transactional(readOnly = true)
 	public boolean existsById(Long productId) {
 		return productRepository.existsById(productId);
 	}
 
+	@Transactional(readOnly = true)
 	public Product findById(Long id) {
 		ProductEntity productEntity = productRepository.findById(id)
 			.orElseThrow(() -> new NapzakException(ProductErrorCode.PRODUCT_NOT_FOUND));
@@ -51,6 +52,7 @@ public class ProductRetriever {
 			.toList();
 	}
 
+	@Transactional(readOnly = true)
 	public List<Product> retrieveProductsExcludingCurrentUser(SortOption sortOption, int size, TradeType tradeType,
 		long storeId) {
 
@@ -58,6 +60,7 @@ public class ProductRetriever {
 			tradeType, storeId).stream().map(Product::fromEntity).toList();
 	}
 
+	@Transactional(readOnly = true)
 	public List<Product> retrieveStoreProducts(Long storeId, SortOption sortOption, Long cursorProductId,
 		Integer cursorOptionalValue, int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds,
 		TradeType tradeType) {
@@ -69,6 +72,7 @@ public class ProductRetriever {
 			.toList();
 	}
 
+	@Transactional(readOnly = true)
 	public List<Product> searchProducts(String searchWord, SortOption sortOption, Long cursorProductId,
 		Integer cursorOptionalValue, int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds,
 		TradeType tradeType) {
@@ -85,6 +89,7 @@ public class ProductRetriever {
 	 *  - 최종 2SELL+2BUY=4개
 	 *  - 장르를 최대한 다르게 구성(겹치지 않게)
 	 */
+	@Transactional(readOnly = true)
 	public List<Product> retrieveRecommendedProducts(Long storeId, List<Long> preferredGenres) {
 		// 1) 우선 선호 장르에서 최대한 수집
 		List<ProductEntity> collected = collectFromPreferredGenres(storeId, preferredGenres);

@@ -14,11 +14,11 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class StoreRetriever {
 
 	private final StoreRepository storeRepository;
 
+	@Transactional(readOnly = true)
 	public Store findStoreByStoreId(final Long id) {
 		StoreEntity storeEntity = storeRepository.findById(id)
 			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
@@ -26,22 +26,26 @@ public class StoreRetriever {
 		return Store.fromEntity((storeEntity));
 	}
 
+	@Transactional(readOnly = true)
 	public Store retrieveBySocialTypeAndSocialId(Long socialId, SocialType socialType) {
 		StoreEntity storeEntity = storeRepository.findBySocialTypeAndSocialId(socialId, socialType)
 			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
 		return Store.fromEntity(storeEntity);
 	}
 
+	@Transactional(readOnly = true)
 	public Store retrieveStoreByStoreId(Long StoreId) {
 		StoreEntity storeEntity = storeRepository.findById(StoreId)
 			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
 		return Store.fromEntity(storeEntity);
 	}
 
+	@Transactional(readOnly = true)
 	public boolean checkStoreExistsBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
 		return storeRepository.findBySocialTypeAndSocialId(socialId, socialType).isPresent();
 	}
 
+	@Transactional(readOnly = true)
 	public StoreStatusDto getStoreStatusDtoById(final Long storeId) {
 		return storeRepository.findStoreStatusById(storeId);
 	}
