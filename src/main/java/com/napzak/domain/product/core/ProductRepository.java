@@ -3,6 +3,7 @@ package com.napzak.domain.product.core;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,9 +11,12 @@ import org.springframework.stereotype.Repository;
 
 import com.napzak.domain.product.core.entity.ProductEntity;
 
+import jakarta.persistence.LockModeType;
+
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, Long>, ProductRepositoryCustom {
 	@Modifying
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("""
 		UPDATE ProductEntity p
 		SET p.interestCount = p.interestCount + 1
@@ -21,6 +25,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, P
 	void incrementInterestCount(@Param("productId") Long productId);
 
 	@Modifying
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("""
 		UPDATE ProductEntity p
 		SET p.interestCount = p.interestCount - 1
