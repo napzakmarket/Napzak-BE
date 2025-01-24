@@ -18,7 +18,6 @@ public class ProductUpdater {
 
 	@Transactional
 	public void decrementInterestCount(Long productId) {
-
 		productRepository.decrementInterestCount(productId);
 	}
 }
