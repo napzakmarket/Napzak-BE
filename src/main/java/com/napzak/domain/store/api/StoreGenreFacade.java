@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import com.napzak.domain.genre.core.GenreRetriever;
+import com.napzak.domain.genre.core.vo.Genre;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +24,7 @@ public class StoreGenreFacade {
 		return genreRetriever.retrieveGenreNamesByIds(genreIds);
 	}
 
-	public boolean existsGenre(Long genreId) {
-		return genreRetriever.existsGenre(genreId);
+	public List<Genre> findExistingGenreList(List<Long> genreIds) {
+		return genreRetriever.findExistingGenrList(genreIds);
 	}
 }

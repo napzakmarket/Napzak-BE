@@ -44,10 +44,7 @@ public class StoreRegistrationService {
 		Long currentStoreId,
 		List<Long> genrePreferenceList
 	) {
-
-		if (genrePreferenceRetriever.existsGenrePreference(currentStoreId)) {
-			genrePreferenceRemover.removeGenrePreference(currentStoreId);
-		}
+		genrePreferenceRemover.removeGenrePreference(currentStoreId);
 
 		if (!genrePreferenceList.isEmpty()) {
 			genrePreferenceSaver.save(genrePreferenceList, currentStoreId);

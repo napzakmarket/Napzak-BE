@@ -10,7 +10,8 @@ import com.napzak.domain.store.core.entity.GenrePreferenceEntity;
 
 import feign.Param;
 
-public interface GenrePreferenceRepository extends JpaRepository<GenrePreferenceEntity, Long> {
+public interface GenrePreferenceRepository
+	extends JpaRepository<GenrePreferenceEntity, Long>, GenrePreferenceRepositoryCustom {
 
 	boolean existsByStoreId(Long storeId);
 
