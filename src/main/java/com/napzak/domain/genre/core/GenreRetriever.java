@@ -52,7 +52,9 @@ public class GenreRetriever {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Long> findExistingGenreIds(List<Long> genreIds) {
-		return genreRepository.findExistingGenreIds(genreIds);
+	public List<Genre> findExistingGenrList(List<Long> genreIds) {
+		return genreRepository.findExistingGenreEntityList(genreIds).stream()
+			.map(Genre::fromEntity)
+			.toList();
 	}
 }

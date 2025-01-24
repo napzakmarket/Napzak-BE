@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.napzak.domain.genre.api.dto.response.GenreNameDto;
 import com.napzak.domain.genre.api.dto.response.GenreNameListResponse;
 import com.napzak.domain.genre.api.exception.GenreErrorCode;
+import com.napzak.domain.genre.core.vo.Genre;
 import com.napzak.domain.store.api.StoreGenreFacade;
 import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
 import com.napzak.domain.store.api.dto.response.LoginSuccessResponse;
@@ -128,15 +129,21 @@ public class StoreController implements StoreApi {
 			throw new NapzakException(StoreErrorCode.DUPLICATE_GENRE_PREFERENCES);
 		} //입력한 선호장르 리스트에 중복이 있으면 예외 발생
 
-		List<Long> nonExistGenreIds = storeGenreFacade.findNonExistGenreIds(genreIds);
-		if (!nonExistGenreIds.isEmpty()) {
-			throw new NapzakException(GenreErrorCode.GENRE_NOT_FOUND);
-		} //입력한 선호장르 리스트 중 존재하지 않는 장르가 있으면 예외 발생
+		List<Genre> genreList = storeGenreFacade.findExistingGenreList(genreIds);
+		List<Long> existsGenreIds = genreList.stream()
+			.map(Genre::getId)
+			.toList();
 
+		for (Long id : genreIds) { //입력된 선호장르 리스트 중 존재하지 않는 장르가 있으면 예외 발생
+			if (!existsGenreIds.contains(id)) {
+				throw new NapzakException(GenreErrorCode.GENRE_NOT_FOUND);
+			}
+		}
 		storeRegistrationService.registerGenrePreference(currentMemberId, genreIds);
 
-		List<GenrePreference> genreList = storeService.getGenrePreferenceList(currentMemberId);
-		List<GenreNameDto> genrePreferenceDto = genrePreferenceResponseGenerator(genreList);
+		List<GenreNameDto> genrePreferenceDto = genreList.stream()
+			.map(genre -> GenreNameDto.from(genre.getId(), genre.getName()))
+			.toList();
 
 		GenreNameListResponse response = GenreNameListResponse.fromWithoutCursor(genrePreferenceDto);
 		return ResponseEntity.ok()

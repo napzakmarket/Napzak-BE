@@ -44,10 +44,7 @@ public class StoreRegistrationService {
 		Long currentStoreId,
 		List<Long> genrePreferenceList
 	) {
-
-		if (genrePreferenceRetriever.existsGenrePreference(currentStoreId)) {
-			genrePreferenceRemover.removeGenrePreference(currentStoreId);
-		} // 기존에 설정한 선호장르가 있으면 삭제
+		genrePreferenceRemover.removeGenrePreference(currentStoreId);
 
 		if (!genrePreferenceList.isEmpty()) {
 			genrePreferenceSaver.save(genrePreferenceList, currentStoreId);
