@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 public class ProductPhotoSaver {
 	private final ProductPhotoRepository productPhotoRepository;
 
-	@Transactional
 	public List<ProductPhoto> saveAll(final Long productId, final Map<Integer, String> photoData) {
 		List<ProductPhotoEntity> productPhotoEntities = photoData.entrySet().stream()
 			.map(entry -> ProductPhotoEntity.create(productId, entry.getValue(), entry.getKey()))

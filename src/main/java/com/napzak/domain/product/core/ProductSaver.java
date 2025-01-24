@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 public class ProductSaver {
 	private final ProductRepository productRepository;
 
-	@Transactional
 	public Product save(
 		final String title,
 		final Long storeId,
