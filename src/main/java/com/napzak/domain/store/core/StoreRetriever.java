@@ -27,7 +27,7 @@ public class StoreRetriever {
 	}
 
 	@Transactional(readOnly = true)
-	public Store retrieveBySocialTypeAndSocialId(Long socialId, SocialType socialType) {
+	public Store retrieveBySocialTypeAndSocialId(String socialId, SocialType socialType) {
 		StoreEntity storeEntity = storeRepository.findBySocialTypeAndSocialId(socialId, socialType)
 			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
 		return Store.fromEntity(storeEntity);
@@ -41,7 +41,7 @@ public class StoreRetriever {
 	}
 
 	@Transactional(readOnly = true)
-	public boolean checkStoreExistsBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
+	public boolean checkStoreExistsBySocialIdAndSocialType(final String socialId, final SocialType socialType) {
 		return storeRepository.findBySocialTypeAndSocialId(socialId, socialType).isPresent();
 	}
 
@@ -51,7 +51,7 @@ public class StoreRetriever {
 	}
 
 	@Transactional(readOnly = true)
-	public Store findBySocialTypeAndSocialId(Long socialId, SocialType socialType) {
+	public Store findBySocialTypeAndSocialId(String socialId, SocialType socialType) {
 		StoreEntity storeEntity = storeRepository.findBySocialTypeAndSocialId(socialId, socialType)
 			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
 		return Store.fromEntity(storeEntity);

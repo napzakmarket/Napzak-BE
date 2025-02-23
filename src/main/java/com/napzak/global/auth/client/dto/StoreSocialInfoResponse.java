@@ -3,11 +3,11 @@ package com.napzak.global.auth.client.dto;
 import com.napzak.domain.store.core.entity.enums.SocialType;
 
 public record StoreSocialInfoResponse(
-        Long socialId,
+        String socialId,
         SocialType socialType
 ) {
         public static StoreSocialInfoResponse of(
-                final Long socialId,
+                final String socialId,
                 final SocialType socialType
         ){
             return new StoreSocialInfoResponse(socialId, socialType);

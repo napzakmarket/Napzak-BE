@@ -19,7 +19,7 @@ public class Store {
 	private final String description;
 	private final LocalDateTime createdAt;
 	private final LocalDateTime deletedAt;
-	private final Long socialId;
+	private final String socialId;
 	private final SocialType socialType;
 
 	public Store(
@@ -32,7 +32,7 @@ public class Store {
 		String description,
 		LocalDateTime createdAt,
 		LocalDateTime deletedAt,
-		Long socialId,
+		String socialId,
 		SocialType socialType
 	) {
 		this.id = id;

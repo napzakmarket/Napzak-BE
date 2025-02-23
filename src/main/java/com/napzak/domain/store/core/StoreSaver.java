@@ -21,7 +21,7 @@ public class StoreSaver {
 		final String phoneNumber,
 		final Role role,
 		final String description,
-		final Long socialId,
+		final String socialId,
 		final SocialType socialType,
 		final String photo,
 		final String cover

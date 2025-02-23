@@ -31,12 +31,12 @@ public class StoreService {
 	}
 
 	@Transactional(readOnly = true)
-	public boolean checkStoreExistsBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
+	public boolean checkStoreExistsBySocialIdAndSocialType(final String socialId, final SocialType socialType) {
 		return storeRetriever.checkStoreExistsBySocialIdAndSocialType(socialId, socialType);
 	}
 
 	@Transactional(readOnly = true)
-	public Store findStoreBySocialIdAndSocialType(final Long socialId, final SocialType socialType) {
+	public Store findStoreBySocialIdAndSocialType(final String socialId, final SocialType socialType) {
 		return storeRetriever.retrieveBySocialTypeAndSocialId(socialId, socialType);
 	}
 

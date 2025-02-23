@@ -14,7 +14,7 @@ import feign.Param;
 public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
 
 	@Query("SELECT u FROM StoreEntity u WHERE u.socialId = :socialId AND u.socialType = :socialType")
-	Optional<StoreEntity> findBySocialTypeAndSocialId(@Param("socialId") Long socialId,
+	Optional<StoreEntity> findBySocialTypeAndSocialId(@Param("socialId") String socialId,
 		@Param("socialType") SocialType socialType);
 
 	@Query("""

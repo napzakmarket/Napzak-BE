@@ -99,7 +99,7 @@ public class KakaoSocialService implements SocialService {
 		final KakaoUserResponse kakaoUserResponse
 	) {
 		return StoreSocialInfoResponse.of(
-			kakaoUserResponse.id(),
+			String.valueOf(kakaoUserResponse.id()),
 			socialType
 		);
 	}
