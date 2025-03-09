@@ -77,7 +77,7 @@ public class KakaoSocialService implements SocialService {
 			log.error("Error while requesting OAuth2 access token from Kakao: {}", e.contentUTF8(), e);
 			throw new NapzakException(OAuthErrorCode.O_AUTH_TOKEN_ERROR);
 		}
-		return response.accessToken();
+		return "Bearer " + response.accessToken();
 	}
 
 	private KakaoUserResponse getUserInfo(
@@ -87,7 +87,7 @@ public class KakaoSocialService implements SocialService {
 
 		KakaoUserResponse response;
 		try {
-			response = kakaoApiClient.getUserInformation("Bearer " + accessToken);
+			response = kakaoApiClient.getUserInformation(accessToken);
 			log.info("Successfully retrieved user info: ID = {}", response.id());
 		} catch (FeignException e) {
 			log.error("Failed to retrieve user info from Kakao API. Error: {}", e.contentUTF8(), e);

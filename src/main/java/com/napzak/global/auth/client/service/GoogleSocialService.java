@@ -66,7 +66,7 @@ public class GoogleSocialService implements SocialService {
         } catch (FeignException e) {
             throw new NapzakException(OAuthErrorCode.O_AUTH_TOKEN_ERROR);
         }
-        return response.accessToken();
+        return "Bearer " + response.accessToken();
     }
 
     private GoogleUserResponse getUserInfo(
@@ -76,7 +76,7 @@ public class GoogleSocialService implements SocialService {
 
         GoogleUserResponse response;
         try {
-            response = googleApiClient.getUserInformation("Bearer " + accessToken);
+            response = googleApiClient.getUserInformation(accessToken);
             log.info("Successfully retrieved user info: ID = {}", response.sub());
         } catch (FeignException e) {
             log.error("Failed to retrieve user info from Google API. Error: {}", e.contentUTF8(), e);
@@ -90,7 +90,7 @@ public class GoogleSocialService implements SocialService {
             final GoogleUserResponse googleUserResponse
     ) {
         return StoreSocialInfoResponse.of(
-                googleUserResponse.sub(),  // Google ID는 String이므로 Long으로 변환
+                googleUserResponse.sub(),
                 socialType
         );
     }
