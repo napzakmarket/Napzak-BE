@@ -1,6 +1,7 @@
 package com.napzak.domain.store.api.service;
 
 import com.napzak.global.auth.client.service.GoogleSocialService;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
