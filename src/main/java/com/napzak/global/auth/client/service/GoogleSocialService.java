@@ -34,7 +34,6 @@ public class GoogleSocialService implements SocialService {
     private final GoogleApiClient googleApiClient;
     private final GoogleAuthApiClient googleAuthApiClient;
 
-    @Transactional
     @Override
     public StoreSocialInfoResponse login(
             final String authorizationCode,
