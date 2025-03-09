@@ -3,10 +3,13 @@ package com.napzak.global.auth.client.service;
 import com.napzak.domain.store.core.entity.enums.SocialType;
 import com.napzak.global.auth.client.dto.StoreSocialInfoResponse;
 import com.napzak.global.auth.client.dto.StoreSocialLoginRequest;
+import com.napzak.global.auth.client.exception.OAuthErrorCode;
 import com.napzak.global.auth.client.google.GoogleApiClient;
 import com.napzak.global.auth.client.google.GoogleAuthApiClient;
 import com.napzak.global.auth.client.google.dto.GoogleAccessTokenResponse;
 import com.napzak.global.auth.client.google.dto.GoogleUserResponse;
+import com.napzak.global.common.exception.NapzakException;
+
 import feign.FeignException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +46,7 @@ public class GoogleSocialService implements SocialService {
         try {
             accessToken = getOAuth2Authentication(authorizationCode);
         } catch (FeignException e) {
-            throw new RuntimeException("Google OAuth2 authentication failed", e);
+            throw new NapzakException(OAuthErrorCode.O_AUTH_TOKEN_ERROR);
         }
 
         return getLoginDto(loginRequest.socialType(), getUserInfo(accessToken));
@@ -61,7 +64,7 @@ public class GoogleSocialService implements SocialService {
                     authorizationCode
             );
         } catch (FeignException e) {
-            throw new RuntimeException("Google OAuth2 authentication failed", e);
+            throw new NapzakException(OAuthErrorCode.O_AUTH_TOKEN_ERROR);
         }
         return response.accessToken();
     }
@@ -77,7 +80,7 @@ public class GoogleSocialService implements SocialService {
             log.info("Successfully retrieved user info: ID = {}", response.sub());
         } catch (FeignException e) {
             log.error("Failed to retrieve user info from Google API. Error: {}", e.contentUTF8(), e);
-            throw new RuntimeException("Failed to fetch user information", e);
+            throw new NapzakException(OAuthErrorCode.GET_INFO_ERROR);
         }
         return response;
     }
