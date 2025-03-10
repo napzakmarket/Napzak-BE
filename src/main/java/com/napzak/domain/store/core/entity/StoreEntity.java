@@ -58,14 +58,14 @@ public class StoreEntity {
 	private LocalDateTime deletedAt;
 
 	@Column(name = COLUMN_SOCIAL_ID, nullable = true)
-	private Long socialId;
+	private String socialId;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = COLUMN_SOCIAL_TYPE, nullable = true)
 	private SocialType socialType;
 
 	@Builder
-	private StoreEntity(String nickname, String phoneNumber, Role role, String description, Long socialId,
+	private StoreEntity(String nickname, String phoneNumber, Role role, String description, String socialId,
 		SocialType socialType, String photo, String cover) {
 		this.nickname = nickname;
 		this.phoneNumber = phoneNumber;
@@ -78,7 +78,7 @@ public class StoreEntity {
 	}
 
 	public static StoreEntity create(final String nickname, final String phoneNumber, final Role role,
-		final String description, final Long socialId, final SocialType socialType, final String photo,
+		final String description, final String socialId, final SocialType socialType, final String photo,
 		final String cover) {
 		return StoreEntity.builder().
 			nickname(nickname).

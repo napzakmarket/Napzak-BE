@@ -3,10 +3,12 @@ package com.napzak.global.auth.client.service;
 import com.napzak.domain.store.core.entity.enums.SocialType;
 import com.napzak.global.auth.client.dto.StoreSocialInfoResponse;
 import com.napzak.global.auth.client.dto.StoreSocialLoginRequest;
+import com.napzak.global.auth.client.exception.OAuthErrorCode;
 import com.napzak.global.auth.client.kakao.KakaoApiClient;
 import com.napzak.global.auth.client.kakao.KakaoAuthApiClient;
 import com.napzak.global.auth.client.kakao.dto.KakaoAccessTokenResponse;
 import com.napzak.global.auth.client.kakao.dto.KakaoUserResponse;
+import com.napzak.global.common.exception.NapzakException;
 
 import feign.FeignException;
 import jakarta.transaction.Transactional;
@@ -51,7 +53,7 @@ public class KakaoSocialService implements SocialService {
 			log.info("Successfully received access token: {}", accessToken);
 		} catch (FeignException e) {
 			log.error("Failed to retrieve access token from Kakao. Error: {}", e.contentUTF8(), e);
-			throw new RuntimeException("Kakao OAuth2 token request failed", e);
+			throw new NapzakException(OAuthErrorCode.O_AUTH_TOKEN_ERROR);
 		}
 
 		return getLoginDto(loginRequest.socialType(), getUserInfo(accessToken));
@@ -73,9 +75,9 @@ public class KakaoSocialService implements SocialService {
 			log.info("Received Kakao access token successfully: {}", response.accessToken());
 		} catch (FeignException e) {
 			log.error("Error while requesting OAuth2 access token from Kakao: {}", e.contentUTF8(), e);
-			throw new RuntimeException("OAuth2 authentication failed", e);
+			throw new NapzakException(OAuthErrorCode.O_AUTH_TOKEN_ERROR);
 		}
-		return response.accessToken();
+		return "Bearer " + response.accessToken();
 	}
 
 	private KakaoUserResponse getUserInfo(
@@ -85,11 +87,11 @@ public class KakaoSocialService implements SocialService {
 
 		KakaoUserResponse response;
 		try {
-			response = kakaoApiClient.getUserInformation("Bearer " + accessToken);
+			response = kakaoApiClient.getUserInformation(accessToken);
 			log.info("Successfully retrieved user info: ID = {}", response.id());
 		} catch (FeignException e) {
 			log.error("Failed to retrieve user info from Kakao API. Error: {}", e.contentUTF8(), e);
-			throw new RuntimeException("Failed to fetch user information", e);
+			throw new NapzakException(OAuthErrorCode.GET_INFO_ERROR);
 		}
 		return response;
 	}
@@ -99,7 +101,7 @@ public class KakaoSocialService implements SocialService {
 		final KakaoUserResponse kakaoUserResponse
 	) {
 		return StoreSocialInfoResponse.of(
-			kakaoUserResponse.id(),
+			String.valueOf(kakaoUserResponse.id()),
 			socialType
 		);
 	}

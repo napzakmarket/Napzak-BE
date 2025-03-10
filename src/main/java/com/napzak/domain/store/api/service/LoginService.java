@@ -1,5 +1,7 @@
 package com.napzak.domain.store.api.service;
 
+import com.napzak.global.auth.client.service.GoogleSocialService;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,7 @@ public class LoginService {
 	private final StoreRegistrationService storeRegistrationService;
 	private final AuthenticationService authenticationService;
 	private final StoreService storeService;
+	private final GoogleSocialService googleSocialService;
 
 	@Transactional
 	public LoginSuccessResponse login(
@@ -55,6 +58,7 @@ public class LoginService {
 	private SocialService getSocialService(SocialType socialType) {
 		return switch (socialType) {
 			case KAKAO -> kakaoSocialService;
+			case GOOGLE -> googleSocialService;
 			default -> throw new RuntimeException();
 		};
 	}
@@ -62,7 +66,7 @@ public class LoginService {
 	//기존 회원을 찾거나, 없으면 새로 멤버 등록
 	private Long findOrRegisterStore(final StoreSocialInfoResponse storeSocialInfoResponse) {
 
-		final Long socialId = storeSocialInfoResponse.socialId();
+		final String socialId = storeSocialInfoResponse.socialId();
 		final SocialType socialType = storeSocialInfoResponse.socialType();
 
 		boolean storeExits = storeService.checkStoreExistsBySocialIdAndSocialType(socialId, socialType);
