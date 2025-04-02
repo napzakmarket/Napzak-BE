@@ -17,11 +17,11 @@ public class LinkResource {
 		this.type = type;
 	}
 
-	public static LinkResource fromEntity(LinkResourceEntity entity) {
+	public static LinkResource fromEntity(LinkResourceEntity linkResourceEntity) {
 		return new LinkResource(
-			entity.getId(),
-			entity.getUrl(),
-			entity.getType()
+			linkResourceEntity.getId(),
+			linkResourceEntity.getUrl(),
+			linkResourceEntity.getType()
 		);
 	}
 }

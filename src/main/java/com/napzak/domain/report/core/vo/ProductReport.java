@@ -41,18 +41,18 @@ public class ProductReport {
 		this.createdAt = createdAt;
 	}
 
-	public static ProductReport fromEntity(ProductReportEntity entity) {
+	public static ProductReport fromEntity(ProductReportEntity productReportEntity) {
 		return new ProductReport(
-			entity.getId(),
-			entity.getReporterId(),
-			entity.getReportedProductId(),
-			entity.getReportedProductImages(),
-			entity.getReportedProductTitle(),
-			entity.getReportedProductDescription(),
-			entity.getReportTitle(),
-			entity.getReportDescription(),
-			entity.getReportContact(),
-			entity.getCreatedAt()
+			productReportEntity.getId(),
+			productReportEntity.getReporterId(),
+			productReportEntity.getReportedProductId(),
+			productReportEntity.getReportedProductImages(),
+			productReportEntity.getReportedProductTitle(),
+			productReportEntity.getReportedProductDescription(),
+			productReportEntity.getReportTitle(),
+			productReportEntity.getReportDescription(),
+			productReportEntity.getReportContact(),
+			productReportEntity.getCreatedAt()
 		);
 	}
 }
