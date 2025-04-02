@@ -77,6 +77,12 @@ public class ProductEntity {
 	@Column(name = COLUMN_INTEREST_COUNT, nullable = false)
 	private int interestCount = 0;
 
+	@Column(name = COLUMN_CHAT_COUNT, nullable = false)
+	private int chatCount = 0;
+
+	@Column(name = COLUMN_IS_VISIBLE, nullable = false)
+	private boolean isVisible = true;
+
 	@Column(name = COLUMN_STORE_ID, nullable = false)
 	private Long storeId;
 
@@ -85,26 +91,32 @@ public class ProductEntity {
 
 	@Builder
 	private ProductEntity(String title, String description, TradeType tradeType, int price,
+		LocalDateTime updatedAt, int viewCount,
 		TradeStatus tradeStatus, Boolean isPriceNegotiable, Boolean isDeliveryIncluded,
 		int standardDeliveryFee, int halfDeliveryFee, ProductCondition productCondition,
+		int interestCount, int chatCount, boolean isVisible,
 		Long storeId, Long genreId) {
 		this.title = title;
 		this.description = description;
 		this.tradeType = tradeType;
 		this.price = price;
+		this.updatedAt = updatedAt;
+		this.viewCount = viewCount;
 		this.tradeStatus = tradeStatus;
 		this.isPriceNegotiable = isPriceNegotiable;
 		this.isDeliveryIncluded = isDeliveryIncluded;
 		this.standardDeliveryFee = standardDeliveryFee;
 		this.halfDeliveryFee = halfDeliveryFee;
 		this.productCondition = productCondition;
+		this.interestCount = interestCount;
+		this.chatCount = chatCount;
+		this.isVisible = isVisible;
 		this.storeId = storeId;
 		this.genreId = genreId;
 	}
 
 	public static ProductEntity create(
 		final String title,
-		final Long storeId,
 		final String description,
 		final TradeType tradeType,
 		final TradeStatus tradeStatus,
@@ -114,11 +126,11 @@ public class ProductEntity {
 		final int standardDeliveryFee,
 		final int halfDeliveryFee,
 		final ProductCondition productCondition,
+		final Long storeId,
 		final Long genreId
 	) {
 		return ProductEntity.builder()
 			.title(title)
-			.storeId(storeId)
 			.description(description)
 			.tradeType(tradeType)
 			.tradeStatus(tradeStatus)
@@ -128,6 +140,7 @@ public class ProductEntity {
 			.standardDeliveryFee(standardDeliveryFee)
 			.halfDeliveryFee(halfDeliveryFee)
 			.productCondition(productCondition)
+			.storeId(storeId)
 			.genreId(genreId)
 			.build();
 	}
