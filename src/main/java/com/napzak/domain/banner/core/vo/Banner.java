@@ -16,10 +16,10 @@ public class Banner {
 	private final LocalDateTime createdAt;
 	private final LocalDateTime updatedAt;
 	private final BannerType bannerType;
-	private final boolean isExternal;
+	private final Boolean isExternal;
 
 	public Banner(Long id, String photoUrl, int sequence, String redirectUrl, LocalDateTime createdAt,
-		LocalDateTime updatedAt, BannerType bannerType, boolean isExternal) {
+		LocalDateTime updatedAt, BannerType bannerType, Boolean isExternal) {
 		this.id = id;
 		this.photoUrl = photoUrl;
 		this.sequence = sequence;
@@ -39,7 +39,7 @@ public class Banner {
 			bannerEntity.getCreatedAt(),
 			bannerEntity.getUpdatedAt(),
 			bannerEntity.getBannerType(),
-			bannerEntity.isExternal()
+			bannerEntity.getIsExternal()
 		);
 	}
 }

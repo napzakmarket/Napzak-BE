@@ -8,6 +8,8 @@ import com.napzak.domain.banner.core.entity.enums.BannerType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -43,15 +45,16 @@ public class BannerEntity {
 	@Column(name = COLUMN_UPDATED_AT, nullable = true)
 	private LocalDateTime updatedAt;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = COLUMN_BANNER_TYPE, nullable = false)
 	private BannerType bannerType;
 
 	@Column(name = COLUMN_IS_EXTERNAL, nullable = false)
-	private boolean isExternal;
+	private Boolean isExternal;
 
 	@Builder
 	private BannerEntity(String photoUrl, int sequence, String redirectUrl, LocalDateTime createdAt,
-		LocalDateTime updatedAt, BannerType bannerType, boolean isExternal) {
+		LocalDateTime updatedAt, BannerType bannerType, Boolean isExternal) {
 		this.photoUrl = photoUrl;
 		this.sequence = sequence;
 		this.redirectUrl = redirectUrl;
@@ -66,7 +69,7 @@ public class BannerEntity {
 		final int sequence,
 		final String redirectUrl,
 		final BannerType bannerType,
-		final boolean isExternal
+		final Boolean isExternal
 	) {
 		return BannerEntity.builder()
 			.photoUrl(photoUrl)
