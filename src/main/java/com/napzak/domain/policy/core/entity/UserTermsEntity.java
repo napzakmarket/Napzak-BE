@@ -13,7 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = TABLE_USER_TERM)
+@Table(name = TABLE_USER_TERMS)
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,19 +24,19 @@ public class UserTermsEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = COLUMN_TERM_TITLE)
-	private String termTitle;
+	@Column(name = COLUMN_TERMS_TITLE)
+	private String termsTitle;
 
-	@Column(name = COLUMN_TERM_URL)
-	private String termUrl;
+	@Column(name = COLUMN_TERMS_URL)
+	private String termsUrl;
 
 	@Builder
-	public UserTermsEntity(String termTitle, String termUrl) {
-		this.termTitle = termTitle;
-		this.termUrl = termUrl;
+	public UserTermsEntity(String termsTitle, String termsUrl) {
+		this.termsTitle = termsTitle;
+		this.termsUrl = termsUrl;
 	}
 
-	public static UserTermsEntity create(String termTitle, String termUrl) {
-		return new UserTermsEntity(termTitle, termUrl);
+	public static UserTermsEntity create(String termsTitle, String termsUrl) {
+		return new UserTermsEntity(termsTitle, termsUrl);
 	}
 }
