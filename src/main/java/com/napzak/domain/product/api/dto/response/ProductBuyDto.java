@@ -35,7 +35,7 @@ public record ProductBuyDto(
 			isInterested,
 			product.getTradeType(),
 			product.getTradeStatus(),
-			product.isPriceNegotiable(),
+			product.getIsPriceNegotiable(),
 			isOwnedByCurrentUser
 		);
 	}

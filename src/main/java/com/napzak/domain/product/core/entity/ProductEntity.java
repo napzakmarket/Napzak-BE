@@ -81,7 +81,7 @@ public class ProductEntity {
 	private int chatCount = 0;
 
 	@Column(name = COLUMN_IS_VISIBLE, nullable = false)
-	private boolean isVisible = true;
+	private Boolean isVisible = true;
 
 	@Column(name = COLUMN_STORE_ID, nullable = false)
 	private Long storeId;

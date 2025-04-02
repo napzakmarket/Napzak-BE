@@ -27,7 +27,7 @@ public class Product {
 	private final ProductCondition productCondition;
 	private final int interestCount;
 	private final int chatCount;
-	private final boolean isVisible;
+	private final Boolean isVisible;
 	private final Long storeId;
 	private final Long genreId;
 
@@ -35,7 +35,7 @@ public class Product {
 		TradeStatus tradeStatus, int price, LocalDateTime createdAt, LocalDateTime updatedAt,
 		int viewCount, Boolean isPriceNegotiable, Boolean isDeliveryIncluded,
 		int standardDeliveryFee, int halfDeliveryFee, ProductCondition productCondition,
-		int interestCount, int chatCount, boolean isVisible, Long storeId, Long genreId) {
+		int interestCount, int chatCount, Boolean isVisible, Long storeId, Long genreId) {
 		this.id = id;
 		this.title = title;
 		this.description = description;
@@ -75,7 +75,7 @@ public class Product {
 			entity.getProductCondition(),
 			entity.getInterestCount(),
 			entity.getChatCount(),
-			entity.isVisible(),
+			entity.getIsVisible(),
 			entity.getStoreId(),
 			entity.getGenreId()
 		);
