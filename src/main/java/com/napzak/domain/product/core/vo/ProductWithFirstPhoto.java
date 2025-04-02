@@ -18,12 +18,14 @@ public class ProductWithFirstPhoto {
 	private final Long genreId;
 	private final TradeType tradeType;
 	private final TradeStatus tradeStatus;
-	private final boolean isPriceNegotiable;
+	private final Boolean isPriceNegotiable;
 	private final Long storeId;
+	private final Boolean isVisible;
+	private final int chatCount;
 
 	private ProductWithFirstPhoto(Long id, String title, int price, int interestCount,
 		LocalDateTime createdAt, String firstPhoto, Long genreId, TradeType tradeType,
-		TradeStatus tradeStatus, boolean isPriceNegotiable, Long storeId) {
+		TradeStatus tradeStatus, Boolean isPriceNegotiable, Long storeId, Boolean isVisible, int chatCount) {
 		this.id = id;
 		this.title = title;
 		this.price = price;
@@ -35,6 +37,8 @@ public class ProductWithFirstPhoto {
 		this.tradeStatus = tradeStatus;
 		this.isPriceNegotiable = isPriceNegotiable;
 		this.storeId = storeId;
+		this.isVisible = isVisible;
+		this.chatCount = chatCount;
 	}
 
 	public static ProductWithFirstPhoto from(Product product, String firstPhoto) {
@@ -49,7 +53,9 @@ public class ProductWithFirstPhoto {
 			product.getTradeType(),
 			product.getTradeStatus(),
 			product.getIsPriceNegotiable(),
-			product.getStoreId()
+			product.getStoreId(),
+			product.getIsVisible(),
+			product.getChatCount()
 		);
 	}
 }
