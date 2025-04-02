@@ -7,19 +7,19 @@ import lombok.Getter;
 @Getter
 public class UserTerms {
 	private final Long id;
-	private final String termTitle;
-	private final String termUrl;
+	private final String termsTitle;
+	private final String termsUrl;
 
-	public UserTerms(Long id, String termTitle, String termUrl) {
+	public UserTerms(Long id, String termsTitle, String termsUrl) {
 		this.id = id;
-		this.termTitle = termTitle;
-		this.termUrl = termUrl;
+		this.termsTitle = termsTitle;
+		this.termsUrl = termsUrl;
 	}
 
-	public static UserTerms fromEntity(UserTermsEntity userTermEntity) {
+	public static UserTerms fromEntity(UserTermsEntity userTermsEntity) {
 		return new UserTerms(
-			userTermEntity.getId(),
-			userTermEntity.getTermTitle(),
-			userTermEntity.getTermUrl());
+			userTermsEntity.getId(),
+			userTermsEntity.getTermsTitle(),
+			userTermsEntity.getTermsUrl());
 	}
 }
