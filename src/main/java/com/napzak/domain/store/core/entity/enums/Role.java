@@ -9,7 +9,12 @@ import lombok.RequiredArgsConstructor;
 public enum Role {
 
 	STORE("ROLE_STORE"),
-	ADMIN("ROLE_ADMIN");
+	ADMIN("ROLE_ADMIN"),
+	ONBOARDING("ROLE_ONBOARDING"),
+	REPORTED("ROLE_REPORTED"),
+	BLOCKED("ROLE_BLOCKED"),
+	WITHDRAWN("ROLE_WITHDRAWN"),
+	;
 
 	private final String roleName;
 
