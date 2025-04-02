@@ -4,6 +4,8 @@ import static com.napzak.domain.banner.core.entity.BannerTableConstants.*;
 
 import java.time.LocalDateTime;
 
+import com.napzak.domain.banner.core.entity.enums.BannerType;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,25 +43,37 @@ public class BannerEntity {
 	@Column(name = COLUMN_UPDATED_AT, nullable = true)
 	private LocalDateTime updatedAt;
 
+	@Column(name = COLUMN_BANNER_TYPE, nullable = false)
+	private BannerType bannerType;
+
+	@Column(name = COLUMN_IS_EXTERNAL, nullable = false)
+	private boolean isExternal;
+
 	@Builder
 	private BannerEntity(String photoUrl, int sequence, String redirectUrl, LocalDateTime createdAt,
-		LocalDateTime updatedAt) {
+		LocalDateTime updatedAt, BannerType bannerType, boolean isExternal) {
 		this.photoUrl = photoUrl;
 		this.sequence = sequence;
 		this.redirectUrl = redirectUrl;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
+		this.bannerType = bannerType;
+		this.isExternal = isExternal;
 	}
 
 	public static BannerEntity create(
 		final String photoUrl,
 		final int sequence,
-		final String redirectUrl
+		final String redirectUrl,
+		final BannerType bannerType,
+		final boolean isExternal
 	) {
 		return BannerEntity.builder()
 			.photoUrl(photoUrl)
 			.sequence(sequence)
 			.redirectUrl(redirectUrl)
+			.bannerType(bannerType)
+			.isExternal(isExternal)
 			.build();
 	}
 
