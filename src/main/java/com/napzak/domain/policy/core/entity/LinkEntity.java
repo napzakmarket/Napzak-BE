@@ -1,6 +1,6 @@
 package com.napzak.domain.policy.core.entity;
 
-import static com.napzak.domain.policy.core.entity.LinkResourceTableConstants.*;
+import static com.napzak.domain.policy.core.entity.LinkTableConstants.*;
 
 import com.napzak.domain.policy.core.entity.enums.LinkType;
 
@@ -10,11 +10,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = TABLE_LINK_RESOURCE)
+@Table(name = TABLE_LINK)
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LinkResourceEntity {
+public class LinkEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,13 +29,13 @@ public class LinkResourceEntity {
 	private LinkType type;
 
 	@Builder
-	public LinkResourceEntity(String url, LinkType type) {
+	public LinkEntity(String url, LinkType type) {
 		this.url = url;
 		this.type = type;
 	}
 
-	public static LinkResourceEntity create(String url, LinkType type) {
-		return LinkResourceEntity.builder()
+	public static LinkEntity create(String url, LinkType type) {
+		return LinkEntity.builder()
 			.url(url)
 			.type(type)
 			.build();
