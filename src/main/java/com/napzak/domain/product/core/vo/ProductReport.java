@@ -1,6 +1,6 @@
-package com.napzak.domain.report.core.vo;
+package com.napzak.domain.product.core.vo;
 
-import com.napzak.domain.report.core.entity.ProductReportEntity;
+import com.napzak.domain.product.core.entity.ProductReportEntity;
 import java.time.LocalDateTime;
 import lombok.Getter;
 

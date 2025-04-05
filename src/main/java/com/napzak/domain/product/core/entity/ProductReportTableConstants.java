@@ -1,4 +1,4 @@
-package com.napzak.domain.report.core.entity;
+package com.napzak.domain.product.core.entity;
 
 public class ProductReportTableConstants {
 	public static final String TABLE_PRODUCT_REPORT = "product_report";

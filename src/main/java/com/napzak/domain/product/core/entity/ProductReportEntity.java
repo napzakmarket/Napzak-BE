@@ -1,6 +1,6 @@
-package com.napzak.domain.report.core.entity;
+package com.napzak.domain.product.core.entity;
 
-import static com.napzak.domain.report.core.entity.ProductReportTableConstants.*;
+import static com.napzak.domain.product.core.entity.ProductReportTableConstants.*;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
