@@ -1,6 +1,6 @@
-package com.napzak.domain.policy.core.entity;
+package com.napzak.domain.store.core.entity;
 
-import static com.napzak.domain.policy.core.entity.SlangTableConstants.*;
+import static com.napzak.domain.store.core.entity.SlangTableConstants.*;
 
 import java.time.LocalDateTime;
 

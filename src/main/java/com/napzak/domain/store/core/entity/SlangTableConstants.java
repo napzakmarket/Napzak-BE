@@ -1,4 +1,4 @@
-package com.napzak.domain.policy.core.entity;
+package com.napzak.domain.store.core.entity;
 
 public class SlangTableConstants {
 	public static final String TABLE_SLANG = "slang";
