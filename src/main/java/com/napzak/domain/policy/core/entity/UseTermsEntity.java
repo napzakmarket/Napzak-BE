@@ -1,6 +1,6 @@
 package com.napzak.domain.policy.core.entity;
 
-import static com.napzak.domain.policy.core.entity.UserTermsTableConstants.*;
+import static com.napzak.domain.policy.core.entity.UseTermsTableConstants.*;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,11 +13,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = TABLE_USER_TERMS)
+@Table(name = TABLE_USE_TERMS)
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserTermsEntity {
+public class UseTermsEntity {
 
 	@Id
 	@Column(name = COLUMN_ID)
@@ -31,12 +31,12 @@ public class UserTermsEntity {
 	private String termsUrl;
 
 	@Builder
-	public UserTermsEntity(String termsTitle, String termsUrl) {
+	public UseTermsEntity(String termsTitle, String termsUrl) {
 		this.termsTitle = termsTitle;
 		this.termsUrl = termsUrl;
 	}
 
-	public static UserTermsEntity create(String termsTitle, String termsUrl) {
-		return new UserTermsEntity(termsTitle, termsUrl);
+	public static UseTermsEntity create(String termsTitle, String termsUrl) {
+		return new UseTermsEntity(termsTitle, termsUrl);
 	}
 }
