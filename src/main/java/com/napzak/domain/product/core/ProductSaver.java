@@ -18,7 +18,6 @@ public class ProductSaver {
 
 	public Product save(
 		final String title,
-		final Long storeId,
 		final String description,
 		final TradeType tradeType,
 		final TradeStatus tradeStatus,
@@ -28,13 +27,14 @@ public class ProductSaver {
 		final int standardDeliveryFee,
 		final int halfDeliveryFee,
 		final ProductCondition productCondition,
+		final Long storeId,
 		final Long genreId
 	) {
 		final ProductEntity productEntity = productRepository.save(
 			ProductEntity.create(
-				title, storeId, description, tradeType, tradeStatus, price,
+				title, description, tradeType, tradeStatus, price,
 				isPriceNegotiable, isDeliveryIncluded, standardDeliveryFee,
-				halfDeliveryFee, productCondition, genreId
+				halfDeliveryFee, productCondition, storeId, genreId
 			)
 		);
 

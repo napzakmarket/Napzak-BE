@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Getter
 public class Product {
 	private final Long id;
-	private final Long storeId;
 	private final String title;
 	private final String description;
 	private final TradeType tradeType;
@@ -27,15 +26,17 @@ public class Product {
 	private final int halfDeliveryFee;
 	private final ProductCondition productCondition;
 	private final int interestCount;
+	private final int chatCount;
+	private final Boolean isVisible;
+	private final Long storeId;
 	private final Long genreId;
 
-	public Product(Long id, Long storeId, String title, String description, TradeType tradeType,
+	public Product(Long id, String title, String description, TradeType tradeType,
 		TradeStatus tradeStatus, int price, LocalDateTime createdAt, LocalDateTime updatedAt,
 		int viewCount, Boolean isPriceNegotiable, Boolean isDeliveryIncluded,
 		int standardDeliveryFee, int halfDeliveryFee, ProductCondition productCondition,
-		int interestCount, Long genreId) {
+		int interestCount, int chatCount, Boolean isVisible, Long storeId, Long genreId) {
 		this.id = id;
-		this.storeId = storeId;
 		this.title = title;
 		this.description = description;
 		this.tradeType = tradeType;
@@ -50,13 +51,15 @@ public class Product {
 		this.halfDeliveryFee = halfDeliveryFee;
 		this.productCondition = productCondition;
 		this.interestCount = interestCount;
+		this.chatCount = chatCount;
+		this.isVisible = isVisible;
+		this.storeId = storeId;
 		this.genreId = genreId;
 	}
 
 	public static Product fromEntity(ProductEntity entity) {
 		return new Product(
 			entity.getId(),
-			entity.getStoreId(),
 			entity.getTitle(),
 			entity.getDescription(),
 			entity.getTradeType(),
@@ -71,6 +74,9 @@ public class Product {
 			entity.getHalfDeliveryFee(),
 			entity.getProductCondition(),
 			entity.getInterestCount(),
+			entity.getChatCount(),
+			entity.getIsVisible(),
+			entity.getStoreId(),
 			entity.getGenreId()
 		);
 	}

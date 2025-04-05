@@ -9,7 +9,7 @@ public record ProductChatResponse(
 	TradeType tradeType,
 	String title,
 	int price,
-	boolean isPriceNegotiable
+	Boolean isPriceNegotiable
 ) {
 	public static ProductChatResponse from(
 		ProductWithFirstPhoto product,
@@ -21,7 +21,7 @@ public record ProductChatResponse(
 			product.getTradeType(),
 			product.getTitle(),
 			product.getPrice(),
-			product.isPriceNegotiable()
+			product.getIsPriceNegotiable()
 		);
 	}
 }

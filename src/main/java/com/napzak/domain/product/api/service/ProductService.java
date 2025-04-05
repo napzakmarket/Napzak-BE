@@ -114,9 +114,9 @@ public class ProductService {
 		ProductCondition productCondition, Long genreId
 	) {
 		Product product = productSaver.save(
-			title, storeId, description, TradeType.SELL, TradeStatus.BEFORE_TRADE, price,
+			title, description, TradeType.SELL, TradeStatus.BEFORE_TRADE, price,
 			false, isDeliveryIncluded, standardDeliveryFee,
-			halfDeliveryFee, productCondition, genreId
+			halfDeliveryFee, productCondition, storeId, genreId
 		);
 
 		return product;
@@ -128,9 +128,9 @@ public class ProductService {
 		int price, Boolean isPriceNegotiable, Long genreId
 	) {
 		Product product = productSaver.save(
-			title, storeId, description, TradeType.BUY, TradeStatus.BEFORE_TRADE, price,
+			title, description, TradeType.BUY, TradeStatus.BEFORE_TRADE, price,
 			isPriceNegotiable, false, 0,
-			0, null, genreId
+			0, null, storeId, genreId
 		);
 
 		return product;
