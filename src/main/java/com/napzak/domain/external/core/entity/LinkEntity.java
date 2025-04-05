@@ -1,8 +1,8 @@
-package com.napzak.domain.policy.core.entity;
+package com.napzak.domain.external.core.entity;
 
-import static com.napzak.domain.policy.core.entity.LinkTableConstants.*;
+import static com.napzak.domain.external.core.entity.LinkTableConstants.*;
 
-import com.napzak.domain.policy.core.entity.enums.LinkType;
+import com.napzak.domain.external.core.entity.enums.LinkType;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

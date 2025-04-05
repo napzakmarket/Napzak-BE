@@ -1,4 +1,4 @@
-package com.napzak.domain.policy.core.entity;
+package com.napzak.domain.external.core.entity;
 
 public class LinkTableConstants {
 	public static final String TABLE_LINK = "link";

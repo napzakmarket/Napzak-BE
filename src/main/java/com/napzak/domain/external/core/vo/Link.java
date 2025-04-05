@@ -1,7 +1,7 @@
-package com.napzak.domain.policy.core.vo;
+package com.napzak.domain.external.core.vo;
 
-import com.napzak.domain.policy.core.entity.LinkEntity;
-import com.napzak.domain.policy.core.entity.enums.LinkType;
+import com.napzak.domain.external.core.entity.LinkEntity;
+import com.napzak.domain.external.core.entity.enums.LinkType;
 
 import lombok.Getter;
 

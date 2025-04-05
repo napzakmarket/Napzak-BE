@@ -1,6 +1,6 @@
-package com.napzak.domain.policy.core.vo;
+package com.napzak.domain.external.core.vo;
 
-import com.napzak.domain.policy.core.entity.UseTermsEntity;
+import com.napzak.domain.external.core.entity.UseTermsEntity;
 
 import lombok.Getter;
 

@@ -1,4 +1,4 @@
-package com.napzak.domain.policy.core.entity.enums;
+package com.napzak.domain.external.core.entity.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

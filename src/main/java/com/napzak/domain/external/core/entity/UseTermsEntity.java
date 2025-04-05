@@ -1,6 +1,6 @@
-package com.napzak.domain.policy.core.entity;
+package com.napzak.domain.external.core.entity;
 
-import static com.napzak.domain.policy.core.entity.UseTermsTableConstants.*;
+import static com.napzak.domain.external.core.entity.UseTermsTableConstants.*;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
