@@ -1,6 +1,6 @@
-package com.napzak.domain.report.core.vo;
+package com.napzak.domain.store.core.vo;
 
-import com.napzak.domain.report.core.entity.StoreReportEntity;
+import com.napzak.domain.store.core.entity.StoreReportEntity;
 
 import java.time.LocalDateTime;
 
