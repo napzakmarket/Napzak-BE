@@ -1,6 +1,6 @@
 package com.napzak.domain.store.core.entity;
 
-import static com.napzak.domain.store.core.entity.WithdrawnStoreTableConstants.*;
+import static com.napzak.domain.store.core.entity.WithdrawTableConstants.*;
 
 import java.time.LocalDateTime;
 
@@ -15,11 +15,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = TABLE_WITHDRAWN_STORE)
+@Table(name = TABLE_WITHDRAW)
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class WithdrawnStoreEntity {
+public class WithdrawEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,14 +36,14 @@ public class WithdrawnStoreEntity {
 	private LocalDateTime createdAt;
 
 	@Builder
-	public WithdrawnStoreEntity(String title, String description, LocalDateTime createdAt) {
+	public WithdrawEntity(String title, String description, LocalDateTime createdAt) {
 		this.title = title;
 		this.description = description;
 		this.createdAt = createdAt;
 	}
 
-	public static WithdrawnStoreEntity create(String title, String description, LocalDateTime createdAt) {
-		return WithdrawnStoreEntity.builder()
+	public static WithdrawEntity create(String title, String description, LocalDateTime createdAt) {
+		return WithdrawEntity.builder()
 			.title(title)
 			.description(description)
 			.createdAt(createdAt)
