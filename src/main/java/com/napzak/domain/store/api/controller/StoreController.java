@@ -111,7 +111,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_STORE_INFO_SUCCESS, storeInfoResponse));
 	}
 
-	@PostMapping("/register")
+	@PostMapping("genres/register")
 	public ResponseEntity<SuccessResponse<GenreNameListResponse>> register(
 		@CurrentMember final Long currentMemberId,
 		@Valid @RequestBody final GenrePreferenceRequest genrePreferenceList
@@ -119,7 +119,7 @@ public class StoreController implements StoreApi {
 
 		List<Long> genreIds = genrePreferenceList.genreIds();
 
-		int maximum_genre_count = 4;
+		int maximum_genre_count = 7;
 		if (genrePreferenceList.genreIds().size() > maximum_genre_count) {
 			throw new NapzakException(StoreErrorCode.INVALID_GENRE_PREFERENCE_COUNT);
 		} //선호장르를 4개이상 등록하려고 했을 때 예외 발생
