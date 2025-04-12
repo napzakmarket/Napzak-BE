@@ -86,11 +86,9 @@ public class AuthenticationService {
 		Role role = jwtTokenProvider.getRoleFromJwt(refreshToken);
 		Collection<GrantedAuthority> authorities = List.of(role.toGrantedAuthority());
 
-		String nickname = jwtTokenProvider.getNicknameFromJwt(refreshToken);
-
 		UsernamePasswordAuthenticationToken authenticationToken = createAuthenticationToken(storeId, role, authorities);
-		log.info("Generated new access token for storeId: {}, nickname: {}, role: {}, authorities: {}",
-			storeId, nickname, role.getRoleName(), authorities);
+		log.info("Generated new access token for storeId: {}, role: {}, authorities: {}",
+			storeId, role.getRoleName(), authorities);
 
 		return AccessTokenGenerateResponse.from(jwtTokenProvider.issueAccessToken(authenticationToken));
 	}
