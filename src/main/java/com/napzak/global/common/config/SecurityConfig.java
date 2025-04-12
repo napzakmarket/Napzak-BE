@@ -36,6 +36,7 @@ public class SecurityConfig {
 		"/error",
 		"/api/v1/stores/login/**",
 		"/api/v1/onboarding/**",
+		"/api/v1/stores/refresh-token/**",
 		"/"
 	};
 
