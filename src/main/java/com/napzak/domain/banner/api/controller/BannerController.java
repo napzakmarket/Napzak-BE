@@ -45,7 +45,8 @@ public class BannerController implements BannerApi {
 				banner.getId(),
 				banner.getPhotoUrl(),
 				banner.getRedirectUrl(),
-				banner.getSequence()
+				banner.getSequence(),
+				banner.getIsExternal()
 			))
 			.toList();
 	}
