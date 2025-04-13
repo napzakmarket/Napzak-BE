@@ -27,6 +27,7 @@ import com.napzak.domain.store.api.StoreProductFacade;
 import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
 import com.napzak.domain.store.api.dto.response.LoginSuccessResponse;
 import com.napzak.domain.store.api.dto.response.MyPageResponse;
+import com.napzak.domain.store.api.dto.response.SettingLinkResponse;
 import com.napzak.domain.store.api.dto.response.StoreInfoResponse;
 import com.napzak.domain.store.api.dto.response.StoreLoginResponse;
 import com.napzak.domain.store.api.exception.StoreErrorCode;
@@ -105,6 +106,20 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_MYPAGE_INFO_SUCCESS, myPageResponse));
 	}
 
+	@GetMapping("/mypage/setting")
+	public ResponseEntity<SuccessResponse<SettingLinkResponse>> getSettingLink(
+		@CurrentMember final Long currentStoreId
+	) {
+		String noticeLink = storeLinkFacade.findByLinkType(LinkType.NOTICE).getUrl();
+		String termLink = storeLinkFacade.findByLinkType(LinkType.TERM).getUrl();
+		String privacyPolicyLink = storeLinkFacade.findByLinkType(LinkType.PRIVACY_POLICY).getUrl();
+		String versionInfoLink = storeLinkFacade.findByLinkType(LinkType.VERSION_INFO).getUrl();
+
+		SettingLinkResponse settingLinkResponse = SettingLinkResponse.from(noticeLink, termLink, privacyPolicyLink, versionInfoLink);
+
+		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_SETTING_LINK_SUCCESS, settingLinkResponse));
+	}
+
 	@GetMapping("/{storeId}")
 	public ResponseEntity<SuccessResponse<StoreInfoResponse>> getStoreInfo(
 		@PathVariable("storeId") Long OnwerId,
@@ -160,6 +175,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(StoreSuccessCode.GENRE_PREPERENCE_REGISTER_SUCCESS, response));
 	}
+
 
 	private List<GenreNameDto> genrePreferenceResponseGenerator(List<GenrePreference> genreList) {
 
