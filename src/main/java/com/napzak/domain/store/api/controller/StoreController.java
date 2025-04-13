@@ -103,10 +103,12 @@ public class StoreController implements StoreApi {
 		List<GenrePreference> genreList = storeService.getGenrePreferenceList(ownerId);
 		Store store = storeService.getStore(ownerId);
 
+		boolean isStoreOwner = ownerId.equals(currentStoreId);
+
 		List<GenreNameDto> genrePreferenceDto = genrePreferenceResponseGenerator(genreList);
 
 		StoreInfoResponse storeInfoResponse = StoreInfoResponse.of(store.getId(), store.getNickname(),
-			store.getDescription(), store.getPhoto(), store.getCover(), genrePreferenceDto);
+			store.getDescription(), store.getPhoto(), store.getCover(), isStoreOwner, genrePreferenceDto);
 
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_STORE_INFO_SUCCESS, storeInfoResponse));
 	}
