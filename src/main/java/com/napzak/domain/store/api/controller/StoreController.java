@@ -96,12 +96,12 @@ public class StoreController implements StoreApi {
 
 	@GetMapping("/{storeId}")
 	public ResponseEntity<SuccessResponse<StoreInfoResponse>> getStoreInfo(
-		@PathVariable("storeId") Long OwnerId,
+		@PathVariable("storeId") Long ownerId,
 		@CurrentMember final Long currentStoreId
 	) {
 
-		List<GenrePreference> genreList = storeService.getGenrePreferenceList(OwnerId);
-		Store store = storeService.getStore(OwnerId);
+		List<GenrePreference> genreList = storeService.getGenrePreferenceList(ownerId);
+		Store store = storeService.getStore(ownerId);
 
 		List<GenreNameDto> genrePreferenceDto = genrePreferenceResponseGenerator(genreList);
 
