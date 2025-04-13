@@ -42,6 +42,11 @@ public class ProductRetriever {
 	}
 
 	@Transactional(readOnly = true)
+	public int countProductsByStoreIdAndTradeType(Long storeId, TradeType tradeType) {
+		return productRepository.countByStoreIdAndTradeType(storeId, tradeType);
+	}
+
+	@Transactional(readOnly = true)
 	public List<Product> retrieveProducts(SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue,
 		int size, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType) {
 
