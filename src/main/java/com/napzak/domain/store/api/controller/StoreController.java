@@ -125,11 +125,11 @@ public class StoreController implements StoreApi {
 		@CurrentMember final Long currentStoreId
 	) {
 		String noticeLink = storeLinkFacade.findByLinkType(LinkType.NOTICE).getUrl();
-		String termLink = storeLinkFacade.findByLinkType(LinkType.TERM).getUrl();
+		String termsLink = storeLinkFacade.findByLinkType(LinkType.TERMS).getUrl();
 		String privacyPolicyLink = storeLinkFacade.findByLinkType(LinkType.PRIVACY_POLICY).getUrl();
 		String versionInfoLink = storeLinkFacade.findByLinkType(LinkType.VERSION_INFO).getUrl();
 
-		SettingLinkResponse settingLinkResponse = SettingLinkResponse.from(noticeLink, termLink, privacyPolicyLink, versionInfoLink);
+		SettingLinkResponse settingLinkResponse = SettingLinkResponse.from(noticeLink, termsLink, privacyPolicyLink, versionInfoLink);
 
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_SETTING_LINK_SUCCESS, settingLinkResponse));
 	}
