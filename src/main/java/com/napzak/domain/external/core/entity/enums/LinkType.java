@@ -10,7 +10,7 @@ public enum LinkType {
 	VERSION_INFO("버전 정보"),       // 버전 정보
 	GENRE_REQUEST("장르 추가 요청"),      // 장르 추가 요청
 	CUSTOMER_SUPPORT("고객센터"),
-	TERM("이용약관"),
+	TERMS("이용약관"),
 	PRIVACY_POLICY("개인정보 처리방침");
 
 	public final String linkType;

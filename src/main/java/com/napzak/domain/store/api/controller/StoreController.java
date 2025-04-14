@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.napzak.domain.external.core.entity.enums.LinkType;
+import com.napzak.domain.external.core.vo.Link;
 import com.napzak.domain.genre.api.dto.response.GenreNameDto;
 import com.napzak.domain.genre.api.dto.response.GenreNameListResponse;
 import com.napzak.domain.genre.api.exception.GenreErrorCode;
@@ -30,9 +31,11 @@ import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
 import com.napzak.domain.store.api.dto.response.AccessTokenGenerateResponse;
 import com.napzak.domain.store.api.dto.response.LoginSuccessResponse;
 import com.napzak.domain.store.api.dto.response.MyPageResponse;
+import com.napzak.domain.store.api.dto.response.OnboardingTermsListResponse;
 import com.napzak.domain.store.api.dto.response.SettingLinkResponse;
 import com.napzak.domain.store.api.dto.response.StoreInfoResponse;
 import com.napzak.domain.store.api.dto.response.StoreLoginResponse;
+import com.napzak.domain.store.api.dto.response.TermsDto;
 import com.napzak.domain.store.api.exception.StoreErrorCode;
 import com.napzak.domain.store.api.exception.StoreSuccessCode;
 import com.napzak.domain.store.api.service.AuthenticationService;
@@ -47,6 +50,7 @@ import com.napzak.global.auth.jwt.service.TokenService;
 import com.napzak.global.common.exception.NapzakException;
 import com.napzak.global.common.exception.dto.SuccessResponse;
 
+import feign.Response;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -125,13 +129,29 @@ public class StoreController implements StoreApi {
 		@CurrentMember final Long currentStoreId
 	) {
 		String noticeLink = storeLinkFacade.findByLinkType(LinkType.NOTICE).getUrl();
-		String termLink = storeLinkFacade.findByLinkType(LinkType.TERM).getUrl();
+		String termsLink = storeLinkFacade.findByLinkType(LinkType.TERMS).getUrl();
 		String privacyPolicyLink = storeLinkFacade.findByLinkType(LinkType.PRIVACY_POLICY).getUrl();
 		String versionInfoLink = storeLinkFacade.findByLinkType(LinkType.VERSION_INFO).getUrl();
 
-		SettingLinkResponse settingLinkResponse = SettingLinkResponse.from(noticeLink, termLink, privacyPolicyLink, versionInfoLink);
+		SettingLinkResponse settingLinkResponse = SettingLinkResponse.from(noticeLink, termsLink, privacyPolicyLink, versionInfoLink);
 
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_SETTING_LINK_SUCCESS, settingLinkResponse));
+	}
+
+	@GetMapping("/terms")
+	public ResponseEntity<SuccessResponse<OnboardingTermsListResponse>> getOnboardingTerms() {
+		Link terms = storeLinkFacade.findByLinkType(LinkType.TERMS);
+		Link privacyPolicy = storeLinkFacade.findByLinkType(LinkType.PRIVACY_POLICY);
+
+		List<TermsDto> termsList = List.of(
+			TermsDto.from(terms.getId(), "(필수) 이용약관", terms.getUrl()),
+			TermsDto.from(privacyPolicy.getId(), "(필수) 개인정보처리방침", privacyPolicy.getUrl())
+		);
+
+		OnboardingTermsListResponse onboardingTermsListResponse = OnboardingTermsListResponse.from(termsList);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(StoreSuccessCode.GET_ONBOARDING_TERMS_SUCCESS, onboardingTermsListResponse));
 	}
 
 	@GetMapping("/{storeId}")
@@ -191,7 +211,6 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(StoreSuccessCode.GENRE_PREPERENCE_REGISTER_SUCCESS, response));
 	}
-
 
 	private List<GenreNameDto> genrePreferenceResponseGenerator(List<GenrePreference> genreList) {
 
