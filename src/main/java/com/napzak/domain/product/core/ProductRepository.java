@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.domain.product.core.entity.ProductEntity;
+import com.napzak.domain.product.core.entity.enums.TradeStatus;
 import com.napzak.domain.product.core.entity.enums.TradeType;
 
 import jakarta.persistence.LockModeType;
@@ -34,8 +35,17 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, P
 		UPDATE ProductEntity p
 		SET p.interestCount = p.interestCount - 1
 		WHERE p.id = :productId
-		AND p.interestCount > 0""")
+		AND p.interestCount > 0
+		""")
 	void decrementInterestCount(@Param("productId") Long productId);
+
+	@Modifying
+	@Query("""
+		UPDATE ProductEntity p
+		SET p.tradeStatus = :tradeStatus
+		WHERE p.id = :productId
+		""")
+	void updateTradeStatus(@Param("productId") Long productId, @Param("tradeStatus") TradeStatus tradeStatus);
 
 	Optional<ProductEntity> findById(Long productId);
 

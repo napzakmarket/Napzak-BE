@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +22,7 @@ import com.napzak.domain.product.api.ProductStoreFacade;
 import com.napzak.domain.product.api.dto.request.ProductBuyCreateRequest;
 import com.napzak.domain.product.api.dto.request.ProductPhotoRequestDto;
 import com.napzak.domain.product.api.dto.request.ProductSellCreateRequest;
+import com.napzak.domain.product.api.dto.request.TradeStatusRequest;
 import com.napzak.domain.product.api.dto.request.cursor.HighPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.LowPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.PopularCursor;
@@ -34,6 +36,7 @@ import com.napzak.domain.product.api.dto.response.ProductPhotoDto;
 import com.napzak.domain.product.api.dto.response.ProductRecommendListResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellListResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellResponse;
+import com.napzak.domain.product.api.exception.ProductErrorCode;
 import com.napzak.domain.product.api.exception.ProductSuccessCode;
 import com.napzak.domain.product.api.service.ProductPagination;
 import com.napzak.domain.product.api.service.ProductService;
@@ -428,6 +431,26 @@ public class ProductController implements ProductApi {
 				response
 			)
 		);
+	}
+
+	@Override
+	@PatchMapping("/{productId}")
+	public ResponseEntity<SuccessResponse<Void>> updateTradeStatus(
+		@CurrentMember Long currentStoreId,
+		@PathVariable Long productId,
+		@RequestBody TradeStatusRequest tradeStatusRequest
+	) {
+
+		Product product = productService.getProduct(productId);
+
+		if (!product.getStoreId().equals(currentStoreId)) {
+			throw new NapzakException((ProductErrorCode.ACCESS_DENIED));
+		}
+
+		productService.updateTradeStatus(productId, tradeStatusRequest.tradeStatus());
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_UPDATE_SUCCESS));
 	}
 
 	@Override
