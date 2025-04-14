@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.domain.product.core.entity.ProductEntity;
+import com.napzak.domain.product.core.entity.enums.TradeType;
 
 import jakarta.persistence.LockModeType;
 
@@ -39,5 +40,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, P
 	Optional<ProductEntity> findById(Long productId);
 
 	boolean existsById(Long productId);
+
+	int countByStoreIdAndTradeType(Long storeId, TradeType tradeType);
 }
 

@@ -17,15 +17,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.napzak.domain.external.core.entity.enums.LinkType;
 import com.napzak.domain.genre.api.dto.response.GenreNameDto;
 import com.napzak.domain.genre.api.dto.response.GenreNameListResponse;
 import com.napzak.domain.genre.api.exception.GenreErrorCode;
 import com.napzak.domain.genre.core.vo.Genre;
+import com.napzak.domain.product.core.entity.enums.TradeType;
 import com.napzak.domain.store.api.StoreGenreFacade;
+import com.napzak.domain.store.api.StoreLinkFacade;
+import com.napzak.domain.store.api.StoreProductFacade;
 import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
 import com.napzak.domain.store.api.dto.response.AccessTokenGenerateResponse;
 import com.napzak.domain.store.api.dto.response.LoginSuccessResponse;
 import com.napzak.domain.store.api.dto.response.MyPageResponse;
+import com.napzak.domain.store.api.dto.response.SettingLinkResponse;
 import com.napzak.domain.store.api.dto.response.StoreInfoResponse;
 import com.napzak.domain.store.api.dto.response.StoreLoginResponse;
 import com.napzak.domain.store.api.exception.StoreErrorCode;
@@ -58,6 +63,8 @@ public class StoreController implements StoreApi {
 	private final StoreService storeService;
 	private final StoreGenreFacade storeGenreFacade;
 	private final StoreRegistrationService storeRegistrationService;
+	private final StoreProductFacade storeProductFacade;
+	private final StoreLinkFacade storeLinkFacade;
 	private final AuthenticationService authenticationService;
 
 	@PostMapping("/login")
@@ -104,8 +111,27 @@ public class StoreController implements StoreApi {
 		@CurrentMember final Long currentStoreId
 	) {
 		Store store = storeService.getStore(currentStoreId);
-		MyPageResponse myPageResponse = MyPageResponse.of(store.getId(), store.getNickname(), store.getPhoto());
+		int totalSellCount = storeProductFacade.getProductCount(currentStoreId, TradeType.SELL);
+		int totalBuyCount = storeProductFacade.getProductCount(currentStoreId, TradeType.BUY);
+		String serviceLink = storeLinkFacade.findByLinkType(LinkType.CUSTOMER_SUPPORT).getUrl();
+
+		MyPageResponse myPageResponse = MyPageResponse.of(store.getId(), store.getNickname(), store.getPhoto(),
+			totalSellCount, totalBuyCount, serviceLink);
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_MYPAGE_INFO_SUCCESS, myPageResponse));
+	}
+
+	@GetMapping("/mypage/setting")
+	public ResponseEntity<SuccessResponse<SettingLinkResponse>> getSettingLink(
+		@CurrentMember final Long currentStoreId
+	) {
+		String noticeLink = storeLinkFacade.findByLinkType(LinkType.NOTICE).getUrl();
+		String termLink = storeLinkFacade.findByLinkType(LinkType.TERM).getUrl();
+		String privacyPolicyLink = storeLinkFacade.findByLinkType(LinkType.PRIVACY_POLICY).getUrl();
+		String versionInfoLink = storeLinkFacade.findByLinkType(LinkType.VERSION_INFO).getUrl();
+
+		SettingLinkResponse settingLinkResponse = SettingLinkResponse.from(noticeLink, termLink, privacyPolicyLink, versionInfoLink);
+
+		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_SETTING_LINK_SUCCESS, settingLinkResponse));
 	}
 
 	@GetMapping("/{storeId}")
@@ -163,6 +189,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(StoreSuccessCode.GENRE_PREPERENCE_REGISTER_SUCCESS, response));
 	}
+
 
 	private List<GenreNameDto> genrePreferenceResponseGenerator(List<GenrePreference> genreList) {
 
