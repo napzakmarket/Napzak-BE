@@ -4,16 +4,16 @@ public record StoreStatusDto(
 	Long userId,
 	String storePhoto,
 	String nickname,
-	Long totalProducts,
-	Long totalTransactions
+	Long totalSellCount,
+	Long totalBuyCount
 ) {
 	public static StoreStatusDto from(
 		Long userId,
 		String storePhoto,
 		String nickname,
-		Long totalProducts,
-		Long totalTransactions
+		Long totalSellCount,
+		Long totalBuyCount
 	) {
-		return new StoreStatusDto(userId, storePhoto, nickname, totalProducts, totalTransactions);
+		return new StoreStatusDto(userId, storePhoto, nickname, totalSellCount, totalBuyCount);
 	}
 }
