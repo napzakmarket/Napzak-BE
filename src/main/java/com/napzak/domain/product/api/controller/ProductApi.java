@@ -168,7 +168,6 @@ public interface ProductApi {
 		@Valid @RequestBody TradeStatusRequest tradeStatusRequest
 	);
 
-
 	@Operation(summary = "추천 상품 조회", description = "사용자의 관심 기반 추천 상품 조회")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "사용자의 관심 기반 추천 상품 조회 성공"),
