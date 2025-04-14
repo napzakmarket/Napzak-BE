@@ -17,6 +17,11 @@ public enum ProductErrorCode implements BaseErrorCode {
 	PRODUCT_PHOTO_SEQUENCE_DUPLICATED(HttpStatus.BAD_REQUEST, "사진 순서는 중복될 수 없습니다."),
 
 	/*
+	403 Forbidden
+	 */
+	ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 상품에 접근 권한이 없습니다."),
+
+	/*
 	404 Not Found
 	 */
 	PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
