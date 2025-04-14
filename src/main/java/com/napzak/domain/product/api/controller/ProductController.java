@@ -387,7 +387,6 @@ public class ProductController implements ProductApi {
 	) {
 
 		Product product = productService.getProduct(productId);
-		List<Review> reviewList = productReviewFacade.findAllByStoreId(product.getStoreId());
 
 		boolean isInterested = productInterestFacade.getIsInterested(productId, currentStoreId); //좋아요 여부
 		String uploadTime = TimeUtils.calculateUploadTime(product.getCreatedAt()); //업로드 시간
@@ -404,23 +403,24 @@ public class ProductController implements ProductApi {
 
 		StoreStatusDto storeStatus = productStoreFacade.findStoreStatusDtoByStoreId(product.getStoreId());
 
-		List<Long> reviewIds = reviewList.stream()
-			.map(Review::getId)
-			.toList();
-
-		Map<Long, String> reviewerNicknames = productReviewFacade.findReviewerNamesByReviewId(product.getStoreId(),
-			reviewIds);
-
-		List<StoreReviewDto> storeReviewDtoList = reviewList.stream()
-			.map(review -> {
-				String reviewerNickname = reviewerNicknames.get(review.getId());
-				return StoreReviewDto.from(review, reviewerNickname, product);
-			})
-			.toList();
+		// List<Review> reviewList = productReviewFacade.findAllByStoreId(product.getStoreId());
+		//
+		// List<Long> reviewIds = reviewList.stream()
+		// 	.map(Review::getId)
+		// 	.toList();
+		//
+		// Map<Long, String> reviewerNicknames = productReviewFacade.findReviewerNamesByReviewId(product.getStoreId(),
+		// 	reviewIds);
+		//
+		// List<StoreReviewDto> storeReviewDtoList = reviewList.stream()
+		// 	.map(review -> {
+		// 		String reviewerNickname = reviewerNicknames.get(review.getId());
+		// 		return StoreReviewDto.from(review, reviewerNickname, product);
+		// 	})
+		// 	.toList();
 
 		ProductDetailResponse response = new ProductDetailResponse(isInterested, productDetailDto, photoDtoList,
-			storeStatus,
-			storeReviewDtoList);
+			storeStatus);
 
 		return ResponseEntity.ok(
 			SuccessResponse.of(

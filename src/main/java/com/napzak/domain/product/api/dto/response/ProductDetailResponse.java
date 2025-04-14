@@ -16,9 +16,6 @@ public record ProductDetailResponse(
 	List<ProductPhotoDto> productPhotoList,
 
 	@JsonProperty("storeInfo")
-	StoreStatusDto storeInfo,
-
-	@JsonProperty("storeReviewList")
-	List<StoreReviewDto> storeReviewList
+	StoreStatusDto storeInfo
 ) {
 }
