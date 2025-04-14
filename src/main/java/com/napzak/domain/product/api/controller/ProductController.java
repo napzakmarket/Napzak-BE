@@ -455,7 +455,7 @@ public class ProductController implements ProductApi {
 	@Override
 	@GetMapping("/home/sell")
 	public ResponseEntity<SuccessResponse<ProductSellListResponse>> getTopSellProducts(
-		@RequestParam(defaultValue = "4") int size,
+		@RequestParam(defaultValue = "6") int size,
 		@CurrentMember Long currentStoreId
 	) {
 
@@ -480,7 +480,7 @@ public class ProductController implements ProductApi {
 	@Override
 	@GetMapping("/home/buy")
 	public ResponseEntity<SuccessResponse<ProductBuyListResponse>> getTopBuyProducts(
-		@RequestParam(defaultValue = "4") int size,
+		@RequestParam(defaultValue = "6") int size,
 		@CurrentMember Long currentStoreId
 	) {
 

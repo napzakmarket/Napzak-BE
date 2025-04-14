@@ -18,6 +18,7 @@ public enum StoreSuccessCode implements BaseSuccessCode {
 	GET_MYPAGE_INFO_SUCCESS(HttpStatus.OK, "마이페이지 정보 조회 성공"),
 	GET_STORE_INFO_SUCCESS(HttpStatus.OK, "상점 정보 조회 성공"),
 	GET_SETTING_LINK_SUCCESS(HttpStatus.OK, "설정 링크 조회 성공"),
+	ACCESS_TOKEN_REISSUE_SUCCESS(HttpStatus.OK, "액세스 토큰 재발급 성공"),
 
 	/*
 	201 Created

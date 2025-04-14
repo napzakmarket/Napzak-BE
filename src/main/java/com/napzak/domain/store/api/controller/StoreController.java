@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +27,7 @@ import com.napzak.domain.store.api.StoreGenreFacade;
 import com.napzak.domain.store.api.StoreLinkFacade;
 import com.napzak.domain.store.api.StoreProductFacade;
 import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
+import com.napzak.domain.store.api.dto.response.AccessTokenGenerateResponse;
 import com.napzak.domain.store.api.dto.response.LoginSuccessResponse;
 import com.napzak.domain.store.api.dto.response.MyPageResponse;
 import com.napzak.domain.store.api.dto.response.SettingLinkResponse;
@@ -32,6 +35,7 @@ import com.napzak.domain.store.api.dto.response.StoreInfoResponse;
 import com.napzak.domain.store.api.dto.response.StoreLoginResponse;
 import com.napzak.domain.store.api.exception.StoreErrorCode;
 import com.napzak.domain.store.api.exception.StoreSuccessCode;
+import com.napzak.domain.store.api.service.AuthenticationService;
 import com.napzak.domain.store.api.service.LoginService;
 import com.napzak.domain.store.api.service.StoreRegistrationService;
 import com.napzak.domain.store.api.service.StoreService;
@@ -61,6 +65,7 @@ public class StoreController implements StoreApi {
 	private final StoreRegistrationService storeRegistrationService;
 	private final StoreProductFacade storeProductFacade;
 	private final StoreLinkFacade storeLinkFacade;
+	private final AuthenticationService authenticationService;
 
 	@PostMapping("/login")
 	public ResponseEntity<SuccessResponse<StoreLoginResponse>> login(
@@ -76,12 +81,13 @@ public class StoreController implements StoreApi {
 			.sameSite("None")
 			.httpOnly(true)
 			.build();
-		httpServletResponse.setHeader("Set-Cookie", cookie.toString());
 
 		StoreLoginResponse response = StoreLoginResponse.of(successResponse.accessToken(), successResponse.nickname(),
 			successResponse.role());
 
-		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.LOGIN_SUCCESS, response));
+		return ResponseEntity.ok()
+			.header(HttpHeaders.SET_COOKIE, cookie.toString())
+			.body(SuccessResponse.of(StoreSuccessCode.LOGIN_SUCCESS, response));
 	}
 
 	@PostMapping("/logout")
@@ -90,6 +96,14 @@ public class StoreController implements StoreApi {
 	) {
 		tokenService.deleteRefreshToken(currentStoreId);
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.LOGOUT_SUCCESS, null));
+	}
+
+	@PostMapping("refresh-token")
+	public ResponseEntity<SuccessResponse<AccessTokenGenerateResponse>> reissue(
+		@CookieValue("refreshToken") String refreshToken
+	) {
+		AccessTokenGenerateResponse accessTokenGenerateResponse = authenticationService.generateAccessTokenFromRefreshToken(refreshToken);
+		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.ACCESS_TOKEN_REISSUE_SUCCESS, accessTokenGenerateResponse));
 	}
 
 	@GetMapping("/mypage")

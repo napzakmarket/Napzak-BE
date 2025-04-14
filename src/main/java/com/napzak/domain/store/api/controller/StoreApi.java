@@ -1,6 +1,7 @@
 package com.napzak.domain.store.api.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.napzak.domain.genre.api.dto.response.GenreNameListResponse;
 import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
+import com.napzak.domain.store.api.dto.response.AccessTokenGenerateResponse;
 import com.napzak.domain.store.api.dto.response.MyPageResponse;
 import com.napzak.domain.store.api.dto.response.StoreInfoResponse;
 import com.napzak.domain.store.api.dto.response.StoreLoginResponse;
@@ -56,6 +58,19 @@ public interface StoreApi {
 	})
 	@PostMapping("/logout")
 	ResponseEntity<SuccessResponse<Void>> logOut(@CurrentMember Long currentStoreId);
+
+	@Operation(summary = "액세스 토큰 재발급", description = "Refresh Token을 기반으로 Access Token을 재발급받는 API")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "Access Token 재발급 성공",
+			content = @Content(schema = @Schema(implementation = AccessTokenGenerateResponse.class))),
+		@ApiResponse(responseCode = "401", description = "Refresh Token이 유효하지 않음"),
+		@ApiResponse(responseCode = "404", description = "해당 사용자를 찾을 수 없음")
+	})
+	@PostMapping("/refresh-token")
+	ResponseEntity<SuccessResponse<AccessTokenGenerateResponse>> reissue(
+		@Parameter(description = "HttpOnly Cookie에 담긴 Refresh Token", hidden = true)
+		@CookieValue("refreshToken") String refreshToken
+	);
 
 	@Operation(summary = "마이페이지 조회", description = "마이페이지 정보 조회 API")
 	@ApiResponses(value = {
