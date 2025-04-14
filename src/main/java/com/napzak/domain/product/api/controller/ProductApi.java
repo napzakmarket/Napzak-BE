@@ -2,6 +2,7 @@ package com.napzak.domain.product.api.controller;
 
 import com.napzak.domain.product.api.dto.request.ProductBuyCreateRequest;
 import com.napzak.domain.product.api.dto.request.ProductSellCreateRequest;
+import com.napzak.domain.product.api.dto.request.TradeStatusRequest;
 import com.napzak.domain.product.api.dto.response.*;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.common.exception.dto.SuccessResponse;
@@ -153,6 +154,20 @@ public interface ProductApi {
 		@PathVariable("productId") Long productId,
 		@CurrentMember Long currentStoreId
 	);
+
+	@Operation(summary = "상품 거래 상태 수정", description = "상품의 거래 상태(tradeStatus)를 수정합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "상품 거래 상태 수정 성공"),
+		@ApiResponse(responseCode = "403", description = "상품 소유자가 아닙니다."),
+		@ApiResponse(responseCode = "404", description = "상품을 찾을 수 없습니다.")
+	})
+	@PatchMapping("/{productId}")
+	ResponseEntity<SuccessResponse<Void>> updateTradeStatus(
+		@CurrentMember Long currentStoreId,
+		@PathVariable("productId") Long productId,
+		@Valid @RequestBody TradeStatusRequest tradeStatusRequest
+	);
+
 
 	@Operation(summary = "추천 상품 조회", description = "사용자의 관심 기반 추천 상품 조회")
 	@ApiResponses(value = {

@@ -433,6 +433,7 @@ public class ProductController implements ProductApi {
 		);
 	}
 
+	@Override
 	@PatchMapping("/{productId}")
 	public ResponseEntity<SuccessResponse<Void>> updateTradeStatus(
 		@CurrentMember Long currentStoreId,
