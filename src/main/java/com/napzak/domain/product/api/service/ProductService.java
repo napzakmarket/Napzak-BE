@@ -11,6 +11,7 @@ import com.napzak.domain.product.core.ProductPhotoRetriever;
 import com.napzak.domain.product.core.ProductPhotoSaver;
 import com.napzak.domain.product.core.ProductRetriever;
 import com.napzak.domain.product.core.ProductSaver;
+import com.napzak.domain.product.core.ProductUpdater;
 import com.napzak.domain.product.core.entity.enums.ProductCondition;
 import com.napzak.domain.product.core.entity.enums.TradeStatus;
 import com.napzak.domain.product.core.entity.enums.TradeType;
@@ -28,6 +29,7 @@ public class ProductService {
 	private final ProductPhotoRetriever productPhotoRetriever;
 	private final ProductSaver productSaver;
 	private final ProductPhotoSaver productPhotoSaver;
+	private final ProductUpdater productUpdater;
 
 	public ProductPagination getSellProducts(
 		SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue, int size,
@@ -145,6 +147,11 @@ public class ProductService {
 	public Product getProduct(Long productId) {
 
 		return productRetriever.findById(productId);
+	}
+
+	public void updateTradeStatus(Long productId, TradeStatus tradeStatus) {
+
+		productUpdater.updateProductStatus(productId, tradeStatus);
 	}
 
 	public List<ProductPhoto> getProductPhotos(Long productId) {

@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.domain.product.api.exception.ProductErrorCode;
 import com.napzak.domain.product.core.entity.ProductEntity;
+import com.napzak.domain.product.core.entity.enums.TradeStatus;
 import com.napzak.global.common.exception.NapzakException;
 
 import lombok.RequiredArgsConstructor;
@@ -27,5 +28,13 @@ public class ProductUpdater {
 		ProductEntity productEntity = productRepository.lockById(productId)
 			.orElseThrow(() -> new NapzakException(ProductErrorCode.PRODUCT_NOT_FOUND));
 		productRepository.decrementInterestCount(productId);
+	}
+
+	@Transactional
+	public void updateProductStatus(Long productId, TradeStatus tradeStatus) {
+		ProductEntity productEntity = productRepository.lockById(productId)
+			.orElseThrow(() -> new NapzakException(ProductErrorCode.PRODUCT_NOT_FOUND));
+
+		productRepository.updateTradeStatus(productId, tradeStatus);
 	}
 }
