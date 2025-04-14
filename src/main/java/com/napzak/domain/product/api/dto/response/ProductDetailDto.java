@@ -10,7 +10,7 @@ public record ProductDetailDto(
 	String productName,
 	int price,
 	String uploadTime,
-	int viewCount,
+	int chatCount,
 	int interestCount,
 	String description,
 	@JsonInclude(JsonInclude.Include.NON_NULL)
@@ -35,7 +35,7 @@ public record ProductDetailDto(
 			product.getTitle(),
 			product.getPrice(),
 			uploadTime,
-			product.getViewCount(),
+			product.getChatCount(),
 			product.getInterestCount(),
 			product.getDescription(),
 			product.getProductCondition() != null ? product.getProductCondition().toString() : null,
