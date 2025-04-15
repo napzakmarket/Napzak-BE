@@ -36,6 +36,7 @@ import com.napzak.domain.product.api.dto.response.ProductDetailResponse;
 import com.napzak.domain.product.api.dto.response.ProductPhotoDto;
 import com.napzak.domain.product.api.dto.response.ProductRecommendListResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellListResponse;
+import com.napzak.domain.product.api.dto.response.ProductSellModifyResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellResponse;
 import com.napzak.domain.product.api.exception.ProductErrorCode;
 import com.napzak.domain.product.api.exception.ProductSuccessCode;
@@ -46,8 +47,6 @@ import com.napzak.domain.product.core.entity.enums.TradeType;
 import com.napzak.domain.product.core.vo.Product;
 import com.napzak.domain.product.core.vo.ProductPhoto;
 import com.napzak.domain.product.core.vo.ProductWithFirstPhoto;
-import com.napzak.domain.review.api.dto.response.StoreReviewDto;
-import com.napzak.domain.review.core.vo.Review;
 import com.napzak.domain.store.api.dto.response.StoreStatusDto;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.common.exception.NapzakException;
@@ -443,10 +442,7 @@ public class ProductController implements ProductApi {
 	) {
 
 		Product product = productService.getProduct(productId);
-
-		if (!product.getStoreId().equals(currentStoreId)) {
-			throw new NapzakException((ProductErrorCode.ACCESS_DENIED));
-		}
+		authChecker(currentStoreId, product);
 
 		productService.updateTradeStatus(productId, tradeStatusRequest.tradeStatus());
 
@@ -462,15 +458,38 @@ public class ProductController implements ProductApi {
 	) {
 
 		Product product = productService.getProduct(productId);
-
-		if (!product.getStoreId().equals(currentStoreId)) {
-			throw new NapzakException((ProductErrorCode.ACCESS_DENIED));
-		}
+		authChecker(currentStoreId, product);
 
 		productService.deleteProduct(productId);
 
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_DELETE_SUCCESS));
+	}
+
+	@Override
+	@GetMapping("/sell/modify/{productId}")
+	public ResponseEntity<SuccessResponse<ProductSellModifyResponse>> getSellProductForModify(
+		@CurrentMember Long currentStoreId,
+		@PathVariable Long productId
+	) {
+
+		Product product = productService.getProduct(productId);
+		authChecker(currentStoreId, product);
+
+		String genreName = productGenreFacade.getGenreName(product.getGenreId());
+
+		List<ProductPhotoDto> photoDtoList = productService.getProductPhotos(productId).stream()
+			.map(ProductPhotoDto::from)
+			.toList();
+
+		ProductSellModifyResponse productSellModifyresponse = ProductSellModifyResponse.from(
+			product.getId(), genreName, product.getTitle(), product.getDescription(),
+			product.getProductCondition(), product.getPrice(), product.getIsDeliveryIncluded(),
+			product.getStandardDeliveryFee(), product.getHalfDeliveryFee(), photoDtoList
+		);
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productSellModifyresponse));
 	}
 
 
@@ -561,6 +580,14 @@ public class ProductController implements ProductApi {
 
 	}
 
+	private void authChecker(Long currentStoreId, Product product) {
+
+		if (!product.getStoreId().equals(currentStoreId)) {
+			throw new NapzakException((ProductErrorCode.ACCESS_DENIED));
+		}
+
+	}
+
 	private Map<Long, Boolean> fetchInterestMap(ProductPagination pagination, Long storeId) {
 		List<Long> productIds = pagination.getProductList().stream()
 			.map(ProductWithFirstPhoto::getId)
@@ -632,5 +659,6 @@ public class ProductController implements ProductApi {
 			return cursorOptionalValue;
 		}
 	}
+
 }
 	
