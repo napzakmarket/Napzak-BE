@@ -29,6 +29,7 @@ import com.napzak.domain.product.api.dto.request.cursor.LowPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.PopularCursor;
 import com.napzak.domain.product.api.dto.request.cursor.RecentCursor;
 import com.napzak.domain.product.api.dto.response.ProductBuyListResponse;
+import com.napzak.domain.product.api.dto.response.ProductBuyModifyResponse;
 import com.napzak.domain.product.api.dto.response.ProductBuyResponse;
 import com.napzak.domain.product.api.dto.response.ProductChatResponse;
 import com.napzak.domain.product.api.dto.response.ProductDetailDto;
@@ -492,6 +493,29 @@ public class ProductController implements ProductApi {
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productSellModifyresponse));
 	}
 
+	@Override
+	@GetMapping("/buy/modify/{productId}")
+	public ResponseEntity<SuccessResponse<ProductBuyModifyResponse>> getBuyProductForModify(
+		@CurrentMember Long currentStoreId,
+		@PathVariable Long productId
+	) {
+		Product product = productService.getProduct(productId);
+		authChecker(currentStoreId, product);
+
+		String genreName = productGenreFacade.getGenreName(product.getGenreId());
+
+		List<ProductPhotoDto> photoDtoList = productService.getProductPhotos(productId).stream()
+			.map(ProductPhotoDto::from)
+			.toList();
+
+		ProductBuyModifyResponse productBuyModifyResponse = ProductBuyModifyResponse.from(
+			product.getId(), genreName, product.getTitle(), product.getDescription(), product.getPrice(),
+			product.getIsPriceNegotiable(), photoDtoList
+		);
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productBuyModifyResponse));
+	}
 
 	@Override
 	@GetMapping("/home/recommend")
