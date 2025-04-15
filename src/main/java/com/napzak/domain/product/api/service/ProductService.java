@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.napzak.domain.product.api.service.enums.SortOption;
 import com.napzak.domain.product.core.ProductPhotoRetriever;
 import com.napzak.domain.product.core.ProductPhotoSaver;
+import com.napzak.domain.product.core.ProductRemover;
 import com.napzak.domain.product.core.ProductRetriever;
 import com.napzak.domain.product.core.ProductSaver;
 import com.napzak.domain.product.core.ProductUpdater;
@@ -30,6 +31,7 @@ public class ProductService {
 	private final ProductSaver productSaver;
 	private final ProductPhotoSaver productPhotoSaver;
 	private final ProductUpdater productUpdater;
+	private final ProductRemover productRemover;
 
 	public ProductPagination getSellProducts(
 		SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue, int size,
@@ -147,6 +149,11 @@ public class ProductService {
 	public Product getProduct(Long productId) {
 
 		return productRetriever.findById(productId);
+	}
+
+	public void deleteProduct(Long productId) {
+
+		productRemover.deleteById(productId);
 	}
 
 	public void updateTradeStatus(Long productId, TradeStatus tradeStatus) {

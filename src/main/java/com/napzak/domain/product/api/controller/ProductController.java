@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -452,6 +453,26 @@ public class ProductController implements ProductApi {
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_UPDATE_SUCCESS));
 	}
+
+	@Override
+	@DeleteMapping("{productId}")
+	public ResponseEntity<SuccessResponse<Void>> deleteProduct(
+		@CurrentMember Long currentStoreId,
+		@PathVariable Long productId
+	) {
+
+		Product product = productService.getProduct(productId);
+
+		if (!product.getStoreId().equals(currentStoreId)) {
+			throw new NapzakException((ProductErrorCode.ACCESS_DENIED));
+		}
+
+		productService.deleteProduct(productId);
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_DELETE_SUCCESS));
+	}
+
 
 	@Override
 	@GetMapping("/home/recommend")
