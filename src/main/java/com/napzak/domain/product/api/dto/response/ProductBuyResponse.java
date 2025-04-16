@@ -3,6 +3,7 @@ package com.napzak.domain.product.api.dto.response;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.napzak.domain.product.core.vo.Product;
 import com.napzak.domain.product.core.vo.ProductPhoto;
 
@@ -14,7 +15,9 @@ public record ProductBuyResponse(
 	String description,
 	int price,
 	boolean isPriceNegotiable,
-	LocalDateTime createdAt
+	LocalDateTime createdAt,
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	LocalDateTime updatedAt
 ) {
 	public static ProductBuyResponse from(Product product, List<ProductPhoto> photos) {
 		List<ProductPhotoResponseDto> productPhotoResponseDtos = photos.stream()
@@ -28,7 +31,8 @@ public record ProductBuyResponse(
 			product.getDescription(),
 			product.getPrice(),
 			product.getIsPriceNegotiable(),
-			product.getCreatedAt()
+			product.getCreatedAt(),
+			product.getUpdatedAt()
 		);
 	}
 }
