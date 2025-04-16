@@ -16,7 +16,6 @@ public record ProductBuyResponse(
 	int price,
 	boolean isPriceNegotiable,
 	LocalDateTime createdAt,
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	LocalDateTime updatedAt
 ) {
 	public static ProductBuyResponse from(Product product, List<ProductPhoto> photos) {

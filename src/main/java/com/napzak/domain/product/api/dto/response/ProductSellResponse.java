@@ -20,7 +20,6 @@ public record ProductSellResponse(
 	int standardDeliveryFee,
 	int halfDeliveryFee,
 	LocalDateTime createdAt,
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	LocalDateTime updatedAt
 ) {
 	public static ProductSellResponse from(Product product, List<ProductPhoto> photos) {
