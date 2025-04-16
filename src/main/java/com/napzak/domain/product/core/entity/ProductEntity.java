@@ -144,4 +144,27 @@ public class ProductEntity {
 			.genreId(genreId)
 			.build();
 	}
+
+	public void update(
+		final String title,
+		final String description,
+		final int price,
+		final Boolean isPriceNegotiable,
+		final Boolean isDeliveryIncluded,
+		final int standardDeliveryFee,
+		final int halfDeliveryFee,
+		final ProductCondition productCondition,
+		final Long genreId
+	) {
+		this.title = title;
+		this.description = description;
+		this.price = price;
+		this.isPriceNegotiable = isPriceNegotiable;
+		this.isDeliveryIncluded = isDeliveryIncluded;
+		this.standardDeliveryFee = standardDeliveryFee;
+		this.halfDeliveryFee = halfDeliveryFee;
+		this.productCondition = productCondition;
+		this.genreId = genreId;
+		this.updatedAt = LocalDateTime.now();
+	}
 }
