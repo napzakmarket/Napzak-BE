@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.domain.product.api.service.enums.SortOption;
+import com.napzak.domain.product.core.ProductPhotoRemover;
 import com.napzak.domain.product.core.ProductPhotoRetriever;
 import com.napzak.domain.product.core.ProductPhotoSaver;
 import com.napzak.domain.product.core.ProductRemover;
@@ -30,6 +31,7 @@ public class ProductService {
 	private final ProductPhotoRetriever productPhotoRetriever;
 	private final ProductSaver productSaver;
 	private final ProductPhotoSaver productPhotoSaver;
+	private final ProductPhotoRemover productPhotoRemover;
 	private final ProductUpdater productUpdater;
 	private final ProductRemover productRemover;
 
@@ -127,6 +129,19 @@ public class ProductService {
 	}
 
 	@Transactional
+	public Product updateSellProduct(
+		Long productId, String title, String description,
+		int price, Boolean isDeliveryIncluded, int standardDeliveryFee, int halfDeliveryFee,
+		ProductCondition productCondition, Long genreId
+	) {
+
+		return productUpdater.updateProduct(
+			productId, title, description, price, false, isDeliveryIncluded,
+			standardDeliveryFee, halfDeliveryFee, productCondition, genreId
+		);
+	}
+
+	@Transactional
 	public Product createBuyProduct(
 		String title, Long storeId, String description,
 		int price, Boolean isPriceNegotiable, Long genreId
@@ -141,7 +156,27 @@ public class ProductService {
 	}
 
 	@Transactional
+	public Product updateBuyProduct(
+		Long productId, String title, String description,
+		int price, Boolean isPriceNegotiable, Long genreId
+	) {
+
+		return productUpdater.updateProduct(
+			productId, title, description, price, isPriceNegotiable, false,
+			0, 0, null, genreId
+		);
+	}
+
+	@Transactional
 	public List<ProductPhoto> createProductPhotos(Long productId, Map<Integer, String> photoData) {
+
+		return productPhotoSaver.saveAll(productId, photoData);
+	}
+
+	@Transactional
+	public List<ProductPhoto> updateProductPhotos(Long productId, Map<Integer, String> photoData) {
+
+		productPhotoRemover.deleteAllByProductId(productId);
 
 		return productPhotoSaver.saveAll(productId, photoData);
 	}

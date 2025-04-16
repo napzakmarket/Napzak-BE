@@ -493,6 +493,47 @@ public class ProductController implements ProductApi {
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productSellModifyresponse));
 	}
 
+	@PatchMapping("/sell/modify/{productId}")
+	public ResponseEntity<SuccessResponse<ProductSellResponse>> modifySellProduct(
+		@CurrentMember Long currentStoreId,
+		@PathVariable Long productId,
+		@Valid @RequestBody ProductSellCreateRequest productSellCreateRequest
+	) {
+		Product product = productService.getProduct(productId);
+		authChecker(currentStoreId, product);
+
+		product = productService.updateSellProduct(
+			productId,
+			productSellCreateRequest.title(),
+			productSellCreateRequest.description(),
+			productSellCreateRequest.price(),
+			productSellCreateRequest.isDeliveryIncluded(),
+			productSellCreateRequest.standardDeliveryFee(),
+			productSellCreateRequest.halfDeliveryFee(),
+			productSellCreateRequest.productCondition(),
+			productSellCreateRequest.genreId()
+		);
+
+		Map<Integer, String> photoData = productSellCreateRequest.productPhotoList().stream()
+			.collect(Collectors.toMap(
+				ProductPhotoRequestDto::sequence,
+				ProductPhotoRequestDto::photoUrl,
+				(existing, replacement) -> existing,  // 중복 키가 발생하면 기존 값 유지
+				LinkedHashMap::new  // 순서 유지
+			));
+
+		List<ProductPhoto> productPhotoList = productService.updateProductPhotos(product.getId(), photoData);
+
+		ProductSellResponse response = ProductSellResponse.from(product, productPhotoList);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+				ProductSuccessCode.PRODUCT_MODIFY_SUCCESS,
+				response
+			)
+		);
+	}
+
 	@Override
 	@GetMapping("/buy/modify/{productId}")
 	public ResponseEntity<SuccessResponse<ProductBuyModifyResponse>> getBuyProductForModify(
@@ -515,6 +556,44 @@ public class ProductController implements ProductApi {
 
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productBuyModifyResponse));
+	}
+
+	@PatchMapping("/buy/modify/{productId}")
+	public ResponseEntity<SuccessResponse<ProductBuyResponse>> modifyBuyProduct(
+		@CurrentMember Long currentStoreId,
+		@PathVariable Long productId,
+		@Valid @RequestBody ProductBuyCreateRequest productBuyCreateRequest
+	) {
+		Product product = productService.getProduct(productId);
+		authChecker(currentStoreId, product);
+
+		product = productService.updateBuyProduct(
+			productId,
+			productBuyCreateRequest.title(),
+			productBuyCreateRequest.description(),
+			productBuyCreateRequest.price(),
+			productBuyCreateRequest.isPriceNegotiable(),
+			productBuyCreateRequest.genreId()
+		);
+
+		Map<Integer, String> photoData = productBuyCreateRequest.productPhotoList().stream()
+			.collect(Collectors.toMap(
+				ProductPhotoRequestDto::sequence,
+				ProductPhotoRequestDto::photoUrl,
+				(existing, replacement) -> existing,  // 중복 키가 발생하면 기존 값 유지
+				LinkedHashMap::new  // 순서 유지
+			));
+
+		List<ProductPhoto> productPhotoList = productService.updateProductPhotos(product.getId(), photoData);
+
+		ProductBuyResponse response = ProductBuyResponse.from(product, productPhotoList);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+				ProductSuccessCode.PRODUCT_MODIFY_SUCCESS,
+				response
+			)
+		);
 	}
 
 	@Override
