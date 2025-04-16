@@ -26,4 +26,5 @@ public interface ProductPhotoRepository extends JpaRepository<ProductPhotoEntity
 		"ORDER BY p.sequence ASC")
 	List<ProductPhotoEntity> findAllByProductEntityOrderBySequenceAsc(@Param("productId") Long productId);
 
+	void deleteByProductId(Long productId);
 }
