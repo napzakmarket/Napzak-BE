@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.napzak.domain.external.core.entity.enums.LinkType;
+import com.napzak.domain.genre.api.GenreLinkFacade;
 import com.napzak.domain.genre.api.dto.response.GenreListResponse;
 import com.napzak.domain.genre.api.dto.response.GenreNameListResponse;
 import com.napzak.domain.genre.api.exception.GenreSuccessCode;
@@ -27,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("api/v1")
 public class GenreController implements GenreApi {
 	private final GenreService genreService;
+	private final GenreLinkFacade genreLinkFacade;
 
 	@Override
 	@GetMapping("/onboarding/genres")
@@ -60,8 +63,18 @@ public class GenreController implements GenreApi {
 
 		GenreListResponse response = GenreListResponse.from(sortOption, pagination);
 
+		boolean isEmpty = response.genreList().isEmpty();
+
+		String genreLink = isEmpty
+			? genreLinkFacade.findByLinkType(LinkType.GENRE_REQUEST).getUrl()
+			: null;
+
+		GenreSuccessCode successCode = isEmpty
+			? GenreSuccessCode.GENRE_SEARCH_NO_RESULT
+			: GenreSuccessCode.GENRE_LIST_SEARCH_SUCCESS;
+
 		return ResponseEntity.ok(
-			SuccessResponse.of(GenreSuccessCode.GENRE_LIST_RETRIEVE_SUCCESS, response)
+			SuccessResponse.of(successCode, response, genreLink)
 		);
 	}
 
@@ -99,8 +112,18 @@ public class GenreController implements GenreApi {
 
 		GenreNameListResponse response = GenreNameListResponse.from(sortOption, pagination);
 
+		boolean isEmpty = response.genreList().isEmpty();
+
+		String genreLink = isEmpty
+			? genreLinkFacade.findByLinkType(LinkType.GENRE_REQUEST).getUrl()
+			: null;
+
+		GenreSuccessCode successCode = isEmpty
+			? GenreSuccessCode.GENRE_SEARCH_NO_RESULT
+			: GenreSuccessCode.GENRE_LIST_SEARCH_SUCCESS;
+
 		return ResponseEntity.ok(
-			SuccessResponse.of(GenreSuccessCode.GENRE_LIST_RETRIEVE_SUCCESS, response)
+			SuccessResponse.of(successCode, response, genreLink)
 		);
 	}
 
