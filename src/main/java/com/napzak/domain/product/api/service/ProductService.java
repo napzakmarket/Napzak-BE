@@ -6,12 +6,17 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.napzak.domain.genre.core.vo.Genre;
+import com.napzak.domain.product.api.ProductGenreFacade;
+import com.napzak.domain.product.api.dto.response.RecommendGenreDto;
+import com.napzak.domain.product.api.dto.response.RecommendSearchWordDto;
 import com.napzak.domain.product.api.service.enums.SortOption;
 import com.napzak.domain.product.core.ProductPhotoRetriever;
 import com.napzak.domain.product.core.ProductPhotoSaver;
 import com.napzak.domain.product.core.ProductRetriever;
 import com.napzak.domain.product.core.ProductSaver;
 import com.napzak.domain.product.core.ProductUpdater;
+import com.napzak.domain.product.core.SearchWordRetriever;
 import com.napzak.domain.product.core.entity.enums.ProductCondition;
 import com.napzak.domain.product.core.entity.enums.TradeStatus;
 import com.napzak.domain.product.core.entity.enums.TradeType;
@@ -19,6 +24,7 @@ import com.napzak.domain.product.core.vo.Product;
 import com.napzak.domain.product.core.vo.ProductPhoto;
 import com.napzak.domain.product.core.vo.ProductWithFirstPhoto;
 import com.napzak.domain.product.core.vo.ProductWithFirstPhotoList;
+import com.napzak.domain.product.core.vo.SearchWord;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +36,8 @@ public class ProductService {
 	private final ProductSaver productSaver;
 	private final ProductPhotoSaver productPhotoSaver;
 	private final ProductUpdater productUpdater;
+	private final SearchWordRetriever searchWordRetriever;
+	private final ProductGenreFacade productGenreFacade;
 
 	public ProductPagination getSellProducts(
 		SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue, int size,
@@ -183,6 +191,13 @@ public class ProductService {
 
 		return ProductWithFirstPhoto.from(product, firstPhoto);
 
+	}
+
+	public List<RecommendSearchWordDto> getRecommendSearchWord() {
+		List<SearchWord> recommendSearchWordList = searchWordRetriever.findAll();
+		return recommendSearchWordList.stream()
+			.map(searchWord -> RecommendSearchWordDto.from(searchWord.getId(), searchWord.getSearchWord()))
+			.toList();
 	}
 
 	private ProductPagination retrieveAndPreparePagination(
