@@ -19,4 +19,7 @@ public interface GenreRepository extends JpaRepository<GenreEntity, Long>, Genre
 
 	@Query("SELECT g FROM GenreEntity g WHERE g.id IN :genreIds")
 	List<GenreEntity> findExistingGenreEntityList(@Param("genreIds") List<Long> genreIds);
+
+	@Query("SELECT g FROM GenreEntity g WHERE g.recommendOrder > 0 ORDER BY g.recommendOrder ASC")
+	List<GenreEntity> findRecommendGenres();
 }
