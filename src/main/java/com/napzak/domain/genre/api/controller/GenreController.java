@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,15 +13,18 @@ import com.napzak.domain.external.core.entity.enums.LinkType;
 import com.napzak.domain.genre.api.GenreLinkFacade;
 import com.napzak.domain.genre.api.dto.response.GenreListResponse;
 import com.napzak.domain.genre.api.dto.response.GenreNameListResponse;
+import com.napzak.domain.genre.api.dto.response.GenrePageResponse;
 import com.napzak.domain.genre.api.exception.GenreSuccessCode;
 import com.napzak.domain.genre.api.service.GenrePagination;
 import com.napzak.domain.genre.api.service.GenreService;
 import com.napzak.domain.genre.api.service.enums.SortOption;
+import com.napzak.domain.genre.core.vo.Genre;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.common.exception.NapzakException;
 import com.napzak.global.common.exception.code.ErrorCode;
 import com.napzak.global.common.exception.dto.SuccessResponse;
 import com.napzak.domain.genre.api.dto.request.cursor.OldestCursor;
+import com.sun.net.httpserver.Authenticator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -125,6 +129,18 @@ public class GenreController implements GenreApi {
 		return ResponseEntity.ok(
 			SuccessResponse.of(successCode, response, genreLink)
 		);
+	}
+
+	@GetMapping("genres/detail/{genreId}")
+	public ResponseEntity<SuccessResponse<GenrePageResponse>> getGenrePage(
+		@CurrentMember Long storeId,
+		@PathVariable Long genreId
+	) {
+		Genre genre = genreService.searchGenre(genreId);
+		GenrePageResponse genrePageResponse = GenrePageResponse.from(genre.getId(), genre.getName(), genre.getTag(), genre.getCover());
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(GenreSuccessCode.GENRE_PAGE_GET_SUCCESS, genrePageResponse));
 	}
 
 	private Long parseCursorValues(String cursor, SortOption sortOption) {
