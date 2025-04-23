@@ -52,8 +52,15 @@ public class GenreRetriever {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Genre> findExistingGenrList(List<Long> genreIds) {
+	public List<Genre> findExistingGenreList(List<Long> genreIds) {
 		return genreRepository.findExistingGenreEntityList(genreIds).stream()
+			.map(Genre::fromEntity)
+			.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public List<Genre> findRecommendGenreList() {
+		return genreRepository.findRecommendGenres().stream()
 			.map(Genre::fromEntity)
 			.toList();
 	}
