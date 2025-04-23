@@ -55,7 +55,7 @@ public class GenreRetriever {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Genre> findExistingGenrList(List<Long> genreIds) {
+	public List<Genre> findExistingGenreList(List<Long> genreIds) {
 		return genreRepository.findExistingGenreEntityList(genreIds).stream()
 			.map(Genre::fromEntity)
 			.toList();
@@ -66,5 +66,12 @@ public class GenreRetriever {
 		GenreEntity genreEntity = genreRepository.findById(genreId)
 			.orElseThrow(()-> new NapzakException(GenreErrorCode.GENRE_NOT_FOUND));
 		return Genre.fromEntity(genreEntity);
+  }
+
+  @Transactional(readOnly = true)
+	public List<Genre> findRecommendGenreList() {
+		return genreRepository.findRecommendGenres().stream()
+			.map(Genre::fromEntity)
+			.toList();
 	}
 }

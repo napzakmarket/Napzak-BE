@@ -25,6 +25,6 @@ public class StoreGenreFacade {
 	}
 
 	public List<Genre> findExistingGenreList(List<Long> genreIds) {
-		return genreRetriever.findExistingGenrList(genreIds);
+		return genreRetriever.findExistingGenreList(genreIds);
 	}
 }
