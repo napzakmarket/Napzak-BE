@@ -87,6 +87,21 @@ public class ProductRetriever {
 			tradeType).stream().map(Product::fromEntity).toList();
 	}
 
+	public long countBySearchWord(String searchWord, Boolean isOnSale, Boolean isUnopened,
+		List<Long> genreIds, TradeType tradeType) {
+		return productRepository.countProductsBySearchFilters(searchWord, isOnSale, isUnopened, genreIds, tradeType);
+	}
+
+	public long countByStore(Long storeId, Boolean isOnSale, Boolean isUnopened,
+		List<Long> genreIds, TradeType tradeType) {
+		return productRepository.countProductsByStoreFilters(storeId, isOnSale, isUnopened, genreIds, tradeType);
+	}
+
+	public long countByFilters(Boolean isOnSale, Boolean isUnopened,
+		List<Long> genreIds, TradeType tradeType) {
+		return productRepository.countProductsByFilters(isOnSale, isUnopened, genreIds, tradeType);
+	}
+
 	/**
 	 * 홈화면용 추천상품을 조회:
 	 *  - 선호 장르(각각 SELL2, BUY2) 모으기

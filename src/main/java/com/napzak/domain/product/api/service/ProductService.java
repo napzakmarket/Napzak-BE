@@ -49,7 +49,6 @@ public class ProductService {
 	private final ProductRemover productRemover;
 	private final ProductPhotoUpdater productPhotoUpdater;
 	private final SearchWordRetriever searchWordRetriever;
-	private final ProductGenreFacade productGenreFacade;
 
 	public ProductPagination getSellProducts(
 		SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue, int size,
@@ -127,6 +126,20 @@ public class ProductService {
 			),
 			size
 		);
+	}
+
+	public int countProductsByFilters(Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType) {
+		return Math.toIntExact(productRetriever.countByFilters(isOnSale, isUnopened, genreIds, tradeType));
+	}
+
+	public int countProductsBySearchFilters(String searchWord, Boolean isOnSale, Boolean isUnopened,
+		List<Long> genreIds, TradeType tradeType) {
+		return Math.toIntExact(productRetriever.countBySearchWord(searchWord, isOnSale, isUnopened, genreIds, tradeType));
+	}
+
+	public int countProductsByStoreFilters(Long storeId, Boolean isOnSale, Boolean isUnopened,
+		List<Long> genreIds, TradeType tradeType) {
+		return Math.toIntExact(productRetriever.countByStore(storeId, isOnSale, isUnopened, genreIds, tradeType));
 	}
 
 	@Transactional

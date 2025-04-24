@@ -100,6 +100,7 @@ public class ProductController implements ProductApi {
 			isUnopened,
 			genreId
 		);
+		int productCount = productService.countProductsByFilters(isOnSale, isUnopened, genreId, TradeType.SELL);
 
 		// 3. 관심, 장르이름 정보 조회
 		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, storeId);
@@ -107,7 +108,7 @@ public class ProductController implements ProductApi {
 
 		// 4. 응답 생성
 		ProductSellListResponse response = ProductSellListResponse.from(
-			parsedSortOption, pagination, interestMap, genreMap, storeId
+			productCount, parsedSortOption, pagination, interestMap, genreMap, storeId
 		);
 
 		// 5. 응답 반환
@@ -140,12 +141,15 @@ public class ProductController implements ProductApi {
 			isOnSale,
 			genreId
 		);
+		int productCount = productService.countProductsByFilters(
+			isOnSale, false, genreId, TradeType.BUY
+		);
 
 		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, storeId);
 		Map<Long, String> genreMap = fetchGenreMap(pagination);
 
 		ProductBuyListResponse response = ProductBuyListResponse.from(
-			parsedSortOption, pagination, interestMap, genreMap, storeId
+			productCount, parsedSortOption, pagination, interestMap, genreMap, storeId
 		);
 
 		return ResponseEntity.ok(
@@ -181,12 +185,15 @@ public class ProductController implements ProductApi {
 			isUnopened,
 			genreId
 		);
+		int productCount = productService.countProductsBySearchFilters(
+			searchWord, isOnSale, isUnopened, genreId, TradeType.SELL
+		);
 
 		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, storeId);
 		Map<Long, String> genreMap = fetchGenreMap(pagination);
 
 		ProductSellListResponse response = ProductSellListResponse.from(
-			parsedSortOption, pagination, interestMap, genreMap, storeId
+			productCount, parsedSortOption, pagination, interestMap, genreMap, storeId
 		);
 
 		return ResponseEntity.ok(
@@ -220,12 +227,15 @@ public class ProductController implements ProductApi {
 			isOnSale,
 			genreId
 		);
+		int productCount = productService.countProductsBySearchFilters(
+			searchWord, isOnSale, false, genreId, TradeType.BUY
+		);
 
 		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, storeId);
 		Map<Long, String> genreMap = fetchGenreMap(pagination);
 
 		ProductBuyListResponse response = ProductBuyListResponse.from(
-			parsedSortOption, pagination, interestMap, genreMap, storeId
+			productCount, parsedSortOption, pagination, interestMap, genreMap, storeId
 		);
 
 		return ResponseEntity.ok(
@@ -261,12 +271,15 @@ public class ProductController implements ProductApi {
 			isUnopened,
 			genreId
 		);
+		int productCount = productService.countProductsByStoreFilters(
+			storeOwnerId, isOnSale, isUnopened, genreId, TradeType.SELL
+		);
 
 		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, currentStoreId);
 		Map<Long, String> genreMap = fetchGenreMap(pagination);
 
 		ProductSellListResponse response = ProductSellListResponse.from(
-			parsedSortOption, pagination, interestMap, genreMap, currentStoreId
+			productCount, parsedSortOption, pagination, interestMap, genreMap, currentStoreId
 		);
 
 		return ResponseEntity.ok(
@@ -300,12 +313,15 @@ public class ProductController implements ProductApi {
 			isOnSale,
 			genreId
 		);
+		int productCount = productService.countProductsByStoreFilters(
+			storeOwnerId, isOnSale, false, genreId, TradeType.BUY
+		);
 
 		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, currentStoreId);
 		Map<Long, String> genreMap = fetchGenreMap(pagination);
 
 		ProductBuyListResponse response = ProductBuyListResponse.from(
-			parsedSortOption, pagination, interestMap, genreMap, currentStoreId
+			productCount, parsedSortOption, pagination, interestMap, genreMap, currentStoreId
 		);
 
 		return ResponseEntity.ok(
@@ -626,7 +642,7 @@ public class ProductController implements ProductApi {
 
 		// 4. 응답 생성
 		ProductSellListResponse response = ProductSellListResponse.from(
-			parsedSortOption, pagination, interestMap, genreMap, currentStoreId
+			null, parsedSortOption, pagination, interestMap, genreMap, currentStoreId
 		);
 
 		return ResponseEntity.ok()
@@ -651,7 +667,7 @@ public class ProductController implements ProductApi {
 
 		// 4. 응답 생성
 		ProductBuyListResponse response = ProductBuyListResponse.from(
-			parsedSortOption, pagination, interestMap, genreMap, currentStoreId
+			null, parsedSortOption, pagination, interestMap, genreMap, currentStoreId
 		);
 
 		return ResponseEntity.ok()

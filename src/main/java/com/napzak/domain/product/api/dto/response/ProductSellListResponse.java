@@ -5,16 +5,20 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.napzak.domain.product.api.service.ProductPagination;
 import com.napzak.domain.product.api.service.enums.SortOption;
 import com.napzak.global.common.util.TimeUtils;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record ProductSellListResponse(
+	Integer productCount,
 	List<ProductSellDto> productSellList,
 	@Nullable
 	String nextCursor
 ) {
 	public static ProductSellListResponse from(
+		Integer productCount,
 		SortOption sortOption,
 		ProductPagination pagination,
 		Map<Long, Boolean> interestMap,
@@ -37,10 +41,11 @@ public record ProductSellListResponse(
 		// 2. Next Cursor 생성
 		String nextCursor = pagination.generateNextCursor(sortOption);
 
-		return new ProductSellListResponse(productDtos, nextCursor);
+		return new ProductSellListResponse(productCount, productDtos, nextCursor);
 	}
 
 	public static ProductSellListResponse fromWithoutCursor(
+		Integer productCount,
 		ProductPagination pagination,
 		Map<Long, Boolean> interestMap,
 		Map<Long, String> genreMap,
@@ -59,7 +64,7 @@ public record ProductSellListResponse(
 				);
 			}).toList();
 
-		return new ProductSellListResponse(productDtos, null);
+		return new ProductSellListResponse(productCount, productDtos, null);
 	}
 
 	public List<ProductSellDto> getProductSellList() {
