@@ -46,4 +46,9 @@ public class ProductPhotoEntity {
 			.sequence(sequence)
 			.build();
 	}
+
+	public void update(String photoUrl, int sequence) {
+		this.photoUrl = photoUrl;
+		this.sequence = sequence;
+	}
 }
