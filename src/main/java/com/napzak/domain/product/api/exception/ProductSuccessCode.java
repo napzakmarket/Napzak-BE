@@ -23,6 +23,7 @@ public enum ProductSuccessCode implements BaseSuccessCode {
 	PRODUCT_UPDATE_SUCCESS(HttpStatus.OK, "상품 상태 변경이 성공하였습니다."),
 	PRODUCT_DELETE_SUCCESS(HttpStatus.OK, "상품 삭제가 성공하였습니다."),
 	PRODUCT_MODIFY_SUCCESS(HttpStatus.OK, "상품 수정이 성공하였습니다"),
+	RECOMMEND_SEARCH_WORD_AND_GENRE_GET_SUCCESS(HttpStatus.OK, "추천 검색어 및 추천 장르가 조회되었습니다."),
 
 	/*
 	201 Created

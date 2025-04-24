@@ -7,8 +7,11 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.napzak.domain.genre.api.exception.GenreErrorCode;
 import com.napzak.domain.genre.api.service.enums.SortOption;
+import com.napzak.domain.genre.core.entity.GenreEntity;
 import com.napzak.domain.genre.core.vo.Genre;
+import com.napzak.global.common.exception.NapzakException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -52,8 +55,22 @@ public class GenreRetriever {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Genre> findExistingGenrList(List<Long> genreIds) {
+	public List<Genre> findExistingGenreList(List<Long> genreIds) {
 		return genreRepository.findExistingGenreEntityList(genreIds).stream()
+			.map(Genre::fromEntity)
+			.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public Genre findByGenreId(Long genreId) {
+		GenreEntity genreEntity = genreRepository.findById(genreId)
+			.orElseThrow(()-> new NapzakException(GenreErrorCode.GENRE_NOT_FOUND));
+		return Genre.fromEntity(genreEntity);
+  }
+
+  @Transactional(readOnly = true)
+	public List<Genre> findRecommendGenreList() {
+		return genreRepository.findRecommendGenres().stream()
 			.map(Genre::fromEntity)
 			.toList();
 	}

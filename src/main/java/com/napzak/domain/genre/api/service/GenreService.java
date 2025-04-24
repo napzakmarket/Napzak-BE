@@ -27,4 +27,8 @@ public class GenreService {
 
 		return new GenrePagination(size, new GenreList(genres));
 	}
+
+	public Genre searchGenre(long genreId) {
+		return genreRetriever.findByGenreId(genreId);
+	}
 }

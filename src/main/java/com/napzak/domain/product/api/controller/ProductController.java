@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.napzak.domain.genre.core.vo.Genre;
 import com.napzak.domain.product.api.ProductGenreFacade;
 import com.napzak.domain.product.api.ProductInterestFacade;
 import com.napzak.domain.product.api.ProductReviewFacade;
@@ -41,6 +42,9 @@ import com.napzak.domain.product.api.dto.response.ProductRecommendListResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellListResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellModifyResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellResponse;
+import com.napzak.domain.product.api.dto.response.RecommendGenreDto;
+import com.napzak.domain.product.api.dto.response.RecommendResponse;
+import com.napzak.domain.product.api.dto.response.RecommendSearchWordDto;
 import com.napzak.domain.product.api.exception.ProductErrorCode;
 import com.napzak.domain.product.api.exception.ProductSuccessCode;
 import com.napzak.domain.product.api.service.ProductPagination;
@@ -668,7 +672,25 @@ public class ProductController implements ProductApi {
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productChatResponse));
 
 	}
+  
+	@GetMapping("/search/recommend")
+	public ResponseEntity<SuccessResponse<RecommendResponse>> getRecommendSearchWordAndGenre(
+		@CurrentMember Long currentStoreId
+	) {
+		List<RecommendSearchWordDto> recommendSearchWordDtoList = productService.getRecommendSearchWord();
 
+		List<Genre> recommendGenreList = productGenreFacade.getRecommendGenre();
+		List<RecommendGenreDto> recommendGenreDtoList = recommendGenreList.stream()
+			.map(genre -> RecommendGenreDto.from(genre.getId(), genre.getName(), genre.getPhotoUrl()))
+			.toList();
+
+		RecommendResponse recommendResponse = new RecommendResponse(recommendSearchWordDtoList, recommendGenreDtoList);
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(ProductSuccessCode.RECOMMEND_SEARCH_WORD_AND_GENRE_GET_SUCCESS, recommendResponse));
+  }
+  
+  
 	private void authChecker(Long currentStoreId, Product product) {
 
 		if (!product.getStoreId().equals(currentStoreId)) {
@@ -676,6 +698,7 @@ public class ProductController implements ProductApi {
 		}
 
 	}
+  
 
 	private Map<Long, Boolean> fetchInterestMap(ProductPagination pagination, Long storeId) {
 		List<Long> productIds = pagination.getProductList().stream()

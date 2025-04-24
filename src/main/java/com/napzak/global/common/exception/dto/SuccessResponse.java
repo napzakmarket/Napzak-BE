@@ -9,15 +9,21 @@ import com.napzak.global.common.exception.base.BaseSuccessCode;
 public record SuccessResponse<T>(
 	int status,
 	String message,
-	T data
+	T data,
+	String externalLink
 ) {
 	// 성공 응답 (데이터 없음)
 	public static <T> SuccessResponse<T> of(BaseSuccessCode baseSuccessCode) {
-		return new SuccessResponse<>(baseSuccessCode.getHttpStatus().value(), baseSuccessCode.getMessage(), null);
+		return new SuccessResponse<>(baseSuccessCode.getHttpStatus().value(), baseSuccessCode.getMessage(), null, null);
 	}
 
 	// 성공 응답 (데이터 있음)
 	public static <T> SuccessResponse<T> of(BaseSuccessCode baseSuccessCode, T data) {
-		return new SuccessResponse<>(baseSuccessCode.getHttpStatus().value(), baseSuccessCode.getMessage(), data);
+		return new SuccessResponse<>(baseSuccessCode.getHttpStatus().value(), baseSuccessCode.getMessage(), data, null);
+	}
+
+	// 성공 응답 (외부 링크 포함)
+	public static <T> SuccessResponse<T> of(BaseSuccessCode baseSuccessCode, T data, String externalLink) {
+		return new SuccessResponse<>(baseSuccessCode.getHttpStatus().value(), baseSuccessCode.getMessage(), data, externalLink);
 	}
 }
