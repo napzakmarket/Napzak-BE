@@ -26,4 +26,10 @@ public interface ProductRepositoryCustom {
 		TradeType tradeType, int limit);
 
 	List<ProductEntity> findLatestProductsExcludingStoreId(Long excludeStoreId, TradeType tradeType, int limit);
+
+	long countProductsByFilters(Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType);
+
+	long countProductsBySearchFilters(String searchWord, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType);
+
+	long countProductsByStoreFilters(Long storeId, Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType);
 }
