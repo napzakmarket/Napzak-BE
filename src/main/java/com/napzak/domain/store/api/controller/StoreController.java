@@ -28,6 +28,7 @@ import com.napzak.domain.store.api.StoreGenreFacade;
 import com.napzak.domain.store.api.StoreLinkFacade;
 import com.napzak.domain.store.api.StoreProductFacade;
 import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
+import com.napzak.domain.store.api.dto.request.NicknameRequest;
 import com.napzak.domain.store.api.dto.response.AccessTokenGenerateResponse;
 import com.napzak.domain.store.api.dto.response.LoginSuccessResponse;
 import com.napzak.domain.store.api.dto.response.MyPageResponse;
@@ -110,6 +111,14 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.ACCESS_TOKEN_REISSUE_SUCCESS, accessTokenGenerateResponse));
 	}
 
+	@PostMapping("/nickname/check")
+	public ResponseEntity<SuccessResponse<Void>> checkNickname(
+		@RequestBody NicknameRequest request
+	) {
+		storeService.validateNickname(request.nickname());
+		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.VALID_NICKNAME_SUCCESS));
+	}
+
 	@GetMapping("/mypage")
 	public ResponseEntity<SuccessResponse<MyPageResponse>> getMyPageInfo(
 		@CurrentMember final Long currentStoreId
@@ -175,7 +184,7 @@ public class StoreController implements StoreApi {
 
 	@PostMapping("genres/register")
 	public ResponseEntity<SuccessResponse<GenreNameListResponse>> register(
-		@CurrentMember final Long currentMemberId,
+		@CurrentMember final Long currentStoreId,
 		@Valid @RequestBody final GenrePreferenceRequest genrePreferenceList
 	) {
 
@@ -201,7 +210,7 @@ public class StoreController implements StoreApi {
 				throw new NapzakException(GenreErrorCode.GENRE_NOT_FOUND);
 			}
 		}
-		storeRegistrationService.registerGenrePreference(currentMemberId, genreIds);
+		storeRegistrationService.registerGenrePreference(currentStoreId, genreIds);
 
 		List<GenreNameDto> genrePreferenceDto = genreList.stream()
 			.map(genre -> GenreNameDto.from(genre.getId(), genre.getName()))
@@ -210,6 +219,14 @@ public class StoreController implements StoreApi {
 		GenreNameListResponse response = GenreNameListResponse.fromWithoutCursor(genrePreferenceDto);
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(StoreSuccessCode.GENRE_PREPERENCE_REGISTER_SUCCESS, response));
+	}
+
+	@PostMapping("/admin/sync-redis/slangs")
+	public ResponseEntity<SuccessResponse<Void>> syncSlangToRedis(
+		@CurrentMember final Long currentStoreId
+	) {
+		storeService.syncSlangToRedis();
+		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.SLANG_REDIS_UPDATE_SUCCESS));
 	}
 
 	private List<GenreNameDto> genrePreferenceResponseGenerator(List<GenrePreference> genreList) {
