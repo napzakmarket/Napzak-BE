@@ -66,4 +66,9 @@ public class StoreRetriever {
 	public String findNicknameByStoreId(Long storeId) {
 		return storeRepository.findNicknameById(storeId);
 	}
+
+	@Transactional(readOnly = true)
+	public boolean existsByNickname(String nickname) {
+		return storeRepository.existsByNickname(nickname);
+	}
 }

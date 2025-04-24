@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.napzak.domain.genre.api.dto.response.GenreNameListResponse;
 import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
+import com.napzak.domain.store.api.dto.request.NicknameRequest;
 import com.napzak.domain.store.api.dto.response.AccessTokenGenerateResponse;
 import com.napzak.domain.store.api.dto.response.MyPageResponse;
 import com.napzak.domain.store.api.dto.response.StoreInfoResponse;
@@ -72,6 +73,21 @@ public interface StoreApi {
 		@CookieValue("refreshToken") String refreshToken
 	);
 
+	@Operation(summary = "닉네임 중복 및 비속어 검증", description = "닉네임의 중복 여부와 비속어 포함 여부를 검증합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "유효한 닉네임"),
+		@ApiResponse(responseCode = "400", description = "닉네임에 비속어 포함"),
+		@ApiResponse(responseCode = "409", description = "중복된 닉네임")
+	})
+	@PostMapping("/nickname/check")
+	ResponseEntity<SuccessResponse<Void>> checkNickname(
+		@io.swagger.v3.oas.annotations.parameters.RequestBody(
+			description = "닉네임 검증 요청", required = true,
+			content = @Content(schema = @Schema(implementation = NicknameRequest.class))
+		)
+		@RequestBody NicknameRequest request
+	);
+
 	@Operation(summary = "마이페이지 조회", description = "마이페이지 정보 조회 API")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "마이페이지 조회 성공",
@@ -107,4 +123,12 @@ public interface StoreApi {
 
 		@Valid @RequestBody GenrePreferenceRequest genrePreferenceList
 	);
+
+	@Operation(summary = "비속어 Redis 동기화", description = "DB의 비속어 목록을 Redis로 동기화합니다. (관리자 전용)")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "Redis 비속어 목록 동기화 성공")
+	})
+	@PostMapping("/admin/sync-redis/slangs")
+	ResponseEntity<SuccessResponse<Void>> syncSlangToRedis(@CurrentMember Long currentStoreId);
+
 }
