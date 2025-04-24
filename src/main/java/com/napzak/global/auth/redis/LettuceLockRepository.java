@@ -11,14 +11,15 @@ import lombok.RequiredArgsConstructor;
 @Repository
 public class LettuceLockRepository {
 	private final RedisTemplate<String, String> redisTemplate;
+	private static final String LOCK_PREFIX = "lock:";
 
 	public Boolean lock(String token, String lockType) {
 		return redisTemplate
 			.opsForValue()
-			.setIfAbsent(token, lockType, Duration.ofSeconds(3L));
+			.setIfAbsent(LOCK_PREFIX + token, lockType, Duration.ofSeconds(3L));
 	}
 
 	public void unlock(String token) {
-		redisTemplate.delete(token);
+		redisTemplate.delete(LOCK_PREFIX + token);
 	}
 }
