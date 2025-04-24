@@ -21,8 +21,10 @@ import com.napzak.domain.product.api.ProductInterestFacade;
 import com.napzak.domain.product.api.ProductReviewFacade;
 import com.napzak.domain.product.api.ProductStoreFacade;
 import com.napzak.domain.product.api.dto.request.ProductBuyCreateRequest;
+import com.napzak.domain.product.api.dto.request.ProductBuyModifyRequest;
 import com.napzak.domain.product.api.dto.request.ProductPhotoRequestDto;
 import com.napzak.domain.product.api.dto.request.ProductSellCreateRequest;
+import com.napzak.domain.product.api.dto.request.ProductSellModifyRequest;
 import com.napzak.domain.product.api.dto.request.TradeStatusRequest;
 import com.napzak.domain.product.api.dto.request.cursor.HighPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.LowPriceCursor;
@@ -497,32 +499,24 @@ public class ProductController implements ProductApi {
 	public ResponseEntity<SuccessResponse<ProductSellResponse>> modifySellProduct(
 		@CurrentMember Long currentStoreId,
 		@PathVariable Long productId,
-		@Valid @RequestBody ProductSellCreateRequest productSellCreateRequest
+		@Valid @RequestBody ProductSellModifyRequest productSellModifyRequest
 	) {
 		Product product = productService.getProduct(productId);
 		authChecker(currentStoreId, product);
 
 		product = productService.updateSellProduct(
 			productId,
-			productSellCreateRequest.title(),
-			productSellCreateRequest.description(),
-			productSellCreateRequest.price(),
-			productSellCreateRequest.isDeliveryIncluded(),
-			productSellCreateRequest.standardDeliveryFee(),
-			productSellCreateRequest.halfDeliveryFee(),
-			productSellCreateRequest.productCondition(),
-			productSellCreateRequest.genreId()
+			productSellModifyRequest.title(),
+			productSellModifyRequest.description(),
+			productSellModifyRequest.price(),
+			productSellModifyRequest.isDeliveryIncluded(),
+			productSellModifyRequest.standardDeliveryFee(),
+			productSellModifyRequest.halfDeliveryFee(),
+			productSellModifyRequest.productCondition(),
+			productSellModifyRequest.genreId()
 		);
 
-		Map<Integer, String> photoData = productSellCreateRequest.productPhotoList().stream()
-			.collect(Collectors.toMap(
-				ProductPhotoRequestDto::sequence,
-				ProductPhotoRequestDto::photoUrl,
-				(existing, replacement) -> existing,  // 중복 키가 발생하면 기존 값 유지
-				LinkedHashMap::new  // 순서 유지
-			));
-
-		List<ProductPhoto> productPhotoList = productService.updateProductPhotos(product.getId(), photoData);
+		List<ProductPhoto> productPhotoList = productService.modifyProductPhotos(product.getId(), productSellModifyRequest.productPhotoList());
 
 		ProductSellResponse response = ProductSellResponse.from(product, productPhotoList);
 
@@ -562,29 +556,21 @@ public class ProductController implements ProductApi {
 	public ResponseEntity<SuccessResponse<ProductBuyResponse>> modifyBuyProduct(
 		@CurrentMember Long currentStoreId,
 		@PathVariable Long productId,
-		@Valid @RequestBody ProductBuyCreateRequest productBuyCreateRequest
+		@Valid @RequestBody ProductBuyModifyRequest productBuyModifyRequest
 	) {
 		Product product = productService.getProduct(productId);
 		authChecker(currentStoreId, product);
 
 		product = productService.updateBuyProduct(
 			productId,
-			productBuyCreateRequest.title(),
-			productBuyCreateRequest.description(),
-			productBuyCreateRequest.price(),
-			productBuyCreateRequest.isPriceNegotiable(),
-			productBuyCreateRequest.genreId()
+			productBuyModifyRequest.title(),
+			productBuyModifyRequest.description(),
+			productBuyModifyRequest.price(),
+			productBuyModifyRequest.isPriceNegotiable(),
+			productBuyModifyRequest.genreId()
 		);
 
-		Map<Integer, String> photoData = productBuyCreateRequest.productPhotoList().stream()
-			.collect(Collectors.toMap(
-				ProductPhotoRequestDto::sequence,
-				ProductPhotoRequestDto::photoUrl,
-				(existing, replacement) -> existing,  // 중복 키가 발생하면 기존 값 유지
-				LinkedHashMap::new  // 순서 유지
-			));
-
-		List<ProductPhoto> productPhotoList = productService.updateProductPhotos(product.getId(), photoData);
+		List<ProductPhoto> productPhotoList = productService.modifyProductPhotos(product.getId(), productBuyModifyRequest.productPhotoList());
 
 		ProductBuyResponse response = ProductBuyResponse.from(product, productPhotoList);
 
