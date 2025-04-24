@@ -1,15 +1,22 @@
 package com.napzak.domain.product.api.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.napzak.domain.product.api.dto.request.ProductPhotoModifyDto;
 import com.napzak.domain.product.api.service.enums.SortOption;
 import com.napzak.domain.product.core.ProductPhotoRemover;
 import com.napzak.domain.product.core.ProductPhotoRetriever;
 import com.napzak.domain.product.core.ProductPhotoSaver;
+import com.napzak.domain.product.core.ProductPhotoUpdater;
 import com.napzak.domain.product.core.ProductRemover;
 import com.napzak.domain.product.core.ProductRetriever;
 import com.napzak.domain.product.core.ProductSaver;
@@ -34,6 +41,7 @@ public class ProductService {
 	private final ProductPhotoRemover productPhotoRemover;
 	private final ProductUpdater productUpdater;
 	private final ProductRemover productRemover;
+	private final ProductPhotoUpdater productPhotoUpdater;
 
 	public ProductPagination getSellProducts(
 		SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue, int size,
@@ -173,14 +181,6 @@ public class ProductService {
 		return productPhotoSaver.saveAll(productId, photoData);
 	}
 
-	@Transactional
-	public List<ProductPhoto> updateProductPhotos(Long productId, Map<Integer, String> photoData) {
-
-		productPhotoRemover.deleteAllByProductId(productId);
-
-		return productPhotoSaver.saveAll(productId, photoData);
-	}
-
 	public Product getProduct(Long productId) {
 
 		return productRetriever.findById(productId);
@@ -225,6 +225,50 @@ public class ProductService {
 
 		return ProductWithFirstPhoto.from(product, firstPhoto);
 
+	}
+
+	@Transactional
+	public List<ProductPhoto> modifyProductPhotos(Long productId, List<ProductPhotoModifyDto> requestPhotos) {
+
+		//기존 존재하는 사진들 조회
+		List<ProductPhoto> existingPhotos = productPhotoRetriever.getProductPhotosByProductId(productId);
+
+		//photoId 기준 객체 매핑
+		Map<Long, ProductPhoto> existingPhotoMap = existingPhotos.stream()
+			.filter(p -> p.getId() != null)
+			.collect(Collectors.toMap(ProductPhoto::getId, p-> p));
+
+		List<ProductPhoto> modifiedProductPhotoList = new ArrayList<>();
+		Set<Long> requestPhotoIds = new HashSet<>();
+		Map<Integer, String> newPhotos = new LinkedHashMap<>();
+
+		for (ProductPhotoModifyDto photo : requestPhotos) {
+			//요청으로 들어온 사진이 기존에 있던 사진이라면
+			if (photo.photoId() != null && existingPhotoMap.containsKey(photo.photoId())) {
+				requestPhotoIds.add(photo.photoId());
+				ProductPhoto originalPhoto = existingPhotoMap.get(photo.photoId());
+				//기존에 있던 사진과 요청으로 들어온 사진 간 순서나 url이 다른 경우 -> 수정 필요
+				boolean needChange = !originalPhoto.getPhotoUrl().equals(photo.photoUrl()) || originalPhoto.getSequence() != photo.sequence();
+				if (needChange) {
+					productPhotoUpdater.updateProductPhoto(photo.photoId(), photo.photoUrl(), photo.sequence());
+				}
+			}
+			else { //새로 등록이 필요한 사진이라면
+				newPhotos.put(photo.sequence(), photo.photoUrl());
+			}
+		}
+
+		List<ProductPhoto> addedPhotos = productPhotoSaver.saveAll(productId, newPhotos);
+		modifiedProductPhotoList.addAll(addedPhotos);
+
+		//요청에는 없지만 db에는 있는 사진 id를 찾아 객체 삭제
+		List<Long> needRemovePhotoIds = existingPhotos.stream()
+			.map(ProductPhoto::getId)
+			.filter(id -> !requestPhotoIds.contains(id))
+			.toList();
+		productPhotoRemover.deleteAllByProductPhotoIds(needRemovePhotoIds);
+
+		return productPhotoRetriever.getProductPhotosByProductId(productId);
 	}
 
 	private ProductPagination retrieveAndPreparePagination(
