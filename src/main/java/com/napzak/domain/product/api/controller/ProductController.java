@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,14 +22,17 @@ import com.napzak.domain.product.api.ProductInterestFacade;
 import com.napzak.domain.product.api.ProductReviewFacade;
 import com.napzak.domain.product.api.ProductStoreFacade;
 import com.napzak.domain.product.api.dto.request.ProductBuyCreateRequest;
+import com.napzak.domain.product.api.dto.request.ProductBuyModifyRequest;
 import com.napzak.domain.product.api.dto.request.ProductPhotoRequestDto;
 import com.napzak.domain.product.api.dto.request.ProductSellCreateRequest;
+import com.napzak.domain.product.api.dto.request.ProductSellModifyRequest;
 import com.napzak.domain.product.api.dto.request.TradeStatusRequest;
 import com.napzak.domain.product.api.dto.request.cursor.HighPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.LowPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.PopularCursor;
 import com.napzak.domain.product.api.dto.request.cursor.RecentCursor;
 import com.napzak.domain.product.api.dto.response.ProductBuyListResponse;
+import com.napzak.domain.product.api.dto.response.ProductBuyModifyResponse;
 import com.napzak.domain.product.api.dto.response.ProductBuyResponse;
 import com.napzak.domain.product.api.dto.response.ProductChatResponse;
 import com.napzak.domain.product.api.dto.response.ProductDetailDto;
@@ -36,6 +40,7 @@ import com.napzak.domain.product.api.dto.response.ProductDetailResponse;
 import com.napzak.domain.product.api.dto.response.ProductPhotoDto;
 import com.napzak.domain.product.api.dto.response.ProductRecommendListResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellListResponse;
+import com.napzak.domain.product.api.dto.response.ProductSellModifyResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellResponse;
 import com.napzak.domain.product.api.dto.response.RecommendGenreDto;
 import com.napzak.domain.product.api.dto.response.RecommendResponse;
@@ -49,8 +54,6 @@ import com.napzak.domain.product.core.entity.enums.TradeType;
 import com.napzak.domain.product.core.vo.Product;
 import com.napzak.domain.product.core.vo.ProductPhoto;
 import com.napzak.domain.product.core.vo.ProductWithFirstPhoto;
-import com.napzak.domain.review.api.dto.response.StoreReviewDto;
-import com.napzak.domain.review.core.vo.Review;
 import com.napzak.domain.store.api.dto.response.StoreStatusDto;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.common.exception.NapzakException;
@@ -446,15 +449,141 @@ public class ProductController implements ProductApi {
 	) {
 
 		Product product = productService.getProduct(productId);
-
-		if (!product.getStoreId().equals(currentStoreId)) {
-			throw new NapzakException((ProductErrorCode.ACCESS_DENIED));
-		}
+		authChecker(currentStoreId, product);
 
 		productService.updateTradeStatus(productId, tradeStatusRequest.tradeStatus());
 
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_UPDATE_SUCCESS));
+	}
+
+	@Override
+	@DeleteMapping("{productId}")
+	public ResponseEntity<SuccessResponse<Void>> deleteProduct(
+		@CurrentMember Long currentStoreId,
+		@PathVariable Long productId
+	) {
+
+		Product product = productService.getProduct(productId);
+		authChecker(currentStoreId, product);
+
+		productService.deleteProduct(productId);
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_DELETE_SUCCESS));
+	}
+
+	@Override
+	@GetMapping("/sell/modify/{productId}")
+	public ResponseEntity<SuccessResponse<ProductSellModifyResponse>> getSellProductForModify(
+		@CurrentMember Long currentStoreId,
+		@PathVariable Long productId
+	) {
+
+		Product product = productService.getProduct(productId);
+		authChecker(currentStoreId, product);
+
+		String genreName = productGenreFacade.getGenreName(product.getGenreId());
+
+		List<ProductPhotoDto> photoDtoList = productService.getProductPhotos(productId).stream()
+			.map(ProductPhotoDto::from)
+			.toList();
+
+		ProductSellModifyResponse productSellModifyresponse = ProductSellModifyResponse.from(
+			product.getId(), genreName, product.getTitle(), product.getDescription(),
+			product.getProductCondition(), product.getPrice(), product.getIsDeliveryIncluded(),
+			product.getStandardDeliveryFee(), product.getHalfDeliveryFee(), photoDtoList
+		);
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productSellModifyresponse));
+	}
+
+	@PatchMapping("/sell/modify/{productId}")
+	public ResponseEntity<SuccessResponse<ProductSellResponse>> modifySellProduct(
+		@CurrentMember Long currentStoreId,
+		@PathVariable Long productId,
+		@Valid @RequestBody ProductSellModifyRequest productSellModifyRequest
+	) {
+		Product product = productService.getProduct(productId);
+		authChecker(currentStoreId, product);
+
+		product = productService.updateSellProduct(
+			productId,
+			productSellModifyRequest.title(),
+			productSellModifyRequest.description(),
+			productSellModifyRequest.price(),
+			productSellModifyRequest.isDeliveryIncluded(),
+			productSellModifyRequest.standardDeliveryFee(),
+			productSellModifyRequest.halfDeliveryFee(),
+			productSellModifyRequest.productCondition(),
+			productSellModifyRequest.genreId()
+		);
+
+		List<ProductPhoto> productPhotoList = productService.modifyProductPhotos(product.getId(), productSellModifyRequest.productPhotoList());
+
+		ProductSellResponse response = ProductSellResponse.from(product, productPhotoList);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+				ProductSuccessCode.PRODUCT_MODIFY_SUCCESS,
+				response
+			)
+		);
+	}
+
+	@Override
+	@GetMapping("/buy/modify/{productId}")
+	public ResponseEntity<SuccessResponse<ProductBuyModifyResponse>> getBuyProductForModify(
+		@CurrentMember Long currentStoreId,
+		@PathVariable Long productId
+	) {
+		Product product = productService.getProduct(productId);
+		authChecker(currentStoreId, product);
+
+		String genreName = productGenreFacade.getGenreName(product.getGenreId());
+
+		List<ProductPhotoDto> photoDtoList = productService.getProductPhotos(productId).stream()
+			.map(ProductPhotoDto::from)
+			.toList();
+
+		ProductBuyModifyResponse productBuyModifyResponse = ProductBuyModifyResponse.from(
+			product.getId(), genreName, product.getTitle(), product.getDescription(), product.getPrice(),
+			product.getIsPriceNegotiable(), photoDtoList
+		);
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productBuyModifyResponse));
+	}
+
+	@PatchMapping("/buy/modify/{productId}")
+	public ResponseEntity<SuccessResponse<ProductBuyResponse>> modifyBuyProduct(
+		@CurrentMember Long currentStoreId,
+		@PathVariable Long productId,
+		@Valid @RequestBody ProductBuyModifyRequest productBuyModifyRequest
+	) {
+		Product product = productService.getProduct(productId);
+		authChecker(currentStoreId, product);
+
+		product = productService.updateBuyProduct(
+			productId,
+			productBuyModifyRequest.title(),
+			productBuyModifyRequest.description(),
+			productBuyModifyRequest.price(),
+			productBuyModifyRequest.isPriceNegotiable(),
+			productBuyModifyRequest.genreId()
+		);
+
+		List<ProductPhoto> productPhotoList = productService.modifyProductPhotos(product.getId(), productBuyModifyRequest.productPhotoList());
+
+		ProductBuyResponse response = ProductBuyResponse.from(product, productPhotoList);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+				ProductSuccessCode.PRODUCT_MODIFY_SUCCESS,
+				response
+			)
+		);
 	}
 
 	@Override
@@ -543,7 +672,7 @@ public class ProductController implements ProductApi {
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productChatResponse));
 
 	}
-
+  
 	@GetMapping("/search/recommend")
 	public ResponseEntity<SuccessResponse<RecommendResponse>> getRecommendSearchWordAndGenre(
 		@CurrentMember Long currentStoreId
@@ -559,8 +688,17 @@ public class ProductController implements ProductApi {
 
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(ProductSuccessCode.RECOMMEND_SEARCH_WORD_AND_GENRE_GET_SUCCESS, recommendResponse));
+  }
+  
+  
+	private void authChecker(Long currentStoreId, Product product) {
+
+		if (!product.getStoreId().equals(currentStoreId)) {
+			throw new NapzakException((ProductErrorCode.ACCESS_DENIED));
+		}
 
 	}
+  
 
 	private Map<Long, Boolean> fetchInterestMap(ProductPagination pagination, Long storeId) {
 		List<Long> productIds = pagination.getProductList().stream()
@@ -633,5 +771,6 @@ public class ProductController implements ProductApi {
 			return cursorOptionalValue;
 		}
 	}
+
 }
 	

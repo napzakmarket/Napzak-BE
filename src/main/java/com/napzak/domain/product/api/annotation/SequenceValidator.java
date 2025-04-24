@@ -6,18 +6,30 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import com.napzak.domain.product.api.dto.request.ProductPhotoBase;
 import com.napzak.domain.product.api.dto.request.ProductPhotoRequestDto;
 
-public class SequenceValidator implements ConstraintValidator<ValidSequence, List<ProductPhotoRequestDto>> {
+public class SequenceValidator implements ConstraintValidator<ValidSequence, List<?>> {
 
 	@Override
-	public boolean isValid(List<ProductPhotoRequestDto> productPhotoList, ConstraintValidatorContext context) {
-		if (productPhotoList == null || productPhotoList.isEmpty()) {
+	public boolean isValid(List<?> value, ConstraintValidatorContext context) {
+		if (value == null || value.isEmpty()) {
 			return false; // 빈 리스트는 유효하지 않음
 		}
 
+		// ProductPhotoBase 타입인지 확인
+		if (!(value.get(0) instanceof ProductPhotoBase)) {
+			return false;
+		}
+
+		List<ProductPhotoBase> productPhotoList = value.stream()
+			.filter(ProductPhotoBase.class::isInstance)
+			.map(ProductPhotoBase.class::cast)
+			.toList();
+
+
 		List<Integer> sequenceList = productPhotoList.stream()
-			.map(ProductPhotoRequestDto::sequence)
+			.map(ProductPhotoBase::sequence)
 			.toList();
 
 		// 중복 체크

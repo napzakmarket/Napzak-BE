@@ -168,6 +168,43 @@ public interface ProductApi {
 		@Valid @RequestBody TradeStatusRequest tradeStatusRequest
 	);
 
+	@Operation(summary = "상품 삭제", description = "상품 데이터를 삭제합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "상품 거래 상태 수정 성공"),
+		@ApiResponse(responseCode = "403", description = "상품 소유자가 아닙니다."),
+		@ApiResponse(responseCode = "404", description = "상품을 찾을 수 없습니다.")
+	})
+	@DeleteMapping("/{productId}")
+	ResponseEntity<SuccessResponse<Void>> deleteProduct(
+		@CurrentMember Long currentStoreId,
+		@PathVariable("productId") Long productId
+	);
+
+	@Operation(summary = "수정을 위한 팔아요 상품 정보 조회", description = "상품 수정을 위한 팔아요 상품 정보를 조회합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "상품 거래 상태 수정 성공"),
+		@ApiResponse(responseCode = "403", description = "상품 소유자가 아닙니다."),
+		@ApiResponse(responseCode = "404", description = "상품을 찾을 수 없습니다.")
+	})
+	@DeleteMapping("/sell/modify/{productId}")
+	ResponseEntity<SuccessResponse<ProductSellModifyResponse>> getSellProductForModify(
+		@CurrentMember Long currentStoreId,
+		@PathVariable("productId") Long productId
+	);
+
+	@Operation(summary = "수정을 위한 구해요 상품 정보 조회", description = "상품 수정을 위한 구해요 상품 정보를 조회합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "상품 거래 상태 수정 성공"),
+		@ApiResponse(responseCode = "403", description = "상품 소유자가 아닙니다."),
+		@ApiResponse(responseCode = "404", description = "상품을 찾을 수 없습니다.")
+	})
+	@DeleteMapping("/buy/modify/{productId}")
+	ResponseEntity<SuccessResponse<ProductBuyModifyResponse>> getBuyProductForModify(
+		@CurrentMember Long currentStoreId,
+		@PathVariable("productId") Long productId
+	);
+
+
 	@Operation(summary = "추천 상품 조회", description = "사용자의 관심 기반 추천 상품 조회")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "사용자의 관심 기반 추천 상품 조회 성공"),
