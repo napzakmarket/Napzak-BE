@@ -12,7 +12,9 @@ import com.napzak.domain.product.core.entity.enums.TradeStatus;
 import com.napzak.domain.product.core.entity.enums.TradeType;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -39,7 +41,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 				isOnSaleFilter(isOnSale),
 				cursorFilter(cursorProductId, cursorOptionalValue, orderSpecifier)
 			)
-			.orderBy(orderSpecifier)
+			.orderBy(tradeStatusOrder().asc(), orderSpecifier)
 			.limit(size + 1)
 			.fetch();
 	}
@@ -57,7 +59,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 				isOnSaleFilter(isOnSale),
 				cursorFilter(cursorProductId, cursorOptionalValue, orderSpecifier)
 			)
-			.orderBy(orderSpecifier)
+			.orderBy(tradeStatusOrder().asc(), orderSpecifier)
 			.limit(size + 1)
 			.fetch();
 	}
@@ -75,7 +77,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 				isOnSaleFilter(isOnSale),
 				cursorFilter(cursorProductId, cursorOptionalValue, orderSpecifier)
 			)
-			.orderBy(orderSpecifier)
+			.orderBy(tradeStatusOrder().asc(), orderSpecifier)
 			.limit(size + 1)
 			.fetch();
 	}
@@ -92,6 +94,52 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 			.orderBy(orderSpecifier)
 			.limit(size)
 			.fetch();
+	}
+
+	@Override
+	public long countProductsByFilters(Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType) {
+		Long count = queryFactory.select(productEntity.count())
+			.from(productEntity)
+			.where(
+				genreFilter(genreIds),
+				isUnopenedFilter(isUnopened),
+				tradeTypeFilter(tradeType),
+				isOnSaleFilter(isOnSale)
+			)
+			.fetchOne();
+		return count != null ? count : 0L;
+	}
+
+	@Override
+	public long countProductsBySearchFilters(String searchWord, Boolean isOnSale, Boolean isUnopened,
+		List<Long> genreIds, TradeType tradeType) {
+		Long count = queryFactory.select(productEntity.count())
+			.from(productEntity)
+			.where(
+				matchProductTitle(searchWord).gt(0),
+				genreFilter(genreIds),
+				isUnopenedFilter(isUnopened),
+				tradeTypeFilter(tradeType),
+				isOnSaleFilter(isOnSale)
+			)
+			.fetchOne();
+		return count != null ? count : 0L;
+	}
+
+	@Override
+	public long countProductsByStoreFilters(Long storeId, Boolean isOnSale, Boolean isUnopened,
+		List<Long> genreIds, TradeType tradeType) {
+		Long count = queryFactory.select(productEntity.count())
+			.from(productEntity)
+			.where(
+				productEntity.storeId.eq(storeId),
+				genreFilter(genreIds),
+				isUnopenedFilter(isUnopened),
+				tradeTypeFilter(tradeType),
+				isOnSaleFilter(isOnSale)
+			)
+			.fetchOne();
+		return count != null ? count : 0L;
 	}
 
 	/**
@@ -201,4 +249,13 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 			productEntity.title,
 			booleanQuery);
 	}
+
+	private NumberExpression<Integer> tradeStatusOrder() {
+		return new CaseBuilder()
+			.when(productEntity.tradeStatus.eq(TradeStatus.BEFORE_TRADE)).then(0)
+			.when(productEntity.tradeStatus.eq(TradeStatus.RESERVED)).then(1)
+			.when(productEntity.tradeStatus.eq(TradeStatus.COMPLETED)).then(2)
+			.otherwise(3);
+	}
+
 }
