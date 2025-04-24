@@ -1,5 +1,7 @@
 package com.napzak.domain.product.core;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import jakarta.transaction.Transactional;
@@ -12,7 +14,9 @@ public class ProductPhotoRemover {
 	private final ProductPhotoRepository productPhotoRepository;
 
 	@Transactional
-	public void deleteAllByProductId(Long productId){
-		productPhotoRepository.deleteByProductId(productId);
+	public void deleteAllByProductPhotoIds(List<Long> ids) {
+		if (ids != null && !ids.isEmpty()) {
+			productPhotoRepository.deleteAllByProductPhotoIds(ids);
+		}
 	}
 }
