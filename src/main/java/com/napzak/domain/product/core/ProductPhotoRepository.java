@@ -3,6 +3,7 @@ package com.napzak.domain.product.core;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -26,5 +27,8 @@ public interface ProductPhotoRepository extends JpaRepository<ProductPhotoEntity
 		"ORDER BY p.sequence ASC")
 	List<ProductPhotoEntity> findAllByProductEntityOrderBySequenceAsc(@Param("productId") Long productId);
 
-	void deleteByProductId(Long productId);
+	@Modifying
+	@Query("DELETE FROM ProductPhotoEntity  p WHERE p.id IN :ids")
+	void deleteAllByProductPhotoIds(@Param("ids") List<Long> ids);
+
 }
