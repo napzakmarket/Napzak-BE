@@ -23,6 +23,8 @@ public enum StoreSuccessCode implements BaseSuccessCode {
 	VALID_NICKNAME_SUCCESS(HttpStatus.OK, "사용할 수 있는 닉네임이에요!"),
 	NICKNAME_REGISTER_SUCCESS(HttpStatus.OK, "닉네임이 등록되었습니다."),
 	SLANG_REDIS_UPDATE_SUCCESS(HttpStatus.OK, "redis 비속어 업데이트 성공"),
+	GET_PROFILE_SUCCESS(HttpStatus.OK, "상점 프로필이 성공적으로 조회되었습니다."),
+	PROFILE_UPDATE_SUCCESS(HttpStatus.OK, "상점 프로필이 성공적으로 수정되었습니다."),
 
 	/*
 	201 Created

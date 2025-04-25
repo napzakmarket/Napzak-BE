@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import com.napzak.global.external.s3.api.dto.ProductPresignedUrlFindAllResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,30 +42,27 @@ public class FileService {
 	/**
 	 * 여러 상품 이미지 파일에 대한 Presigned URL 생성
 	 *
-	 * @param productImages 이미지 파일 이름 리스트
+	 * @param imageNames 이미지 파일 이름 리스트
 	 * @return Presigned URL 매핑
 	 */
-	public ProductPresignedUrlFindAllResponse generateAllPresignedUrlsForProduct(List<String> productImages){
-		log.info("상품 Presigned URL 일괄 생성 요청 - 파일 수: {}", productImages.size());
+	public Map<String, String> generateAllPresignedUrls(List<String> imageNames, String prefix) {
+		log.info("{} Presigned URL 일괄 생성 요청 - 파일 수: {}", prefix, imageNames.size());
 
-		Map<String, String> productPresignedUrls = productImages.parallelStream()
+		return imageNames.parallelStream()
 			.collect(Collectors.toMap(
-				productImage -> productImage,
-				productImage -> {
-					String filePath = generatePath("product", productImage);
+				fileName -> fileName,
+				fileName -> {
+					String filePath = generatePath(prefix, fileName);
 					try {
 						URL presignedUrl = amazonS3.generatePresignedUrl(buildPresignedUrlRequest(bucket, filePath));
-						log.info("Presigned URL 생성 성공 - 파일명: {}", productImage);
+						log.info("Presigned URL 생성 성공 - 파일명: {}", fileName);
 						return presignedUrl.toString();
 					} catch (Exception e) {
-						log.error("Presigned URL 생성 실패 - 파일명: {}, 오류: {}", productImage, e.getMessage());
+						log.error("Presigned URL 생성 실패 - 파일명: {}, 오류: {}", fileName, e.getMessage());
 						throw new RuntimeException("S3 presigned URL 생성 중 오류 발생: " + e.getMessage());
 					}
 				}
 			));
-		log.info("모든 Presigned URL 생성 완료");
-
-		return ProductPresignedUrlFindAllResponse.from(productPresignedUrls);
 	}
 
 	/**

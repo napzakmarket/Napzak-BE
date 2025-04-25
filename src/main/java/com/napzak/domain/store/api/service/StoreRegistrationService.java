@@ -40,6 +40,7 @@ public class StoreRegistrationService {
 		return store.getId();
 	}
 
+	@Transactional
 	public void registerGenrePreference(
 		Long currentStoreId,
 		List<Long> genrePreferenceList
