@@ -26,6 +26,9 @@ public class WithdrawEntity {
 	@Column(name = COLUMN_ID)
 	private Long id;
 
+	@Column(name = COLUMN_WITHDRAWER_ID)
+	private Long withdrawerId;
+
 	@Column(name = COLUMN_TITLE, nullable = false)
 	private String title;
 
@@ -36,14 +39,16 @@ public class WithdrawEntity {
 	private LocalDateTime createdAt;
 
 	@Builder
-	public WithdrawEntity(String title, String description, LocalDateTime createdAt) {
+	public WithdrawEntity(Long withdrawerId, String title, String description, LocalDateTime createdAt) {
+		this.withdrawerId = withdrawerId;
 		this.title = title;
 		this.description = description;
 		this.createdAt = createdAt;
 	}
 
-	public static WithdrawEntity create(String title, String description, LocalDateTime createdAt) {
+	public static WithdrawEntity create(Long withdrawerId, String title, String description, LocalDateTime createdAt) {
 		return WithdrawEntity.builder()
+			.withdrawerId(withdrawerId)
 			.title(title)
 			.description(description)
 			.createdAt(createdAt)
