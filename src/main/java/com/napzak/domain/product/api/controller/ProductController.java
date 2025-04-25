@@ -609,17 +609,15 @@ public class ProductController implements ProductApi {
 	public ResponseEntity<SuccessResponse<ProductRecommendListResponse>> getRecommendProducts(
 		@CurrentMember Long currentStoreId
 	) {
+		String nickname = productStoreFacade.getStoreNickname(currentStoreId);
 		List<Long> genreIds = productStoreFacade.getGenrePreferenceIds(currentStoreId);
 
 		ProductPagination pagination = productService.getHomeRecommendProducts(currentStoreId, genreIds);
 
 		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, currentStoreId);
-		interestMap.putAll(fetchInterestMap(pagination, currentStoreId));
-
 		Map<Long, String> genreMap = fetchGenreMap(pagination);
-		genreMap.putAll(fetchGenreMap(pagination));
 
-		ProductRecommendListResponse productListResponse = ProductRecommendListResponse.from(pagination, interestMap,
+		ProductRecommendListResponse productListResponse = ProductRecommendListResponse.from(nickname, pagination, interestMap,
 			genreMap, currentStoreId);
 
 		return ResponseEntity.ok()
@@ -749,7 +747,6 @@ public class ProductController implements ProductApi {
 		}
 
 	}
-  
 
 	private Map<Long, Boolean> fetchInterestMap(ProductPagination pagination, Long storeId) {
 		List<Long> productIds = pagination.getProductList().stream()
