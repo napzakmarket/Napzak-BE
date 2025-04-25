@@ -68,4 +68,4 @@ jobs:
           username: ${{ secrets.DEV_SERVER_USERNAME }}
           key: ${{ secrets.DEV_SERVER_KEY }}
           script: |
-            bash /home/ubuntu/35-APPJAM-SERVER-NAPZAKMARKET/deploy.sh
+            bash /home/ubuntu/Napzak-BE/deploy.sh
