@@ -35,4 +35,12 @@ public class StoreUpdater {
 		storeEntity.setNickname(nickname);
 		storeEntity.setDescription(description);
 	}
+
+	@Transactional
+	public void updateRole(final Long storeId, final Role role) {
+		StoreEntity storeEntity = storeRepository.findById(storeId)
+			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
+		storeEntity.setRole(role);
+		storeRepository.save(storeEntity);
+	}
 }

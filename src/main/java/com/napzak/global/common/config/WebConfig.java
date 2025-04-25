@@ -3,6 +3,7 @@ package com.napzak.global.common.config;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -11,11 +12,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.napzak.global.auth.resolver.CurrentMemberArgumentResolver;
 import com.napzak.global.common.converter.StringToEnumCustomConverterFactory;
+import com.napzak.global.common.util.discord.DiscordWebhookProperties;
 
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
+@EnableConfigurationProperties(DiscordWebhookProperties.class)
 public class WebConfig implements WebMvcConfigurer {
 
 	private final CurrentMemberArgumentResolver currentMemberArgumentResolver;

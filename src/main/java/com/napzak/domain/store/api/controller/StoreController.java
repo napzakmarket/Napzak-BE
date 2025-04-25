@@ -31,6 +31,8 @@ import com.napzak.domain.store.api.StoreProductFacade;
 import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
 import com.napzak.domain.store.api.dto.request.NicknameRequest;
 import com.napzak.domain.store.api.dto.request.StoreProfileModifyRequest;
+import com.napzak.domain.store.api.dto.request.StoreReportRequest;
+import com.napzak.domain.store.api.dto.request.StoreWithdrawRequest;
 import com.napzak.domain.store.api.dto.response.AccessTokenGenerateResponse;
 import com.napzak.domain.store.api.dto.response.LoginSuccessResponse;
 import com.napzak.domain.store.api.dto.response.MyPageResponse;
@@ -39,6 +41,8 @@ import com.napzak.domain.store.api.dto.response.SettingLinkResponse;
 import com.napzak.domain.store.api.dto.response.StoreInfoResponse;
 import com.napzak.domain.store.api.dto.response.StoreLoginResponse;
 import com.napzak.domain.store.api.dto.response.StoreProfileModifyResponse;
+import com.napzak.domain.store.api.dto.response.StoreReportResponse;
+import com.napzak.domain.store.api.dto.response.StoreWithdrawResponse;
 import com.napzak.domain.store.api.dto.response.TermsDto;
 import com.napzak.domain.store.api.exception.StoreErrorCode;
 import com.napzak.domain.store.api.exception.StoreSuccessCode;
@@ -243,6 +247,44 @@ public class StoreController implements StoreApi {
 		GenreNameListResponse response = GenreNameListResponse.fromWithoutCursor(genrePreferenceDto);
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(StoreSuccessCode.GENRE_PREPERENCE_REGISTER_SUCCESS, response));
+	}
+
+	@PostMapping("/report/{storeId}")
+	public ResponseEntity<SuccessResponse<StoreReportResponse>> reportStore(
+		@PathVariable("storeId") final Long reportedStoreId,
+		@CurrentMember final Long reporterStoreId,
+		@RequestBody @Valid final StoreReportRequest request
+	){
+		Store reportedStore = storeService.getStore(reportedStoreId);
+		storeService.reportStore(
+			reporterStoreId, reportedStore, request.reportTitle(),
+			request.reportDescription(), request.reportContact()
+		);
+
+		StoreReportResponse response = StoreReportResponse.of(
+			reporterStoreId,
+			reportedStoreId,
+			request.reportTitle(),
+			request.reportDescription(),
+			request.reportContact()
+		);
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(StoreSuccessCode.STORE_REPORT_SUCCESS, response));
+	}
+
+	@PostMapping("/withdraw")
+	public ResponseEntity<SuccessResponse<StoreWithdrawResponse>> withdraw(
+		@CurrentMember final Long storeId,
+		@RequestBody @Valid final StoreWithdrawRequest request
+	) {
+		storeService.withdraw(storeId, request.withdrawTitle(), request.withdrawDescription());
+		StoreWithdrawResponse response = StoreWithdrawResponse.of(
+			storeId,
+			request.withdrawTitle(),
+			request.withdrawDescription()
+		);
+		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.STORE_WITHDRAW_SUCCESS, response));
 	}
 
 	@PostMapping("/admin/sync-redis/slangs")

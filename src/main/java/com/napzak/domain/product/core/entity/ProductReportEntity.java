@@ -31,7 +31,7 @@ public class ProductReportEntity {
 	@Column(name = COLUMN_REPORTED_PRODUCT_ID, nullable = false)
 	private Long reportedProductId;
 
-	@Column(name = COLUMN_REPORTED_PRODUCT_IMAGES, nullable = false)
+	@Column(name = COLUMN_REPORTED_PRODUCT_IMAGES, nullable = false, columnDefinition = "TEXT")
 	private String reportedProductImages;
 
 	@Column(name = COLUMN_REPORTED_PRODUCT_TITLE, nullable = false)

@@ -34,13 +34,6 @@ public class StoreRetriever {
 	}
 
 	@Transactional(readOnly = true)
-	public Store retrieveStoreByStoreId(Long StoreId) {
-		StoreEntity storeEntity = storeRepository.findById(StoreId)
-			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
-		return Store.fromEntity(storeEntity);
-	}
-
-	@Transactional(readOnly = true)
 	public boolean checkStoreExistsBySocialIdAndSocialType(final String socialId, final SocialType socialType) {
 		return storeRepository.findBySocialTypeAndSocialId(socialId, socialType).isPresent();
 	}

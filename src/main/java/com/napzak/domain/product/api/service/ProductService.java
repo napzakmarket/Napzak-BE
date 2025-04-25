@@ -12,9 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.domain.product.api.dto.request.ProductPhotoModifyDto;
-import com.napzak.domain.genre.core.vo.Genre;
-import com.napzak.domain.product.api.ProductGenreFacade;
-import com.napzak.domain.product.api.dto.response.RecommendGenreDto;
 import com.napzak.domain.product.api.dto.response.RecommendSearchWordDto;
 import com.napzak.domain.product.api.service.enums.SortOption;
 import com.napzak.domain.product.core.ProductPhotoRemover;
@@ -22,6 +19,7 @@ import com.napzak.domain.product.core.ProductPhotoRetriever;
 import com.napzak.domain.product.core.ProductPhotoSaver;
 import com.napzak.domain.product.core.ProductPhotoUpdater;
 import com.napzak.domain.product.core.ProductRemover;
+import com.napzak.domain.product.core.ProductReportSaver;
 import com.napzak.domain.product.core.ProductRetriever;
 import com.napzak.domain.product.core.ProductSaver;
 import com.napzak.domain.product.core.ProductUpdater;
@@ -49,6 +47,7 @@ public class ProductService {
 	private final ProductRemover productRemover;
 	private final ProductPhotoUpdater productPhotoUpdater;
 	private final SearchWordRetriever searchWordRetriever;
+	private final ProductReportSaver productReportSaver;
 
 	public ProductPagination getSellProducts(
 		SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue, int size,
@@ -163,7 +162,6 @@ public class ProductService {
 		int price, Boolean isDeliveryIncluded, int standardDeliveryFee, int halfDeliveryFee,
 		ProductCondition productCondition, Long genreId
 	) {
-
 		return productUpdater.updateProduct(
 			productId, title, description, price, false, isDeliveryIncluded,
 			standardDeliveryFee, halfDeliveryFee, productCondition, genreId
@@ -189,7 +187,6 @@ public class ProductService {
 		Long productId, String title, String description,
 		int price, Boolean isPriceNegotiable, Long genreId
 	) {
-
 		return productUpdater.updateProduct(
 			productId, title, description, price, isPriceNegotiable, false,
 			0, 0, null, genreId
@@ -198,30 +195,30 @@ public class ProductService {
 
 	@Transactional
 	public List<ProductPhoto> createProductPhotos(Long productId, Map<Integer, String> photoData) {
-
 		return productPhotoSaver.saveAll(productId, photoData);
 	}
 
+	@Transactional(readOnly = true)
 	public Product getProduct(Long productId) {
-
 		return productRetriever.findById(productId);
 	}
 
+	@Transactional
 	public void deleteProduct(Long productId) {
-
 		productRemover.deleteById(productId);
 	}
 
+	@Transactional
 	public void updateTradeStatus(Long productId, TradeStatus tradeStatus) {
-
 		productUpdater.updateProductStatus(productId, tradeStatus);
 	}
 
+	@Transactional(readOnly = true)
 	public List<ProductPhoto> getProductPhotos(Long productId) {
-
 		return productPhotoRetriever.getProductPhotosByProductId(productId);
 	}
 
+	@Transactional(readOnly = true)
 	public ProductPagination getHomePopularProducts(
 		SortOption sortOption, int size, TradeType tradeType, Long storeId) {
 
@@ -233,6 +230,7 @@ public class ProductService {
 		);
 	}
 
+	@Transactional(readOnly = true)
 	public ProductPagination getHomeRecommendProducts(Long storeId, List<Long> genreIds) {
 		return retrieveAndPreparePagination(
 			() -> productRetriever.retrieveRecommendedProducts(storeId, genreIds),
@@ -240,6 +238,7 @@ public class ProductService {
 		);
 	}
 
+	@Transactional(readOnly = true)
 	public ProductWithFirstPhoto getProductChatInfo(Long productId) {
 		Product product = productRetriever.findById(productId);
 		String firstPhoto = productPhotoRetriever.getFirstProductPhoto(productId);
@@ -290,13 +289,19 @@ public class ProductService {
 		productPhotoRemover.deleteAllByProductPhotoIds(needRemovePhotoIds);
 
 		return productPhotoRetriever.getProductPhotosByProductId(productId);
-  }
+	}
 
+	@Transactional(readOnly = true)
 	public List<RecommendSearchWordDto> getRecommendSearchWord() {
 		List<SearchWord> recommendSearchWordList = searchWordRetriever.findAll();
 		return recommendSearchWordList.stream()
 			.map(searchWord -> RecommendSearchWordDto.from(searchWord.getId(), searchWord.getSearchWord()))
 			.toList();
+	}
+
+	@Transactional
+	public void reportProduct(Long reporterId, Product product, List<ProductPhoto> photoList, String title, String description, String contact) {
+		productReportSaver.save(reporterId, product, photoList, title, description, contact);
 	}
 
 	private ProductPagination retrieveAndPreparePagination(
