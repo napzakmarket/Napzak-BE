@@ -22,8 +22,12 @@ public interface ProductRepositoryCustom {
 	List<ProductEntity> findProductsBySortOptionExcludingStoreId(
 		OrderSpecifier<?> orderSpecifier, int size, TradeType tradeType, long storeId);
 
-	List<ProductEntity> findProductsByGenreAndTradeTypeExcludingStoreId(Long genreId, Long excludeStoreId,
-		TradeType tradeType, int limit);
+	List<ProductEntity> findProductsByGenresAndTradeTypesExcludingStoreId(
+		List<Long> genreIds,
+		List<TradeType> tradeTypes,
+		Long excludeStoreId,
+		int limit
+	);
 
 	List<ProductEntity> findLatestProductsExcludingStoreId(Long excludeStoreId, TradeType tradeType, int limit);
 
