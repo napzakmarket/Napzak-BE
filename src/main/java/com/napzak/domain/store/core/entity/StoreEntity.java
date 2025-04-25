@@ -90,4 +90,24 @@ public class StoreEntity {
 			photo(photo).
 			cover(cover).build();
 	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public void setCover(String cover) {
+		this.cover = cover;
+	}
+
+	public void setPhoto(String photo) {
+		this.photo = photo;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }
