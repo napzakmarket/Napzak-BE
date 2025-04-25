@@ -37,12 +37,6 @@ public class StoreService {
 	private final WithdrawSaver withdrawSaver;
 
 	@Transactional(readOnly = true)
-	public Store findStoreByStoreId(Long StoreId) {
-		return storeRetriever.retrieveStoreByStoreId(StoreId);
-
-	}
-
-	@Transactional(readOnly = true)
 	public boolean checkStoreExistsBySocialIdAndSocialType(final String socialId, final SocialType socialType) {
 		return storeRetriever.checkStoreExistsBySocialIdAndSocialType(socialId, socialType);
 	}
@@ -102,8 +96,7 @@ public class StoreService {
 
 	@Transactional
 	public void withdraw(Long storeId, String title, String description) {
-		Store store = storeRetriever.retrieveStoreByStoreId(storeId);
-		withdrawSaver.save(title, description, LocalDateTime.now());
+		withdrawSaver.save(storeId, title, description, LocalDateTime.now());
 		storeUpdater.updateRole(storeId, Role.WITHDRAWN);
 	}
 
