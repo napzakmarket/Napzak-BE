@@ -1,5 +1,6 @@
 package com.napzak.domain.store.api.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -7,9 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.domain.store.api.exception.StoreErrorCode;
 import com.napzak.domain.store.core.GenrePreferenceRetriever;
+import com.napzak.domain.store.core.StoreReportSaver;
 import com.napzak.domain.store.core.StoreRetriever;
 import com.napzak.domain.store.core.StoreUpdater;
+import com.napzak.domain.store.core.WithdrawSaver;
 import com.napzak.domain.store.core.entity.SlangRetriever;
+import com.napzak.domain.store.core.entity.enums.Role;
 import com.napzak.domain.store.core.entity.enums.SocialType;
 import com.napzak.domain.store.core.vo.GenrePreference;
 import com.napzak.domain.store.core.vo.Store;
@@ -29,6 +33,8 @@ public class StoreService {
 	private final SlangRetriever slangRetriever;
 	private final SlangFilter slangFilter;
 	private final StoreUpdater storeUpdater;
+	private final StoreReportSaver storeReportSaver;
+	private final WithdrawSaver withdrawSaver;
 
 	@Transactional(readOnly = true)
 	public Store findStoreByStoreId(Long StoreId) {
@@ -81,6 +87,24 @@ public class StoreService {
 	public void modifyProfile(final Long storeId, final String cover, final String photo,
 		final String nickname, final String description){
 		storeUpdater.updateProfile(storeId, cover, photo, nickname, description);
+	}
+
+	@Transactional
+	public void reportStore(Long reporterId, Store reportedStore, String title, String description, String contact) {
+		storeReportSaver.save(
+			reporterId,
+			reportedStore,
+			title,
+			description,
+			contact
+		);
+	}
+
+	@Transactional
+	public void withdraw(Long storeId, String title, String description) {
+		Store store = storeRetriever.retrieveStoreByStoreId(storeId);
+		withdrawSaver.save(title, description, LocalDateTime.now());
+		storeUpdater.updateRole(storeId, Role.WITHDRAWN);
 	}
 
 	public void syncSlangToRedis() {
