@@ -142,22 +142,22 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 		return count != null ? count : 0L;
 	}
 
-	/**
-	 * 본인 상품 제외 특정 장르의 상품을 가져오기 (SELL 또는 BUY)
-	 */
 	@Override
-	public List<ProductEntity> findProductsByGenreAndTradeTypeExcludingStoreId(Long genreId, Long excludeStoreId,
-		TradeType tradeType, int limit) {
-		return queryFactory
-			.selectFrom(productEntity)
+	public List<ProductEntity> findProductsByGenresAndTradeTypesExcludingStoreId(
+		List<Long> genreIds,
+		List<TradeType> tradeTypes,
+		Long excludeStoreId,
+		int limit
+	) {
+		return queryFactory.selectFrom(productEntity)
 			.where(
-				productEntity.genreId.eq(genreId),               // 특정 장르 ID
-				productEntity.storeId.ne(excludeStoreId),        // 본인 상품 제외
-				productEntity.tradeType.eq(tradeType),           // SELL 또는 BUY 필터링
-				productEntity.tradeStatus.eq(TradeStatus.BEFORE_TRADE)  // 거래 가능 상태
+				productEntity.genreId.in(genreIds),
+				productEntity.tradeType.in(tradeTypes),
+				productEntity.storeId.ne(excludeStoreId),
+				productEntity.tradeStatus.eq(TradeStatus.BEFORE_TRADE)
 			)
-			.orderBy(productEntity.createdAt.desc())             // 최신순 정렬
-			.limit(limit)                                   // 원하는 개수만큼 조회
+			.orderBy(productEntity.createdAt.desc())
+			.limit(limit)
 			.fetch();
 	}
 
