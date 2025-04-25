@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.napzak.domain.store.api.exception.StoreErrorCode;
 import com.napzak.domain.store.core.GenrePreferenceRetriever;
 import com.napzak.domain.store.core.StoreRetriever;
+import com.napzak.domain.store.core.StoreUpdater;
 import com.napzak.domain.store.core.entity.SlangRetriever;
 import com.napzak.domain.store.core.entity.enums.SocialType;
 import com.napzak.domain.store.core.vo.GenrePreference;
@@ -27,6 +28,7 @@ public class StoreService {
 	private final GenrePreferenceRetriever genrePreferenceRetriever;
 	private final SlangRetriever slangRetriever;
 	private final SlangFilter slangFilter;
+	private final StoreUpdater storeUpdater;
 
 	@Transactional(readOnly = true)
 	public Store findStoreByStoreId(Long StoreId) {
@@ -68,6 +70,17 @@ public class StoreService {
 		if (slangFilter.containsSlang(nickname)) {
 			throw new NapzakException(StoreErrorCode.NICKNAME_CONTAINS_SLANG);
 		}
+	}
+
+	@Transactional
+	public void registerNickname(final Long storeId, final String nickname){
+		storeUpdater.registerNicknameAndSetRole(storeId, nickname);
+	}
+
+	@Transactional
+	public void modifyProfile(final Long storeId, final String cover, final String photo,
+		final String nickname, final String description){
+		storeUpdater.updateProfile(storeId, cover, photo, nickname, description);
 	}
 
 	public void syncSlangToRedis() {
