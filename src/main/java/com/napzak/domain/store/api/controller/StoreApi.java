@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.napzak.domain.genre.api.dto.response.GenreNameListResponse;
 import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
 import com.napzak.domain.store.api.dto.request.NicknameRequest;
+import com.napzak.domain.store.api.dto.request.StoreProfileModifyRequest;
 import com.napzak.domain.store.api.dto.response.AccessTokenGenerateResponse;
 import com.napzak.domain.store.api.dto.response.MyPageResponse;
 import com.napzak.domain.store.api.dto.response.StoreInfoResponse;
 import com.napzak.domain.store.api.dto.response.StoreLoginResponse;
+import com.napzak.domain.store.api.dto.response.StoreProfileModifyResponse;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.auth.client.dto.StoreSocialLoginRequest;
 import com.napzak.global.common.exception.dto.SuccessResponse;
@@ -86,6 +89,37 @@ public interface StoreApi {
 			content = @Content(schema = @Schema(implementation = NicknameRequest.class))
 		)
 		@RequestBody NicknameRequest request
+	);
+
+	@Operation(summary = "닉네임 등록", description = "스토어의 닉네임을 등록하고, 역할을 STORE로 설정합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "닉네임 등록 성공")
+	})
+	@PostMapping("/nickname/register")
+	ResponseEntity<SuccessResponse<Void>> registerNickname(
+		@CurrentMember Long currentStoreId,
+		@RequestBody @Valid NicknameRequest request
+	);
+
+	@Operation(summary = "상점 프로필 수정용 정보 조회", description = "상점 프로필 수정을 위한 커버, 프로필, 닉네임, 설명, 장르 목록을 조회합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "상점 프로필이 성공적으로 조회되었습니다.",
+			content = @Content(schema = @Schema(implementation = StoreProfileModifyResponse.class))),
+		@ApiResponse(responseCode = "404", description = "스토어를 찾을 수 없습니다.")
+	})
+	@GetMapping("/modify/profile")
+	ResponseEntity<SuccessResponse<StoreProfileModifyResponse>> getProfileForModify(@CurrentMember Long currentStoreId);
+
+	@Operation(summary = "상점 프로필 수정", description = "상점의 커버, 프로필 사진, 닉네임, 설명, 선호 장르를 수정합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "상점 프로필이 성공적으로 수정되었습니다.",
+			content = @Content(schema = @Schema(implementation = StoreProfileModifyResponse.class))),
+		@ApiResponse(responseCode = "400", description = "요청 필드 값이 유효하지 않습니다.")
+	})
+	@PutMapping("/modify/profile")
+	ResponseEntity<SuccessResponse<StoreProfileModifyResponse>> modifyProfile(
+		@CurrentMember Long currentStoreId,
+		@RequestBody @Valid StoreProfileModifyRequest request
 	);
 
 	@Operation(summary = "마이페이지 조회", description = "마이페이지 정보 조회 API")
