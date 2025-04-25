@@ -24,6 +24,7 @@ import com.napzak.domain.product.api.ProductStoreFacade;
 import com.napzak.domain.product.api.dto.request.ProductBuyCreateRequest;
 import com.napzak.domain.product.api.dto.request.ProductBuyModifyRequest;
 import com.napzak.domain.product.api.dto.request.ProductPhotoRequestDto;
+import com.napzak.domain.product.api.dto.request.ProductReportRequest;
 import com.napzak.domain.product.api.dto.request.ProductSellCreateRequest;
 import com.napzak.domain.product.api.dto.request.ProductSellModifyRequest;
 import com.napzak.domain.product.api.dto.request.TradeStatusRequest;
@@ -39,6 +40,7 @@ import com.napzak.domain.product.api.dto.response.ProductDetailDto;
 import com.napzak.domain.product.api.dto.response.ProductDetailResponse;
 import com.napzak.domain.product.api.dto.response.ProductPhotoDto;
 import com.napzak.domain.product.api.dto.response.ProductRecommendListResponse;
+import com.napzak.domain.product.api.dto.response.ProductReportResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellListResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellModifyResponse;
 import com.napzak.domain.product.api.dto.response.ProductSellResponse;
@@ -705,8 +707,41 @@ public class ProductController implements ProductApi {
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(ProductSuccessCode.RECOMMEND_SEARCH_WORD_AND_GENRE_GET_SUCCESS, recommendResponse));
   }
-  
-  
+
+	@PostMapping("/report/{productId}")
+	public ResponseEntity<SuccessResponse<ProductReportResponse>> reportProduct(
+		@PathVariable("productId") Long productId,
+		@CurrentMember Long reporterId,
+		@RequestBody @Valid ProductReportRequest request
+	) {
+		Product product = productService.getProduct(productId);
+		List<ProductPhoto> photoList = productService.getProductPhotos(productId);
+
+		productService.reportProduct(
+			reporterId,
+			product,
+			photoList,
+			request.reportTitle(),
+			request.reportDescription(),
+			request.reportContact()
+		);
+
+		ProductReportResponse response = ProductReportResponse.of(
+			reporterId,
+			product.getId(),
+			request.reportTitle(),
+			request.reportDescription(),
+			request.reportContact()
+		);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+				ProductSuccessCode.PRODUCT_REPORT_SUCCESS,
+				response
+			)
+		);
+	}
+
 	private void authChecker(Long currentStoreId, Product product) {
 
 		if (!product.getStoreId().equals(currentStoreId)) {
@@ -787,6 +822,4 @@ public class ProductController implements ProductApi {
 			return cursorOptionalValue;
 		}
 	}
-
 }
-	
