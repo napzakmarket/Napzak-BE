@@ -32,3 +32,6 @@ services:
 networks:
   napzak-dev-net:
     driver: bridge
+
+volumes:
+  redis_data:
