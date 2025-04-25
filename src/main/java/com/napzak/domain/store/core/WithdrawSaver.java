@@ -18,13 +18,15 @@ public class WithdrawSaver {
 	private final DiscordWebhookSender discordWebhookSender;
 
 	@Transactional
-	public void save(String title, String description, LocalDateTime createdAt) {
-		WithdrawEntity entity = WithdrawEntity.create(title, description, createdAt);
+	public void save(Long storeId, String title, String description, LocalDateTime createdAt) {
+		WithdrawEntity entity = WithdrawEntity.create(storeId, title, description, createdAt);
 		withdrawRepository.save(entity);
 
 		discordWebhookSender.sendWithdraw("""
 			------------------------------------------------------------------------------------------------------------------
 			📤 __**회원 탈퇴 발생**__
+			
+			🫥 **탈퇴 회원 ID**: %s
 			
 			📝 **제목**: %s
 			
@@ -32,6 +34,7 @@ public class WithdrawSaver {
 			
 			🕒 **탈퇴 시각**: %s
 			""".formatted(
+			entity.getWithdrawerId(),
 			entity.getTitle(),
 			entity.getDescription(),
 			entity.getCreatedAt()
