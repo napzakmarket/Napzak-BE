@@ -29,7 +29,7 @@ public class WithdrawEntity {
 	@Column(name = COLUMN_TITLE, nullable = false)
 	private String title;
 
-	@Column(name = COLUMN_DESCRIPTION)
+	@Column(name = COLUMN_DESCRIPTION, columnDefinition = "TEXT")
 	private String description;
 
 	@Column(name = COLUMN_CREATED_AT, nullable = false)
