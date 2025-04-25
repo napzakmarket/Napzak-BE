@@ -7,9 +7,11 @@ import com.napzak.domain.product.api.service.ProductPagination;
 import com.napzak.global.common.util.TimeUtils;
 
 public record ProductRecommendListResponse(
+	String nickname,
 	List<ProductBuyDto> productRecommendList
 ) {
 	public static ProductRecommendListResponse from(
+		String nickname,
 		ProductPagination pagination,
 		Map<Long, Boolean> interestMap,
 		Map<Long, String> genreMap,
@@ -27,6 +29,6 @@ public record ProductRecommendListResponse(
 				);
 			}).toList();
 
-		return new ProductRecommendListResponse(productDtos);
+		return new ProductRecommendListResponse(nickname, productDtos);
 	}
 }
