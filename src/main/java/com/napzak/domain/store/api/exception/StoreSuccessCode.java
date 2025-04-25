@@ -30,6 +30,8 @@ public enum StoreSuccessCode implements BaseSuccessCode {
 	201 Created
 	 */
 	LOGIN_SUCCESS(HttpStatus.OK, "로그인 성공"),
+	STORE_REPORT_SUCCESS(HttpStatus.CREATED, "상점이 신고되었습니다."),
+	STORE_WITHDRAW_SUCCESS(HttpStatus.CREATED, "상점 탈퇴가 완료되었습니다."),
 	;
 
 	private final HttpStatus httpStatus;
