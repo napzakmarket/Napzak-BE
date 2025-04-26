@@ -17,11 +17,14 @@ public class StoreUpdater {
 	private final StoreRepository storeRepository;
 
 	@Transactional
-	public void registerNicknameAndSetRole(final Long storeId, final String nickname) {
+	public void registerNicknameAndSetRoleAndPhoto(final Long storeId, final String nickname,
+		final String profileUrl, final String coverUrl) {
 		StoreEntity storeEntity = storeRepository.findById(storeId)
 			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
 		storeEntity.setNickname(nickname);
 		storeEntity.setRole(Role.STORE);
+		storeEntity.setPhoto(profileUrl);
+		storeEntity.setCover(coverUrl);
 		storeRepository.save(storeEntity);
 	}
 

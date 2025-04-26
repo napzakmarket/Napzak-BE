@@ -1,6 +1,7 @@
 package com.napzak.domain.product.api.controller;
 
 import com.napzak.domain.product.api.dto.request.ProductBuyCreateRequest;
+import com.napzak.domain.product.api.dto.request.ProductReportRequest;
 import com.napzak.domain.product.api.dto.request.ProductSellCreateRequest;
 import com.napzak.domain.product.api.dto.request.TradeStatusRequest;
 import com.napzak.domain.product.api.dto.response.*;
@@ -8,6 +9,8 @@ import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.common.exception.dto.SuccessResponse;
 
 import io.swagger.v3.oas.annotations.*;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -235,6 +238,20 @@ public interface ProductApi {
 	ResponseEntity<SuccessResponse<ProductBuyListResponse>> getTopBuyProducts(
 		@RequestParam(defaultValue = "4") int size,
 		@CurrentMember Long currentStoreId
+	);
+
+	@Operation(summary = "상품 신고", description = "특정 상품을 신고하는 API입니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "상품 신고 성공",
+			content = @Content(schema = @Schema(implementation = ProductReportResponse.class))),
+		@ApiResponse(responseCode = "404", description = "상품을 찾을 수 없습니다.")
+	})
+	@PostMapping("/report/{productId}")
+	ResponseEntity<SuccessResponse<ProductReportResponse>> reportProduct(
+		@Parameter(description = "신고 대상 상품 ID")
+		@PathVariable("productId") Long productId,
+		@CurrentMember Long reporterId,
+		@RequestBody @Valid ProductReportRequest request
 	);
 
 	@Operation(summary = "채팅 대상 상품 정보 조회", description = "채팅방 생성 시 필요한 상품 정보 조회")

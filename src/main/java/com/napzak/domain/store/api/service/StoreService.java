@@ -8,11 +8,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.domain.store.api.exception.StoreErrorCode;
 import com.napzak.domain.store.core.GenrePreferenceRetriever;
+import com.napzak.domain.store.core.StorePhotoRetriever;
 import com.napzak.domain.store.core.StoreReportSaver;
 import com.napzak.domain.store.core.StoreRetriever;
 import com.napzak.domain.store.core.StoreUpdater;
 import com.napzak.domain.store.core.WithdrawSaver;
 import com.napzak.domain.store.core.entity.SlangRetriever;
+import com.napzak.domain.store.core.entity.enums.PhotoType;
 import com.napzak.domain.store.core.entity.enums.Role;
 import com.napzak.domain.store.core.entity.enums.SocialType;
 import com.napzak.domain.store.core.vo.GenrePreference;
@@ -35,6 +37,7 @@ public class StoreService {
 	private final StoreUpdater storeUpdater;
 	private final StoreReportSaver storeReportSaver;
 	private final WithdrawSaver withdrawSaver;
+	private final StorePhotoRetriever storePhotoRetriever;
 
 	@Transactional(readOnly = true)
 	public boolean checkStoreExistsBySocialIdAndSocialType(final String socialId, final SocialType socialType) {
@@ -74,7 +77,9 @@ public class StoreService {
 
 	@Transactional
 	public void registerNickname(final Long storeId, final String nickname){
-		storeUpdater.registerNicknameAndSetRole(storeId, nickname);
+		String profileUrl = storePhotoRetriever.getStorePhoto(PhotoType.PROFILE);
+		String coverUrl = storePhotoRetriever.getStorePhoto(PhotoType.COVER);
+		storeUpdater.registerNicknameAndSetRoleAndPhoto(storeId, nickname, profileUrl, coverUrl);
 	}
 
 	@Transactional

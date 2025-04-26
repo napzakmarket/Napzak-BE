@@ -7,6 +7,8 @@ import com.napzak.domain.store.core.entity.enums.PhotoType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,6 +31,7 @@ public class StorePhotoEntity {
 	@Column(name = COLUMN_STORE_ID)
 	private Long storeId;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = COLUMN_PHOTO_TYPE)
 	private PhotoType photoType;
 

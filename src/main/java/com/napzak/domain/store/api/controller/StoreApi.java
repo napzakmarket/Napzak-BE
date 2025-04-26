@@ -14,11 +14,15 @@ import com.napzak.domain.genre.api.dto.response.GenreNameListResponse;
 import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
 import com.napzak.domain.store.api.dto.request.NicknameRequest;
 import com.napzak.domain.store.api.dto.request.StoreProfileModifyRequest;
+import com.napzak.domain.store.api.dto.request.StoreReportRequest;
+import com.napzak.domain.store.api.dto.request.StoreWithdrawRequest;
 import com.napzak.domain.store.api.dto.response.AccessTokenGenerateResponse;
 import com.napzak.domain.store.api.dto.response.MyPageResponse;
 import com.napzak.domain.store.api.dto.response.StoreInfoResponse;
 import com.napzak.domain.store.api.dto.response.StoreLoginResponse;
 import com.napzak.domain.store.api.dto.response.StoreProfileModifyResponse;
+import com.napzak.domain.store.api.dto.response.StoreReportResponse;
+import com.napzak.domain.store.api.dto.response.StoreWithdrawResponse;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.auth.client.dto.StoreSocialLoginRequest;
 import com.napzak.global.common.exception.dto.SuccessResponse;
@@ -156,6 +160,32 @@ public interface StoreApi {
 		@CurrentMember Long currentMemberId,
 
 		@Valid @RequestBody GenrePreferenceRequest genrePreferenceList
+	);
+
+	@Operation(summary = "스토어 신고", description = "특정 스토어를 신고하는 API입니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "스토어 신고 성공",
+			content = @Content(schema = @Schema(implementation = StoreReportResponse.class))),
+		@ApiResponse(responseCode = "404", description = "스토어를 찾을 수 없습니다.")
+	})
+	@PostMapping("/report/{storeId}")
+	ResponseEntity<SuccessResponse<StoreReportResponse>> reportStore(
+		@Parameter(description = "신고 대상 스토어 ID")
+		@PathVariable("storeId") Long reportedStoreId,
+		@CurrentMember Long reporterStoreId,
+		@RequestBody @Valid StoreReportRequest request
+	);
+
+	@Operation(summary = "스토어 탈퇴", description = "스토어 회원 탈퇴를 요청하는 API입니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "스토어 탈퇴 성공",
+			content = @Content(schema = @Schema(implementation = StoreWithdrawResponse.class))),
+		@ApiResponse(responseCode = "400", description = "잘못된 요청")
+	})
+	@PostMapping("/withdraw")
+	ResponseEntity<SuccessResponse<StoreWithdrawResponse>> withdraw(
+		@CurrentMember Long storeId,
+		@RequestBody @Valid StoreWithdrawRequest request
 	);
 
 	@Operation(summary = "비속어 Redis 동기화", description = "DB의 비속어 목록을 Redis로 동기화합니다. (관리자 전용)")
