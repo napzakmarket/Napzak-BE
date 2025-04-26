@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -517,7 +518,7 @@ public class ProductController implements ProductApi {
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productSellModifyresponse));
 	}
 
-	@PatchMapping("/sell/modify/{productId}")
+	@PutMapping("/sell/modify/{productId}")
 	public ResponseEntity<SuccessResponse<ProductSellResponse>> modifySellProduct(
 		@CurrentMember Long currentStoreId,
 		@PathVariable Long productId,
@@ -574,7 +575,7 @@ public class ProductController implements ProductApi {
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productBuyModifyResponse));
 	}
 
-	@PatchMapping("/buy/modify/{productId}")
+	@PutMapping("/buy/modify/{productId}")
 	public ResponseEntity<SuccessResponse<ProductBuyResponse>> modifyBuyProduct(
 		@CurrentMember Long currentStoreId,
 		@PathVariable Long productId,
