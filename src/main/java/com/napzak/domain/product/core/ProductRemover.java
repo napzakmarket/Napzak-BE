@@ -9,9 +9,11 @@ import lombok.RequiredArgsConstructor;
 public class ProductRemover {
 
 	private final ProductRepository productRepository;
+	private final ProductPhotoRepository productPhotoRepository;
 
 	public void deleteById(Long productId) {
 
+		productPhotoRepository.deleteAllByProductId(productId);
 		productRepository.deleteById(productId);
 
 	}

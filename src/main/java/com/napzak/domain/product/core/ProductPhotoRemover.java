@@ -19,4 +19,9 @@ public class ProductPhotoRemover {
 			productPhotoRepository.deleteAllByProductPhotoIds(ids);
 		}
 	}
+
+	@Transactional
+	public void deleteByProductId(Long productId) {
+		productPhotoRepository.deleteAllByProductId(productId);
+	}
 }
