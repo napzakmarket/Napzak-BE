@@ -16,6 +16,7 @@ public enum StoreErrorCode implements BaseErrorCode {
 	INVALID_GENRE_PREFERENCE_COUNT(HttpStatus.BAD_REQUEST, "선호 장르 리스트는 최대 4개까지 입력할 수 있습니다."),
 	DUPLICATE_GENRE_PREFERENCES(HttpStatus.BAD_REQUEST, "선호 장르 리스트에 중복된 값이 있습니다."),
 	NICKNAME_CONTAINS_SLANG(HttpStatus.BAD_REQUEST, "욕설이나 비속어를 사용할 수 없어요."),
+	SOCIAL_TYPE_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "지원하지 않는 소셜 로그인 타입입니다."),
 
 	/*
 	404 Not Found
