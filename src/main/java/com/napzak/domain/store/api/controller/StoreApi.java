@@ -17,6 +17,7 @@ import com.napzak.domain.store.api.dto.request.StoreProfileModifyRequest;
 import com.napzak.domain.store.api.dto.request.StoreReportRequest;
 import com.napzak.domain.store.api.dto.request.StoreWithdrawRequest;
 import com.napzak.domain.store.api.dto.response.AccessTokenGenerateResponse;
+import com.napzak.domain.store.api.dto.response.LoginSuccessResponse;
 import com.napzak.domain.store.api.dto.response.MyPageResponse;
 import com.napzak.domain.store.api.dto.response.StoreInfoResponse;
 import com.napzak.domain.store.api.dto.response.StoreLoginResponse;
@@ -46,11 +47,11 @@ public interface StoreApi {
 	@Operation(summary = "스토어 로그인", description = "소셜 로그인 API")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "로그인 성공",
-			content = @Content(schema = @Schema(implementation = StoreLoginResponse.class))),
+			content = @Content(schema = @Schema(implementation = LoginSuccessResponse.class))),
 		@ApiResponse(responseCode = "400", description = "잘못된 요청")
 	})
 	@PostMapping("/login")
-	ResponseEntity<SuccessResponse<StoreLoginResponse>> login(
+	ResponseEntity<SuccessResponse<LoginSuccessResponse>> login(
 		@Parameter(description = "소셜 인증 코드")
 		@RequestParam("authorizationCode") String authorizationCode,
 

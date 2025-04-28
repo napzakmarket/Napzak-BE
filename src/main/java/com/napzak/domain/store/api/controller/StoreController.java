@@ -79,7 +79,7 @@ public class StoreController implements StoreApi {
 	private final AuthenticationService authenticationService;
 
 	@PostMapping("/login")
-	public ResponseEntity<SuccessResponse<StoreLoginResponse>> login(
+	public ResponseEntity<SuccessResponse<LoginSuccessResponse>> login(
 		@RequestParam("authorizationCode") String authorizationCode,
 		@RequestBody StoreSocialLoginRequest storeSocialLoginRequest,
 		HttpServletResponse httpServletResponse
@@ -93,12 +93,10 @@ public class StoreController implements StoreApi {
 			.httpOnly(true)
 			.build();
 
-		StoreLoginResponse response = StoreLoginResponse.of(successResponse.accessToken(), successResponse.nickname(),
-			successResponse.role());
 
 		return ResponseEntity.ok()
 			.header(HttpHeaders.SET_COOKIE, cookie.toString())
-			.body(SuccessResponse.of(StoreSuccessCode.LOGIN_SUCCESS, response));
+			.body(SuccessResponse.of(StoreSuccessCode.LOGIN_SUCCESS, successResponse));
 	}
 
 	@PostMapping("/logout")
