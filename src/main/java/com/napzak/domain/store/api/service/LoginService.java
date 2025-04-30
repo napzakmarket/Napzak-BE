@@ -1,5 +1,7 @@
 package com.napzak.domain.store.api.service;
 
+import com.napzak.domain.store.api.exception.StoreErrorCode;
+import com.napzak.global.auth.client.service.AppleSocialService;
 import com.napzak.global.auth.client.service.GoogleSocialService;
 
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import com.napzak.domain.store.core.vo.Store;
 import com.napzak.global.auth.client.dto.StoreSocialInfoResponse;
 import com.napzak.global.auth.client.dto.StoreSocialLoginRequest;
 import com.napzak.global.auth.client.service.SocialService;
+import com.napzak.global.common.exception.NapzakException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +28,7 @@ public class LoginService {
 	private final AuthenticationService authenticationService;
 	private final StoreService storeService;
 	private final GoogleSocialService googleSocialService;
+	private final AppleSocialService appleSocialService;
 
 	@Transactional
 	public LoginSuccessResponse login(
@@ -59,7 +63,8 @@ public class LoginService {
 		return switch (socialType) {
 			case KAKAO -> kakaoSocialService;
 			case GOOGLE -> googleSocialService;
-			default -> throw new RuntimeException();
+			case APPLE -> appleSocialService;
+			default -> throw new NapzakException(StoreErrorCode.SOCIAL_TYPE_NOT_SUPPORTED);
 		};
 	}
 
