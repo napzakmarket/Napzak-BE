@@ -33,7 +33,7 @@ public class StoreRegistrationService {
 		String socialId = storeSocialInfoResponse.socialId();
 		SocialType socialType = storeSocialInfoResponse.socialType();
 
-		Store store = storeSaver.save(null, null, Role.STORE, null, socialId, socialType, null, null);
+		Store store = storeSaver.save(null, null, Role.ONBOARDING, null, socialId, socialType, null, null);
 
 		log.info("Store registered with storeId: {}, role: {}", store.getId(), store.getRole());
 
