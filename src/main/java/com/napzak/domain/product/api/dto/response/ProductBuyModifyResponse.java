@@ -4,6 +4,7 @@ import java.util.List;
 
 public record ProductBuyModifyResponse(
 	Long productId,
+	Long genreId,
 	String genreName,
 	String title,
 	String description,
@@ -13,6 +14,7 @@ public record ProductBuyModifyResponse(
 ) {
 	public static ProductBuyModifyResponse from(
 		Long productId,
+		Long genreId,
 		String genreName,
 		String title,
 		String description,
@@ -20,7 +22,7 @@ public record ProductBuyModifyResponse(
 		boolean isPriceNegotiable,
 		List<ProductPhotoDto> productPhotoList
 	) {
-		return new ProductBuyModifyResponse(productId, genreName, title, description, price, isPriceNegotiable,
+		return new ProductBuyModifyResponse(productId, genreId, genreName, title, description, price, isPriceNegotiable,
 			productPhotoList);
 	}
 }

@@ -509,7 +509,7 @@ public class ProductController implements ProductApi {
 			.toList();
 
 		ProductSellModifyResponse productSellModifyresponse = ProductSellModifyResponse.from(
-			product.getId(), genreName, product.getTitle(), product.getDescription(),
+			product.getId(), product.getGenreId(), genreName, product.getTitle(), product.getDescription(),
 			product.getProductCondition(), product.getPrice(), product.getIsDeliveryIncluded(),
 			product.getStandardDeliveryFee(), product.getHalfDeliveryFee(), photoDtoList
 		);
@@ -567,7 +567,7 @@ public class ProductController implements ProductApi {
 			.toList();
 
 		ProductBuyModifyResponse productBuyModifyResponse = ProductBuyModifyResponse.from(
-			product.getId(), genreName, product.getTitle(), product.getDescription(), product.getPrice(),
+			product.getId(), product.getGenreId(), genreName, product.getTitle(), product.getDescription(), product.getPrice(),
 			product.getIsPriceNegotiable(), photoDtoList
 		);
 

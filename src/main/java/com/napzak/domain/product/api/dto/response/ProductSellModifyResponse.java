@@ -6,6 +6,7 @@ import com.napzak.domain.product.core.entity.enums.ProductCondition;
 
 public record ProductSellModifyResponse(
 	Long productId,
+	Long genreId,
 	String genreName,
 	String title,
 	String description,
@@ -18,6 +19,7 @@ public record ProductSellModifyResponse(
 ) {
 	public static ProductSellModifyResponse from(
 		Long productId,
+		Long genreId,
 		String genreName,
 		String title,
 		String description,
@@ -28,7 +30,7 @@ public record ProductSellModifyResponse(
 		int halfDeliveryFee,
 		List<ProductPhotoDto> productPhotoList
 	) {
-		return new ProductSellModifyResponse(productId, genreName, title, description, productCondition, price,
+		return new ProductSellModifyResponse(productId, genreId, genreName, title, description, productCondition, price,
 			isDeliveryIncluded, standardDeliveryFee, halfDeliveryFee, productPhotoList);
 	}
 }
