@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import com.napzak.domain.store.core.entity.enums.Platform;
 import com.napzak.domain.store.core.entity.enums.SocialType;
 import com.napzak.global.auth.client.apple.dto.ApplePublicKeyDto;
 import com.napzak.global.auth.client.apple.dto.ApplePublicKeyResponse;
@@ -35,8 +36,11 @@ public class AppleSocialService implements SocialService{
 
 	private static final long THIRTY_DAYS_MS = 30L * 24 * 60 * 60 * 1000;
 
-	@Value("${spring.security.oauth2.client.registration.apple.client-id}")
-	private String clientId;
+	@Value("${spring.security.oauth2.apple.client-id.web}")
+	private String webClientId;
+
+	@Value("${spring.security.oauth2.apple.client-id.ios}")
+	private String iosClientId;
 
 	@Value("${spring.security.oauth2.client.registration.apple.client-secret}")
 	private String clientSecret;
@@ -49,11 +53,21 @@ public class AppleSocialService implements SocialService{
 
 	@Override
 	public StoreSocialInfoResponse login(String authorizationCode, StoreSocialLoginRequest request) {
-		AppleTokenResponseDto appleTokenResponse = getAppleToken(authorizationCode);
+		Platform platform = request.platform();
+
+		String clientId = switch (platform) {
+			case IOS -> iosClientId;
+			case WEB -> webClientId;
+			case ANDROID -> null;
+		};
+
+		AppleTokenResponseDto appleTokenResponse = getAppleToken(authorizationCode, clientId);
+
+
 		return getStore(appleTokenResponse);
 	}
 
-	public AppleTokenResponseDto getAppleToken(String authorizationCode) {
+	public AppleTokenResponseDto getAppleToken(String authorizationCode, String clientId) {
 		WebClient webClient = WebClient.builder()
 			.baseUrl("https://appleid.apple.com")
 			.defaultHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=utf-8")
@@ -64,7 +78,7 @@ public class AppleSocialService implements SocialService{
 				.uri(uriBuilder -> uriBuilder.path("/auth/token")
 					.queryParam("grant_type", "authorization_code")
 					.queryParam("client_id", clientId)
-					.queryParam("client_secret", makeClientSecretToken())
+					.queryParam("client_secret", makeClientSecretToken(clientId))
 					.queryParam("code", authorizationCode)
 					.build())
 				.retrieve()
@@ -104,7 +118,7 @@ public class AppleSocialService implements SocialService{
 		return applePublicKeyResponse.getKeys();
 	}
 
-	private String makeClientSecretToken() {
+	private String makeClientSecretToken(String clientId) {
 		String token = Jwts.builder()
 			.setSubject(clientId)
 			.setIssuer(teamId)
