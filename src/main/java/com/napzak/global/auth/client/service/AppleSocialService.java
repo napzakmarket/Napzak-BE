@@ -58,7 +58,6 @@ public class AppleSocialService implements SocialService{
 		String clientId = switch (platform) {
 			case IOS -> iosClientId;
 			case WEB -> webClientId;
-			case ANDROID -> null;
 		};
 
 		AppleTokenResponseDto appleTokenResponse = getAppleToken(authorizationCode, clientId);
