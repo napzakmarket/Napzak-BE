@@ -12,9 +12,11 @@ import com.napzak.domain.store.core.entity.enums.SocialType;
 import com.napzak.domain.store.core.vo.Store;
 import com.napzak.global.auth.client.dto.StoreSocialInfoResponse;
 import com.napzak.global.auth.client.dto.StoreSocialLoginRequest;
+import com.napzak.global.auth.client.service.KakaoSocialService;
 import com.napzak.global.auth.client.service.SocialService;
 import com.napzak.global.common.exception.NapzakException;
 
+import io.micrometer.core.instrument.binder.system.FileDescriptorMetrics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,6 +31,7 @@ public class LoginService {
 	private final StoreService storeService;
 	private final GoogleSocialService googleSocialService;
 	private final AppleSocialService appleSocialService;
+	private final FileDescriptorMetrics fileDescriptorMetrics;
 
 	@Transactional
 	public LoginSuccessResponse login(
@@ -47,6 +50,16 @@ public class LoginService {
 			log.error("Login failed: ", e);
 			throw e;
 		}
+	}
+
+	public LoginSuccessResponse loginWithAccessToken(
+		String kakaoAccessToken,
+		StoreSocialLoginRequest request) {
+
+		StoreSocialInfoResponse storeInfo = ((KakaoSocialService) kakaoSocialService).loginWithAccessToken(kakaoAccessToken);
+		Long storeId = findOrRegisterStore(storeInfo);
+
+		return returnLoginSuccessResponse(storeId, storeInfo);
 	}
 
 	//소셜 타입에 따라 사용자 정보 조회

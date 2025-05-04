@@ -59,6 +59,12 @@ public class KakaoSocialService implements SocialService {
 		return getLoginDto(loginRequest.socialType(), getUserInfo(accessToken));
 	}
 
+	public StoreSocialInfoResponse loginWithAccessToken(String kakaoAccessToken) {
+
+		KakaoUserResponse kakaoUserResponse = getUserInfo("Bearer " + kakaoAccessToken);
+		return getLoginDto(SocialType.KAKAO, kakaoUserResponse);
+	}
+
 	private String getOAuth2Authentication(
 		final String authorizationCode
 	) {

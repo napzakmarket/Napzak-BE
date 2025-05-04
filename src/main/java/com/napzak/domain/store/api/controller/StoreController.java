@@ -99,6 +99,26 @@ public class StoreController implements StoreApi {
 			.body(SuccessResponse.of(StoreSuccessCode.LOGIN_SUCCESS, successResponse));
 	}
 
+
+	@PostMapping("/login/kakao")
+	public ResponseEntity<SuccessResponse<LoginSuccessResponse>> loginWithKakaoAccessToken(
+		@RequestParam("accessToken") String accessToken,
+		@RequestBody StoreSocialLoginRequest storeSocialLoginRequest
+	) {
+		LoginSuccessResponse loginSuccessResponse = loginService.loginWithAccessToken(accessToken, storeSocialLoginRequest);
+		ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN, loginSuccessResponse.refreshToken())
+			.maxAge(COOKIE_MAX_AGE)
+			.path("/")
+			.secure(true)
+			.sameSite("None")
+			.httpOnly(true)
+			.build();
+
+		return ResponseEntity.ok()
+			.header(HttpHeaders.SET_COOKIE, cookie.toString())
+			.body(SuccessResponse.of(StoreSuccessCode.LOGIN_SUCCESS, loginSuccessResponse));
+	}
+
 	@PostMapping("/logout")
 	public ResponseEntity<SuccessResponse<Void>> logOut(
 		@CurrentMember final Long currentStoreId
