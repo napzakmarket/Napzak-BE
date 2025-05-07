@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.napzak.domain.external.core.entity.enums.LinkType;
+import com.napzak.domain.external.core.entity.enums.TermsType;
 import com.napzak.domain.external.core.vo.Link;
+import com.napzak.domain.external.core.vo.UseTerms;
 import com.napzak.domain.genre.api.dto.response.GenreNameDto;
 import com.napzak.domain.genre.api.dto.response.GenreNameListResponse;
 import com.napzak.domain.genre.api.exception.GenreErrorCode;
@@ -28,6 +30,7 @@ import com.napzak.domain.product.core.entity.enums.TradeType;
 import com.napzak.domain.store.api.StoreGenreFacade;
 import com.napzak.domain.store.api.StoreLinkFacade;
 import com.napzak.domain.store.api.StoreProductFacade;
+import com.napzak.domain.store.api.StoreUseTermsFacade;
 import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
 import com.napzak.domain.store.api.dto.request.NicknameRequest;
 import com.napzak.domain.store.api.dto.request.StoreProfileModifyRequest;
@@ -77,6 +80,7 @@ public class StoreController implements StoreApi {
 	private final StoreProductFacade storeProductFacade;
 	private final StoreLinkFacade storeLinkFacade;
 	private final AuthenticationService authenticationService;
+	private final StoreUseTermsFacade storeUseTermsFacade;
 
 	@PostMapping("/login")
 	public ResponseEntity<SuccessResponse<LoginSuccessResponse>> login(
@@ -206,8 +210,8 @@ public class StoreController implements StoreApi {
 		@CurrentMember final Long currentStoreId
 	) {
 		String noticeLink = storeLinkFacade.findByLinkType(LinkType.NOTICE).getUrl();
-		String termsLink = storeLinkFacade.findByLinkType(LinkType.TERMS).getUrl();
-		String privacyPolicyLink = storeLinkFacade.findByLinkType(LinkType.PRIVACY_POLICY).getUrl();
+		String termsLink = storeUseTermsFacade.findByTermsType(TermsType.TERMS).getTermsUrl();
+		String privacyPolicyLink = storeUseTermsFacade.findByTermsType(TermsType.PRIVACY_POLICY).getTermsUrl();
 		String versionInfoLink = storeLinkFacade.findByLinkType(LinkType.VERSION_INFO).getUrl();
 
 		SettingLinkResponse settingLinkResponse = SettingLinkResponse.from(noticeLink, termsLink, privacyPolicyLink, versionInfoLink);
@@ -217,12 +221,12 @@ public class StoreController implements StoreApi {
 
 	@GetMapping("/terms")
 	public ResponseEntity<SuccessResponse<OnboardingTermsListResponse>> getOnboardingTerms() {
-		Link terms = storeLinkFacade.findByLinkType(LinkType.TERMS);
-		Link privacyPolicy = storeLinkFacade.findByLinkType(LinkType.PRIVACY_POLICY);
+		UseTerms terms = storeUseTermsFacade.findByTermsType(TermsType.TERMS);
+		UseTerms privacyPolicy = storeUseTermsFacade.findByTermsType(TermsType.PRIVACY_POLICY);
 
 		List<TermsDto> termsList = List.of(
-			TermsDto.from(terms.getId(), "(필수) 이용약관", terms.getUrl()),
-			TermsDto.from(privacyPolicy.getId(), "(필수) 개인정보처리방침", privacyPolicy.getUrl())
+			TermsDto.from(terms.getId(), "(필수) 이용약관", terms.getTermsUrl(), terms.getBundleId()),
+			TermsDto.from(privacyPolicy.getId(), "(필수) 개인정보처리방침", privacyPolicy.getTermsUrl(), terms.getBundleId())
 		);
 
 		OnboardingTermsListResponse onboardingTermsListResponse = OnboardingTermsListResponse.from(termsList);
