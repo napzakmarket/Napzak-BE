@@ -1,6 +1,6 @@
-package com.napzak.domain.external.core.entity;
+package com.napzak.domain.store.core.entity;
 
-import static com.napzak.domain.external.core.entity.TermsAgreementConstants.*;
+import static com.napzak.domain.store.core.entity.TermsAgreementConstants.*;
 
 import java.time.LocalDateTime;
 

@@ -1,8 +1,8 @@
-package com.napzak.domain.external.core.vo;
+package com.napzak.domain.store.core.vo;
 
 import java.time.LocalDateTime;
 
-import com.napzak.domain.external.core.entity.TermsAgreementEntity;
+import com.napzak.domain.store.core.entity.TermsAgreementEntity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

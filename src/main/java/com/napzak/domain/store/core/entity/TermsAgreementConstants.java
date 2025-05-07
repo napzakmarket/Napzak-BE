@@ -1,4 +1,4 @@
-package com.napzak.domain.external.core.entity;
+package com.napzak.domain.store.core.entity;
 
 public class TermsAgreementConstants {
 	public static final String TABLE_TERMS_AGREEMENT = "terms_agreement";
