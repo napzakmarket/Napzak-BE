@@ -235,6 +235,17 @@ public class StoreController implements StoreApi {
 			SuccessResponse.of(StoreSuccessCode.GET_ONBOARDING_TERMS_SUCCESS, onboardingTermsListResponse));
 	}
 
+	@PostMapping("/terms/{bundleId}")
+	public ResponseEntity<SuccessResponse<Void>> registerAgreement(
+		@PathVariable("bundleId") int bundleId,
+		@CurrentMember final Long currentStoreId
+	) {
+		storeService.registerAgreement(currentStoreId, bundleId);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(StoreSuccessCode.REGISTER_TERMS_AGREEMENT_SUCCESS));
+	}
+
 	@GetMapping("/{storeId}")
 	public ResponseEntity<SuccessResponse<StoreInfoResponse>> getStoreInfo(
 		@PathVariable("storeId") Long ownerId,
