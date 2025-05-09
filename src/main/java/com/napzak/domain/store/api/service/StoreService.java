@@ -6,12 +6,15 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.napzak.domain.external.core.entity.enums.TermsType;
+import com.napzak.domain.external.core.vo.UseTerms;
 import com.napzak.domain.store.api.exception.StoreErrorCode;
 import com.napzak.domain.store.core.GenrePreferenceRetriever;
 import com.napzak.domain.store.core.StorePhotoRetriever;
 import com.napzak.domain.store.core.StoreReportSaver;
 import com.napzak.domain.store.core.StoreRetriever;
 import com.napzak.domain.store.core.StoreUpdater;
+import com.napzak.domain.store.core.TermsAgreementSaver;
 import com.napzak.domain.store.core.WithdrawSaver;
 import com.napzak.domain.store.core.entity.SlangRetriever;
 import com.napzak.domain.store.core.entity.enums.PhotoType;
@@ -27,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
 public class StoreService {
 	private final StoreRetriever storeRetriever;
@@ -38,6 +40,7 @@ public class StoreService {
 	private final StoreReportSaver storeReportSaver;
 	private final WithdrawSaver withdrawSaver;
 	private final StorePhotoRetriever storePhotoRetriever;
+	private final TermsAgreementSaver termsAgreementSaver;
 
 	@Transactional(readOnly = true)
 	public boolean checkStoreExistsBySocialIdAndSocialType(final String socialId, final SocialType socialType) {
@@ -60,6 +63,7 @@ public class StoreService {
 
 	}
 
+	@Transactional(readOnly = true)
 	public List<GenrePreference> getGenrePreferenceList(Long storeId) {
 		return genrePreferenceRetriever.getGenrePreferences(storeId);
 	}
@@ -104,6 +108,9 @@ public class StoreService {
 		withdrawSaver.save(storeId, title, description, LocalDateTime.now());
 		storeUpdater.updateRole(storeId, Role.WITHDRAWN);
 	}
+
+	@Transactional
+	public void registerAgreement(Long storeId, int bundleId) {termsAgreementSaver.save(storeId, bundleId);}
 
 	public void syncSlangToRedis() {
 		slangRetriever.updateSlangToRedis();

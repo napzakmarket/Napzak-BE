@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.napzak.domain.external.core.entity.enums.LinkType;
+import com.napzak.domain.external.core.entity.enums.TermsType;
 import com.napzak.domain.external.core.vo.Link;
+import com.napzak.domain.external.core.vo.UseTerms;
 import com.napzak.domain.genre.api.dto.response.GenreNameDto;
 import com.napzak.domain.genre.api.dto.response.GenreNameListResponse;
 import com.napzak.domain.genre.api.exception.GenreErrorCode;
@@ -29,6 +31,8 @@ import com.napzak.domain.product.core.entity.enums.TradeType;
 import com.napzak.domain.store.api.StoreGenreFacade;
 import com.napzak.domain.store.api.StoreLinkFacade;
 import com.napzak.domain.store.api.StoreProductFacade;
+import com.napzak.domain.store.api.StoreTermsBundleFacade;
+import com.napzak.domain.store.api.StoreUseTermsFacade;
 import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
 import com.napzak.domain.store.api.dto.request.NicknameRequest;
 import com.napzak.domain.store.api.dto.request.RoleDto;
@@ -79,6 +83,8 @@ public class StoreController implements StoreApi {
 	private final StoreProductFacade storeProductFacade;
 	private final StoreLinkFacade storeLinkFacade;
 	private final AuthenticationService authenticationService;
+	private final StoreUseTermsFacade storeUseTermsFacade;
+	private final StoreTermsBundleFacade storeTermsBundleFacade;
 
 	@PostMapping("/login")
 	public ResponseEntity<SuccessResponse<LoginSuccessResponse>> login(
@@ -207,9 +213,11 @@ public class StoreController implements StoreApi {
 	public ResponseEntity<SuccessResponse<SettingLinkResponse>> getSettingLink(
 		@CurrentMember final Long currentStoreId
 	) {
+		int activeBundleId = storeTermsBundleFacade.findActiveBundleId();
+
 		String noticeLink = storeLinkFacade.findByLinkType(LinkType.NOTICE).getUrl();
-		String termsLink = storeLinkFacade.findByLinkType(LinkType.TERMS).getUrl();
-		String privacyPolicyLink = storeLinkFacade.findByLinkType(LinkType.PRIVACY_POLICY).getUrl();
+		String termsLink = storeUseTermsFacade.findByTermsTypeAndBundleId(TermsType.TERMS, activeBundleId).getTermsUrl();
+		String privacyPolicyLink = storeUseTermsFacade.findByTermsTypeAndBundleId(TermsType.PRIVACY_POLICY, activeBundleId).getTermsUrl();
 		String versionInfoLink = storeLinkFacade.findByLinkType(LinkType.VERSION_INFO).getUrl();
 
 		SettingLinkResponse settingLinkResponse = SettingLinkResponse.from(noticeLink, termsLink, privacyPolicyLink, versionInfoLink);
@@ -219,18 +227,30 @@ public class StoreController implements StoreApi {
 
 	@GetMapping("/terms")
 	public ResponseEntity<SuccessResponse<OnboardingTermsListResponse>> getOnboardingTerms() {
-		Link terms = storeLinkFacade.findByLinkType(LinkType.TERMS);
-		Link privacyPolicy = storeLinkFacade.findByLinkType(LinkType.PRIVACY_POLICY);
+		int activeBundleId = storeTermsBundleFacade.findActiveBundleId();
+		UseTerms terms = storeUseTermsFacade.findByTermsTypeAndBundleId(TermsType.TERMS, activeBundleId);
+		UseTerms privacyPolicy = storeUseTermsFacade.findByTermsTypeAndBundleId(TermsType.PRIVACY_POLICY, activeBundleId);
 
 		List<TermsDto> termsList = List.of(
-			TermsDto.from(terms.getId(), "(필수) 이용약관", terms.getUrl()),
-			TermsDto.from(privacyPolicy.getId(), "(필수) 개인정보처리방침", privacyPolicy.getUrl())
+			TermsDto.from(terms.getId(), "(필수) 이용약관", terms.getTermsUrl(), terms.isRequired()),
+			TermsDto.from(privacyPolicy.getId(), "(필수) 개인정보처리방침", privacyPolicy.getTermsUrl(), terms.isRequired())
 		);
 
-		OnboardingTermsListResponse onboardingTermsListResponse = OnboardingTermsListResponse.from(termsList);
+		OnboardingTermsListResponse onboardingTermsListResponse = OnboardingTermsListResponse.from(activeBundleId, termsList);
 
 		return ResponseEntity.ok(
 			SuccessResponse.of(StoreSuccessCode.GET_ONBOARDING_TERMS_SUCCESS, onboardingTermsListResponse));
+	}
+
+	@PostMapping("/terms/{bundleId}")
+	public ResponseEntity<SuccessResponse<Void>> registerAgreement(
+		@PathVariable("bundleId") int bundleId,
+		@CurrentMember final Long currentStoreId
+	) {
+		storeService.registerAgreement(currentStoreId, bundleId);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(StoreSuccessCode.REGISTER_TERMS_AGREEMENT_SUCCESS));
 	}
 
 	@GetMapping("/{storeId}")
