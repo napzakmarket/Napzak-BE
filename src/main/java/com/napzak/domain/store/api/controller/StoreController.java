@@ -10,6 +10,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,6 +31,7 @@ import com.napzak.domain.store.api.StoreLinkFacade;
 import com.napzak.domain.store.api.StoreProductFacade;
 import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
 import com.napzak.domain.store.api.dto.request.NicknameRequest;
+import com.napzak.domain.store.api.dto.request.RoleDto;
 import com.napzak.domain.store.api.dto.request.StoreProfileModifyRequest;
 import com.napzak.domain.store.api.dto.request.StoreReportRequest;
 import com.napzak.domain.store.api.dto.request.StoreWithdrawRequest;
@@ -312,6 +314,16 @@ public class StoreController implements StoreApi {
 		storeService.syncSlangToRedis();
 		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.SLANG_REDIS_UPDATE_SUCCESS));
 	}
+
+	@PatchMapping("/role/{storeId}")
+	public ResponseEntity<SuccessResponse<Void>> changeStoreRole(
+		@PathVariable("storeId") Long storeId,
+		@RequestBody RoleDto roleDto
+	) {
+		storeService.changeStoreRole(storeId, roleDto.role());
+		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.CHANGE_STORE_ROLE_SUCCESS));
+	}
+
 
 	private List<GenreNameDto> genrePreferenceResponseGenerator(List<GenrePreference> genreList) {
 

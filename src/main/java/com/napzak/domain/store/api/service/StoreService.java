@@ -108,4 +108,9 @@ public class StoreService {
 	public void syncSlangToRedis() {
 		slangRetriever.updateSlangToRedis();
 	}
+
+	@Transactional
+	public void changeStoreRole(Long storeId, Role role) {
+		storeUpdater.updateRole(storeId, role);
+	}
 }
