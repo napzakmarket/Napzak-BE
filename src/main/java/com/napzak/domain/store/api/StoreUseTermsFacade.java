@@ -14,7 +14,7 @@ public class StoreUseTermsFacade {
 
 	private final UseTermsRetriever useTermsRetriever;
 
-	public UseTerms findByTermsType(TermsType termsType) {
-		return useTermsRetriever.retrieveUseTermsByTermsType(termsType);
+	public UseTerms findByTermsTypeAndBundleId(TermsType termsType, int bundleId) {
+		return useTermsRetriever.retrieveUseTermsByTermsType(termsType, bundleId);
 	}
 }

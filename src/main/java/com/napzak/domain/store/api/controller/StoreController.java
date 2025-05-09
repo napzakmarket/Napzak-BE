@@ -30,6 +30,7 @@ import com.napzak.domain.product.core.entity.enums.TradeType;
 import com.napzak.domain.store.api.StoreGenreFacade;
 import com.napzak.domain.store.api.StoreLinkFacade;
 import com.napzak.domain.store.api.StoreProductFacade;
+import com.napzak.domain.store.api.StoreTermsBundleFacade;
 import com.napzak.domain.store.api.StoreUseTermsFacade;
 import com.napzak.domain.store.api.dto.request.GenrePreferenceRequest;
 import com.napzak.domain.store.api.dto.request.NicknameRequest;
@@ -81,6 +82,7 @@ public class StoreController implements StoreApi {
 	private final StoreLinkFacade storeLinkFacade;
 	private final AuthenticationService authenticationService;
 	private final StoreUseTermsFacade storeUseTermsFacade;
+	private final StoreTermsBundleFacade storeTermsBundleFacade;
 
 	@PostMapping("/login")
 	public ResponseEntity<SuccessResponse<LoginSuccessResponse>> login(
@@ -209,9 +211,11 @@ public class StoreController implements StoreApi {
 	public ResponseEntity<SuccessResponse<SettingLinkResponse>> getSettingLink(
 		@CurrentMember final Long currentStoreId
 	) {
+		int activeBundleId = storeTermsBundleFacade.findActiveBundleId();
+
 		String noticeLink = storeLinkFacade.findByLinkType(LinkType.NOTICE).getUrl();
-		String termsLink = storeUseTermsFacade.findByTermsType(TermsType.TERMS).getTermsUrl();
-		String privacyPolicyLink = storeUseTermsFacade.findByTermsType(TermsType.PRIVACY_POLICY).getTermsUrl();
+		String termsLink = storeUseTermsFacade.findByTermsTypeAndBundleId(TermsType.TERMS, activeBundleId).getTermsUrl();
+		String privacyPolicyLink = storeUseTermsFacade.findByTermsTypeAndBundleId(TermsType.PRIVACY_POLICY, activeBundleId).getTermsUrl();
 		String versionInfoLink = storeLinkFacade.findByLinkType(LinkType.VERSION_INFO).getUrl();
 
 		SettingLinkResponse settingLinkResponse = SettingLinkResponse.from(noticeLink, termsLink, privacyPolicyLink, versionInfoLink);
@@ -221,15 +225,16 @@ public class StoreController implements StoreApi {
 
 	@GetMapping("/terms")
 	public ResponseEntity<SuccessResponse<OnboardingTermsListResponse>> getOnboardingTerms() {
-		UseTerms terms = storeUseTermsFacade.findByTermsType(TermsType.TERMS);
-		UseTerms privacyPolicy = storeUseTermsFacade.findByTermsType(TermsType.PRIVACY_POLICY);
+		int activeBundleId = storeTermsBundleFacade.findActiveBundleId();
+		UseTerms terms = storeUseTermsFacade.findByTermsTypeAndBundleId(TermsType.TERMS, activeBundleId);
+		UseTerms privacyPolicy = storeUseTermsFacade.findByTermsTypeAndBundleId(TermsType.PRIVACY_POLICY, activeBundleId);
 
 		List<TermsDto> termsList = List.of(
-			TermsDto.from(terms.getId(), "(필수) 이용약관", terms.getTermsUrl(), terms.getBundleId()),
-			TermsDto.from(privacyPolicy.getId(), "(필수) 개인정보처리방침", privacyPolicy.getTermsUrl(), terms.getBundleId())
+			TermsDto.from(terms.getId(), "(필수) 이용약관", terms.getTermsUrl(), terms.isRequired()),
+			TermsDto.from(privacyPolicy.getId(), "(필수) 개인정보처리방침", privacyPolicy.getTermsUrl(), terms.isRequired())
 		);
 
-		OnboardingTermsListResponse onboardingTermsListResponse = OnboardingTermsListResponse.from(termsList);
+		OnboardingTermsListResponse onboardingTermsListResponse = OnboardingTermsListResponse.from(activeBundleId, termsList);
 
 		return ResponseEntity.ok(
 			SuccessResponse.of(StoreSuccessCode.GET_ONBOARDING_TERMS_SUCCESS, onboardingTermsListResponse));

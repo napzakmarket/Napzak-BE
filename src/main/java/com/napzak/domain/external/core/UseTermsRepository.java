@@ -8,5 +8,6 @@ import com.napzak.domain.external.core.entity.enums.TermsType;
 
 @Repository
 public interface UseTermsRepository extends JpaRepository<UseTermsEntity, Long> {
-	UseTermsEntity findByTermsTitle(TermsType termsType);
+	UseTermsEntity findByTermsTitleAndBundleId(TermsType termsType, int bundleId);
+
 }

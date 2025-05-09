@@ -4,14 +4,14 @@ public record TermsDto(
 	Long termsId,
 	String termsTitle,
 	String termsUrl,
-	int bundleId
+	boolean isRequired
 ) {
 	public static TermsDto from(
 		Long termsId,
 		String termsTitle,
 		String termsUrl,
-		int bundleId
+		boolean isRequired
 	) {
-		return new TermsDto(termsId, termsTitle, termsUrl, bundleId);
+		return new TermsDto(termsId, termsTitle, termsUrl, isRequired);
 	}
 }

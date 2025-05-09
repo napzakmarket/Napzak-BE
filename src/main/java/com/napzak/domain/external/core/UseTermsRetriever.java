@@ -13,8 +13,8 @@ import lombok.RequiredArgsConstructor;
 public class UseTermsRetriever {
 	private final UseTermsRepository useTermsRepository;
 
-	public UseTerms retrieveUseTermsByTermsType(TermsType termsType) {
-		UseTermsEntity useTermsEntity = useTermsRepository.findByTermsTitle(termsType);
+	public UseTerms retrieveUseTermsByTermsType(TermsType termsType, int bundleId) {
+		UseTermsEntity useTermsEntity = useTermsRepository.findByTermsTitleAndBundleId(termsType, bundleId);
 		return UseTerms.fromEntity(useTermsEntity);
 	}
 }

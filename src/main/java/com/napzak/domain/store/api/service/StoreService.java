@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.napzak.domain.external.core.entity.enums.TermsType;
+import com.napzak.domain.external.core.vo.UseTerms;
 import com.napzak.domain.store.api.exception.StoreErrorCode;
 import com.napzak.domain.store.core.GenrePreferenceRetriever;
 import com.napzak.domain.store.core.StorePhotoRetriever;
@@ -109,7 +111,6 @@ public class StoreService {
 
 	@Transactional
 	public void registerAgreement(Long storeId, int bundleId) {termsAgreementSaver.save(storeId, bundleId);}
-
 
 	public void syncSlangToRedis() {
 		slangRetriever.updateSlangToRedis();
