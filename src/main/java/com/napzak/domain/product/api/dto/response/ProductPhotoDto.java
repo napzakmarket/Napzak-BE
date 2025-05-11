@@ -5,7 +5,7 @@ import com.napzak.domain.product.core.vo.ProductPhoto;
 public record ProductPhotoDto(
 	Long photoId,
 	String photoUrl,
-	int photoSequence
+	int sequence
 ) {
 	public static ProductPhotoDto from(ProductPhoto photo) {
 		return new ProductPhotoDto(
