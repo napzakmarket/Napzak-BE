@@ -24,48 +24,27 @@ public class SlangFilter {
 		boolean hasEng = !onlyEng.isEmpty();
 		boolean hasKor = input.matches(".*[가-힣ㄱ-ㅎㅏ-ㅣ].*");
 
-		if (hasEng && containsOrdered(onlyEng, redisTemplate.opsForSet().members(RAW_SET))) return true;
+		if (hasEng && containsFullSubstring(onlyEng, redisTemplate.opsForSet().members(RAW_SET))) return true;
 
 		String rawJamo = KoreanUtils.extractJamo(input);
-		if (containsStrictSubstring(rawJamo, redisTemplate.opsForSet().members(JAMO_SET))) return true;
+		if (containsFullSubstring(rawJamo, redisTemplate.opsForSet().members(JAMO_SET))) return true;
 
 		if (hasKor || (hasEng && input.length() <= 10)) {
 			String normalized = normalizeMixed(input);
 			String jamo = KoreanUtils.extractJamo(normalized);
 
-			if (containsStrictSubstring(jamo, redisTemplate.opsForSet().members(JAMO_SET))) return true;
-			if (containsOrdered(normalized, redisTemplate.opsForSet().members(MIXED_SET))) return true;
+			if (containsFullSubstring(jamo, redisTemplate.opsForSet().members(JAMO_SET))) return true;
+			if (containsFullSubstring(normalized, redisTemplate.opsForSet().members(MIXED_SET))) return true;
 		}
 
 		return false;
 	}
 
-	private boolean containsOrdered(String input, Set<String> slangSet) {
+	private boolean containsFullSubstring(String input, Set<String> slangSet) {
 		if (slangSet == null || slangSet.isEmpty()) return false;
 		for (String slang : slangSet) {
-			if (slang == null || slang.length() < MIN_SLANG_LENGTH) continue;
-			if (isOrderedSubstring(input, slang)) return true;
-		}
-		return false;
-	}
-
-	private boolean containsStrictSubstring(String input, Set<String> slangSet) {
-		if (slangSet == null || slangSet.isEmpty()) return false;
-		for (String slang : slangSet) {
-			if (slang == null || slang.length() < MIN_SLANG_LENGTH) continue;
+			if (slang == null || slang.isBlank() || slang.length() < MIN_SLANG_LENGTH) continue;
 			if (input.contains(slang)) return true;
-		}
-		return false;
-	}
-
-	private boolean isOrderedSubstring(String text, String pattern) {
-		if (pattern == null || pattern.isEmpty()) return false;
-		int idx = 0;
-		for (char ch : text.toCharArray()) {
-			if (ch == pattern.charAt(idx)) {
-				idx++;
-				if (idx == pattern.length()) return true;
-			}
 		}
 		return false;
 	}

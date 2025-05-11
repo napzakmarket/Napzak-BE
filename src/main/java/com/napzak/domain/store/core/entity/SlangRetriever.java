@@ -14,7 +14,9 @@ import com.napzak.global.common.slang.KoreanUtils;
 import com.napzak.global.common.slang.SlangFilter;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class SlangRetriever {
@@ -32,7 +34,9 @@ public class SlangRetriever {
 	}
 
 	public void updateSlangToRedis() {
+		log.info("🔥 updateSlangToRedis start");
 		List<SlangEntity> slangs = slangRepository.findAll();
+		log.info("🧠 slang rows: {}", slangs.size());
 
 		Set<String> rawWords = slangs.stream()
 			.map(SlangEntity::getWord)
@@ -42,6 +46,7 @@ public class SlangRetriever {
 		Set<String> jamoWords = slangs.stream()
 			.map(SlangEntity::getWord)
 			.map(KoreanUtils::extractJamo)
+			.filter(jamo -> jamo != null && !jamo.isBlank() && jamo.length() >= 3)
 			.collect(Collectors.toSet());
 
 		Set<String> mixedWords = slangs.stream()
