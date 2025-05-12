@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import com.napzak.domain.interest.core.InterestRemover;
 import com.napzak.domain.interest.core.InterestRetriever;
 
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProductInterestFacade {
 	private final InterestRetriever interestRetriever;
+	private final InterestRemover interestRemover;
 
 	public boolean getIsInterested(Long productId, Long storeId) {
 		return interestRetriever.getIsInterested(productId, storeId);
@@ -20,5 +22,9 @@ public class ProductInterestFacade {
 
 	public Map<Long, Boolean> getIsInterestedMap(List<Long> productIds, Long storeId) {
 		return interestRetriever.areProductsInterested(productIds, storeId);
+	}
+
+	public void deleteAllByProductId(Long productId) {
+		interestRemover.deleteAllInterest(productId);
 	}
 }
