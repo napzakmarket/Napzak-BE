@@ -25,7 +25,7 @@ public record ProductBuyCreateRequest(
 	String title,
 
 	@NotBlank
-	@Size(max = 250, message = "상품 설명은 250자를 초과할 수 없습니다.")
+	@Size(max = 450, message = "상품 설명은 450자를 초과할 수 없습니다.")
 	String description,
 
 	@NotNull
