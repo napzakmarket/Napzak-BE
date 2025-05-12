@@ -17,4 +17,9 @@ public class InterestRemover {
 		interestRepository.deleteByProductIdAndStoreId(productId, storeId);
 
 	}
+
+	@Transactional
+	public void deleteAllInterest(Long productId) {
+		interestRepository.deleteByProductId(productId);
+	}
 }

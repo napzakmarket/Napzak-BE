@@ -33,4 +33,11 @@ public interface InterestRepository extends JpaRepository<InterestEntity, Long> 
 	void deleteByProductIdAndStoreId(
 		@Param("productId") Long productId,
 		@Param("storeId") Long storeId);
+
+	@Modifying
+	@Query("""
+				DELETE FROM InterestEntity i
+				WHERE i.productId = :productId
+			""")
+	void deleteByProductId(@Param("productId") Long productId);
 }
