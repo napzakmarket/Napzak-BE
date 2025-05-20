@@ -29,6 +29,7 @@ import com.napzak.domain.genre.api.exception.GenreErrorCode;
 import com.napzak.domain.genre.core.vo.Genre;
 import com.napzak.domain.product.core.entity.enums.TradeType;
 import com.napzak.domain.store.api.StoreGenreFacade;
+import com.napzak.domain.store.api.StoreInterestFacade;
 import com.napzak.domain.store.api.StoreLinkFacade;
 import com.napzak.domain.store.api.StoreProductFacade;
 import com.napzak.domain.store.api.StoreTermsBundleFacade;
@@ -85,6 +86,7 @@ public class StoreController implements StoreApi {
 	private final AuthenticationService authenticationService;
 	private final StoreUseTermsFacade storeUseTermsFacade;
 	private final StoreTermsBundleFacade storeTermsBundleFacade;
+	private final StoreInterestFacade storeInterestFacade;
 
 	@PostMapping("/login")
 	public ResponseEntity<SuccessResponse<LoginSuccessResponse>> login(
@@ -319,6 +321,9 @@ public class StoreController implements StoreApi {
 		@RequestBody @Valid final StoreWithdrawRequest request
 	) {
 		storeService.withdraw(storeId, request.withdrawTitle(), request.withdrawDescription());
+		storeInterestFacade.deleteInterestByStoreId(storeId);
+		storeProductFacade.updateProductIsVisibleByStoreId(storeId);
+
 		StoreWithdrawResponse response = StoreWithdrawResponse.of(
 			storeId,
 			request.withdrawTitle(),
