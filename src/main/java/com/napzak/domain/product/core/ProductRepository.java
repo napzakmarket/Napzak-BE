@@ -47,10 +47,17 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, P
 		""")
 	void updateTradeStatus(@Param("productId") Long productId, @Param("tradeStatus") TradeStatus tradeStatus);
 
+	@Modifying
+	@Query("""
+		UPDATE ProductEntity p
+		SET p.isVisible = false
+		WHERE p.storeId = :storeId
+		""")
+	void updateIsVisible(@Param("storeId") Long storeId);
+
+	@Query("SELECT p FROM ProductEntity p where p.id = :productId AND p.isVisible = true")
 	Optional<ProductEntity> findById(Long productId);
 
-	boolean existsById(Long productId);
-
-	int countByStoreIdAndTradeType(Long storeId, TradeType tradeType);
+	int countByStoreIdAndTradeTypeAndIsVisibleTrue(Long storeId, TradeType tradeType);
 }
 

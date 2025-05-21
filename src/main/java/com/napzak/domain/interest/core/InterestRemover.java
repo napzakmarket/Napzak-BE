@@ -22,4 +22,7 @@ public class InterestRemover {
 	public void deleteAllInterest(Long productId) {
 		interestRepository.deleteByProductId(productId);
 	}
+
+	@Transactional
+	public void deleteAllInterestByStoreId(Long storeId) { interestRepository.deleteByStoreId(storeId);}
 }

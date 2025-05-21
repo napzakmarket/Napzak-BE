@@ -6,9 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.napzak.domain.external.core.entity.enums.TermsType;
-import com.napzak.domain.external.core.vo.UseTerms;
 import com.napzak.domain.store.api.exception.StoreErrorCode;
+import com.napzak.domain.store.core.GenrePreferenceRemover;
 import com.napzak.domain.store.core.GenrePreferenceRetriever;
 import com.napzak.domain.store.core.StorePhotoRetriever;
 import com.napzak.domain.store.core.StoreReportSaver;
@@ -41,6 +40,7 @@ public class StoreService {
 	private final WithdrawSaver withdrawSaver;
 	private final StorePhotoRetriever storePhotoRetriever;
 	private final TermsAgreementSaver termsAgreementSaver;
+	private final GenrePreferenceRemover genrePreferenceRemover;
 
 	@Transactional(readOnly = true)
 	public boolean checkStoreExistsBySocialIdAndSocialType(final String socialId, final SocialType socialType) {
@@ -107,6 +107,7 @@ public class StoreService {
 	public void withdraw(Long storeId, String title, String description) {
 		withdrawSaver.save(storeId, title, description, LocalDateTime.now());
 		storeUpdater.updateRole(storeId, Role.WITHDRAWN);
+		genrePreferenceRemover.removeGenrePreference(storeId);
 	}
 
 	@Transactional

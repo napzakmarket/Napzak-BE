@@ -27,11 +27,6 @@ public class ProductRetriever {
 	private static final List<Long> FALLBACK_GENRES = List.of(1L, 7L, 4L, 5L);
 
 	@Transactional(readOnly = true)
-	public boolean existsById(Long productId) {
-		return productRepository.existsById(productId);
-	}
-
-	@Transactional(readOnly = true)
 	public Product findById(Long id) {
 		ProductEntity productEntity = productRepository.findById(id)
 			.orElseThrow(() -> new NapzakException(ProductErrorCode.PRODUCT_NOT_FOUND));
@@ -40,7 +35,7 @@ public class ProductRetriever {
 
 	@Transactional(readOnly = true)
 	public int countProductsByStoreIdAndTradeType(Long storeId, TradeType tradeType) {
-		return productRepository.countByStoreIdAndTradeType(storeId, tradeType);
+		return productRepository.countByStoreIdAndTradeTypeAndIsVisibleTrue(storeId, tradeType);
 	}
 
 	@Transactional(readOnly = true)
