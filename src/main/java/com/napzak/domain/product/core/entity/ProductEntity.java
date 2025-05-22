@@ -127,7 +127,8 @@ public class ProductEntity {
 		final int halfDeliveryFee,
 		final ProductCondition productCondition,
 		final Long storeId,
-		final Long genreId
+		final Long genreId,
+		final Boolean isVisible
 	) {
 		return ProductEntity.builder()
 			.title(title)
@@ -142,6 +143,7 @@ public class ProductEntity {
 			.productCondition(productCondition)
 			.storeId(storeId)
 			.genreId(genreId)
+			.isVisible(isVisible)
 			.build();
 	}
 
