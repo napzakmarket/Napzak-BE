@@ -93,6 +93,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 			.where(
 				tradeTypeFilter(tradeType),
 				productEntity.storeId.ne(storeId),
+				productEntity.tradeStatus.eq(TradeStatus.BEFORE_TRADE),
 				isVisibleFilter()
 			)
 			.orderBy(orderSpecifier)
