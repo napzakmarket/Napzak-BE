@@ -34,7 +34,7 @@ public class ProductSaver {
 			ProductEntity.create(
 				title, description, tradeType, tradeStatus, price,
 				isPriceNegotiable, isDeliveryIncluded, standardDeliveryFee,
-				halfDeliveryFee, productCondition, storeId, genreId
+				halfDeliveryFee, productCondition, storeId, genreId, true
 			)
 		);
 
