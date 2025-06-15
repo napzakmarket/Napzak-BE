@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.napzak.domain.interest.core.entity.InterestEntity;
+import com.napzak.domain.interest.core.vo.Interest;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -30,5 +33,12 @@ public class InterestRetriever {
 				productId -> productId,          // 상품 ID
 				likedProductIds::contains        // 좋아요 여부
 			));
+	}
+
+	@Transactional(readOnly = true)
+	public Interest retrieveInterestByProductIdAndStoreId(Long productId, Long storeId) {
+		InterestEntity interestEntity = interestRepository.findByProductIdAndStoreId(productId, storeId);
+
+		return Interest.fromEntity(interestEntity);
 	}
 }

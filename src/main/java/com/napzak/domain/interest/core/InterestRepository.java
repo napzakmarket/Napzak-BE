@@ -47,4 +47,11 @@ public interface InterestRepository extends JpaRepository<InterestEntity, Long> 
 				WHERE i.storeId = :storeId
 			""")
 	void deleteByStoreId(@Param("storeId") Long storeId);
+
+	@Query("""
+				SELECT i FROM InterestEntity i
+				WHERE i.storeId = :storeId
+				AND i.productId = :productId
+			""")
+	InterestEntity findByProductIdAndStoreId(Long productId, Long storeId);
 }
