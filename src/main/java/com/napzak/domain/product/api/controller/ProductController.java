@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.napzak.domain.genre.core.vo.Genre;
 import com.napzak.domain.product.api.ProductGenreFacade;
 import com.napzak.domain.product.api.ProductInterestFacade;
-import com.napzak.domain.product.api.ProductReviewFacade;
 import com.napzak.domain.product.api.ProductStoreFacade;
 import com.napzak.domain.product.api.dto.request.ProductBuyCreateRequest;
 import com.napzak.domain.product.api.dto.request.ProductBuyModifyRequest;
@@ -33,6 +32,7 @@ import com.napzak.domain.product.api.dto.request.cursor.HighPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.LowPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.PopularCursor;
 import com.napzak.domain.product.api.dto.request.cursor.RecentCursor;
+import com.napzak.domain.product.api.dto.response.InterestedProductResponse;
 import com.napzak.domain.product.api.dto.response.ProductBuyListResponse;
 import com.napzak.domain.product.api.dto.response.ProductBuyModifyResponse;
 import com.napzak.domain.product.api.dto.response.ProductBuyResponse;
@@ -75,7 +75,6 @@ public class ProductController implements ProductApi {
 
 	private final ProductInterestFacade productInterestFacade;
 	private final ProductGenreFacade productGenreFacade;
-	private final ProductReviewFacade productReviewFacade;
 	private final ProductStoreFacade productStoreFacade;
 
 	@Override
@@ -539,7 +538,8 @@ public class ProductController implements ProductApi {
 			productSellModifyRequest.genreId()
 		);
 
-		List<ProductPhoto> productPhotoList = productService.modifyProductPhotos(product.getId(), productSellModifyRequest.productPhotoList());
+		List<ProductPhoto> productPhotoList = productService.modifyProductPhotos(product.getId(),
+			productSellModifyRequest.productPhotoList());
 
 		ProductSellResponse response = ProductSellResponse.from(product, productPhotoList);
 
@@ -567,7 +567,8 @@ public class ProductController implements ProductApi {
 			.toList();
 
 		ProductBuyModifyResponse productBuyModifyResponse = ProductBuyModifyResponse.from(
-			product.getId(), product.getGenreId(), genreName, product.getTitle(), product.getDescription(), product.getPrice(),
+			product.getId(), product.getGenreId(), genreName, product.getTitle(), product.getDescription(),
+			product.getPrice(),
 			product.getIsPriceNegotiable(), photoDtoList
 		);
 
@@ -593,7 +594,8 @@ public class ProductController implements ProductApi {
 			productBuyModifyRequest.genreId()
 		);
 
-		List<ProductPhoto> productPhotoList = productService.modifyProductPhotos(product.getId(), productBuyModifyRequest.productPhotoList());
+		List<ProductPhoto> productPhotoList = productService.modifyProductPhotos(product.getId(),
+			productBuyModifyRequest.productPhotoList());
 
 		ProductBuyResponse response = ProductBuyResponse.from(product, productPhotoList);
 
@@ -618,7 +620,8 @@ public class ProductController implements ProductApi {
 		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, currentStoreId);
 		Map<Long, String> genreMap = fetchGenreMap(pagination);
 
-		ProductRecommendListResponse productListResponse = ProductRecommendListResponse.from(nickname, pagination, interestMap,
+		ProductRecommendListResponse productListResponse = ProductRecommendListResponse.from(nickname, pagination,
+			interestMap,
 			genreMap, currentStoreId);
 
 		return ResponseEntity.ok()
@@ -689,7 +692,7 @@ public class ProductController implements ProductApi {
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productChatResponse));
 
 	}
-  
+
 	@GetMapping("/search/recommend")
 	public ResponseEntity<SuccessResponse<RecommendResponse>> getRecommendSearchWordAndGenre(
 		@CurrentMember Long currentStoreId
@@ -704,8 +707,9 @@ public class ProductController implements ProductApi {
 		RecommendResponse recommendResponse = new RecommendResponse(recommendSearchWordDtoList, recommendGenreDtoList);
 
 		return ResponseEntity.ok()
-			.body(SuccessResponse.of(ProductSuccessCode.RECOMMEND_SEARCH_WORD_AND_GENRE_GET_SUCCESS, recommendResponse));
-  }
+			.body(
+				SuccessResponse.of(ProductSuccessCode.RECOMMEND_SEARCH_WORD_AND_GENRE_GET_SUCCESS, recommendResponse));
+	}
 
 	@PostMapping("/report/{productId}")
 	public ResponseEntity<SuccessResponse<ProductReportResponse>> reportProduct(
@@ -739,6 +743,77 @@ public class ProductController implements ProductApi {
 				response
 			)
 		);
+	}
+
+	@GetMapping("/interest/sell")
+	public ResponseEntity<SuccessResponse<InterestedProductResponse>> getInterestedSellProducts(
+		@RequestParam(required = false) Long cursor,
+		@RequestParam(defaultValue = "100") int size,
+		@CurrentMember Long currentStoreId
+	) {
+
+		ProductPagination pagination = productService.getInterestedProducts(
+			currentStoreId,
+			cursor,
+			size,
+			TradeType.SELL
+		);
+
+		List<ProductWithFirstPhoto> productList = pagination.getProductList();
+		Map<Long, String> genreMap = fetchGenreMap(pagination);
+		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, currentStoreId);
+
+		String nextCursor = productService.generateInterestCursor(pagination, currentStoreId);
+
+		InterestedProductResponse response = InterestedProductResponse.from(
+			productList,
+			interestMap,
+			genreMap,
+			nextCursor,
+			currentStoreId
+		);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+			ProductSuccessCode.INTERESTED_PRODUCT_RETRIEVE_SUCCESS,
+			response
+		));
+
+	}
+
+	@GetMapping("/interest/buy")
+	public ResponseEntity<SuccessResponse<InterestedProductResponse>> getInterestedBuyProducts(
+		@RequestParam(required = false) Long cursor,
+		@RequestParam(defaultValue = "100") int size,
+		@CurrentMember Long currentStoreId
+	) {
+
+		ProductPagination pagination = productService.getInterestedProducts(
+			currentStoreId,
+			cursor,
+			size,
+			TradeType.BUY
+		);
+
+		List<ProductWithFirstPhoto> productList = pagination.getProductList();
+		Map<Long, String> genreMap = fetchGenreMap(pagination);
+		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, currentStoreId);
+
+		String nextCursor = productService.generateInterestCursor(pagination, currentStoreId);
+
+		InterestedProductResponse response = InterestedProductResponse.from(
+			productList,
+			interestMap,
+			genreMap,
+			nextCursor,
+			currentStoreId
+		);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+				ProductSuccessCode.INTERESTED_PRODUCT_RETRIEVE_SUCCESS,
+				response
+			));
 	}
 
 	private void authChecker(Long currentStoreId, Product product) {
@@ -820,4 +895,5 @@ public class ProductController implements ProductApi {
 			return cursorOptionalValue;
 		}
 	}
+
 }

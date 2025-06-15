@@ -53,6 +53,11 @@ public class ProductPagination {
 		}
 	}
 
+	public Long getLastProductId() {
+		if (!hasMoreData()) return null;
+		return productList.getProductList().get(needSize).getId();
+	}
+
 	// 클라이언트에 반환할 데이터만 제공
 	public List<ProductWithFirstPhoto> getProductList() {
 		return productList.getProductList().subList(0, Math.min(needSize, productList.size()));
