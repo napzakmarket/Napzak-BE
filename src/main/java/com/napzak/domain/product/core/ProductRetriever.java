@@ -50,6 +50,15 @@ public class ProductRetriever {
 	}
 
 	@Transactional(readOnly = true)
+	public List<Product> retrieveInterestedProducts(
+		Long storeId, Long cursorInterestId, int size, TradeType tradeType
+	) {
+		return productRepository.findInterestedProducts(
+			storeId, cursorInterestId, size, tradeType
+		).stream().map(Product::fromEntity).toList();
+	}
+
+	@Transactional(readOnly = true)
 	public List<Product> retrieveProductsExcludingCurrentUser(SortOption sortOption, int size, TradeType tradeType,
 		long storeId) {
 
@@ -161,6 +170,7 @@ public class ProductRetriever {
 		// [5] 정렬 후 DTO 변환
 		return convertToProductList(reorderSellBuy(bestFourProducts));
 	}
+
 
 	private List<ProductEntity> pickBestFourAllowingGenreOverlap(List<ProductEntity> productList, int needSell, int needBuy) {
 		if (productList.size() < 4) return List.of();

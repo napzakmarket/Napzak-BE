@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.napzak.domain.interest.core.entity.QInterestEntity;
 import com.napzak.domain.product.core.entity.ProductEntity;
+import com.napzak.domain.product.core.entity.QProductEntity;
 import com.napzak.domain.product.core.entity.enums.ProductCondition;
 import com.napzak.domain.product.core.entity.enums.TradeStatus;
 import com.napzak.domain.product.core.entity.enums.TradeType;
@@ -43,6 +45,29 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 				cursorFilter(cursorProductId, cursorOptionalValue, orderSpecifier)
 			)
 			.orderBy(tradeStatusOrder().asc(), orderSpecifier)
+			.limit(size + 1)
+			.fetch();
+	}
+
+	@Override
+	public List<ProductEntity> findInterestedProducts(
+		Long storeId, Long cursorInterestId, int size, TradeType tradeType
+	) {
+
+		QProductEntity product = QProductEntity.productEntity;
+		QInterestEntity interest = QInterestEntity.interestEntity;
+
+		return queryFactory.
+			select(product)
+			.from(interest)
+			.join(product).on(interest.productId.eq(product.id))
+			.where(
+				interest.storeId.eq(storeId),
+				product.tradeType.eq(tradeType),
+				product.isVisible.isTrue(),
+				cursorInterestId != null ? interest.id.loe(Long.valueOf(cursorInterestId)) : null
+			)
+			.orderBy(interest.createdAt.desc())
 			.limit(size + 1)
 			.fetch();
 	}
