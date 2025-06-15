@@ -10,12 +10,12 @@ import com.napzak.domain.product.core.vo.ProductWithFirstPhoto;
 import com.napzak.global.common.util.TimeUtils;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record InterestedSellProductResponse (
+public record InterestedProductResponse(
 	List<ProductSellDto> interestedSellProductList,
 	@Nullable
 	String nextCursor
 ) {
-	public static InterestedSellProductResponse from(
+	public static InterestedProductResponse from(
 		List<ProductWithFirstPhoto> productList,
 		Map<Long, Boolean> interestMap,
 		Map<Long, String> genreMap,
@@ -35,6 +35,6 @@ public record InterestedSellProductResponse (
 			})
 			.toList();
 
-		return new InterestedSellProductResponse(dtoList, nextCursor);
+		return new InterestedProductResponse(dtoList, nextCursor);
 	}
 }
