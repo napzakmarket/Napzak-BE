@@ -1,6 +1,7 @@
 package com.napzak.domain.product.core;
 
 import java.util.List;
+import java.util.Map;
 
 import com.napzak.domain.product.core.entity.ProductEntity;
 import com.napzak.domain.product.core.entity.enums.TradeType;
@@ -12,7 +13,7 @@ public interface ProductRepositoryCustom {
 		Boolean isOnSale, Boolean isUnopened, List<Long> genreIds, TradeType tradeType);
 
 	List<ProductEntity> findInterestedProducts(
-		Long storeId, Long cursorInterestId, int size, TradeType tradeType
+		Map<Long, Long> interestIdToProductIdMap, Long cursorInterestId, int size
 	);
 
 	List<ProductEntity> searchProductsBySearchWordAndSortOptionAndFilters(

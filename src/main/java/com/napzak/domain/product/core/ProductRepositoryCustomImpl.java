@@ -3,6 +3,9 @@ package com.napzak.domain.product.core;
 import static com.napzak.domain.product.core.entity.QProductEntity.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
@@ -51,25 +54,38 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
 	@Override
 	public List<ProductEntity> findInterestedProducts(
-		Long storeId, Long cursorInterestId, int size, TradeType tradeType
+		Map<Long, Long> interestIdToProductIdMap, Long cursorInterestId, int size
 	) {
 
 		QProductEntity product = QProductEntity.productEntity;
-		QInterestEntity interest = QInterestEntity.interestEntity;
 
-		return queryFactory.
-			select(product)
-			.from(interest)
-			.join(product).on(interest.productId.eq(product.id))
+		List<Long> filteredProductIds = interestIdToProductIdMap.entrySet().stream()
+			.filter(entry -> cursorInterestId == null || entry.getKey() <= cursorInterestId)
+			.map(Map.Entry::getValue)
+			.toList();
+
+		System.out.println("Filtered ProductIds: " + filteredProductIds);
+
+		List<ProductEntity> products = queryFactory
+			.selectFrom(product)
 			.where(
-				interest.storeId.eq(storeId),
-				product.tradeType.eq(tradeType),
-				product.isVisible.isTrue(),
-				cursorInterestId != null ? interest.id.loe(Long.valueOf(cursorInterestId)) : null
+				product.id.in(filteredProductIds),
+				product.isVisible.isTrue()
 			)
-			.orderBy(interest.createdAt.desc())
-			.limit(size + 1)
 			.fetch();
+
+		System.out.println("Products: " + products);
+
+		Map<Long, ProductEntity> productMap = products.stream()
+			.collect(Collectors.toMap(ProductEntity::getId, p -> p));
+
+		System.out.println("ProductMap: " + productMap);
+
+		return filteredProductIds.stream()
+			.map(productMap::get)
+			.filter(Objects::nonNull)
+			.limit(size + 1)
+			.toList();
 	}
 
 	@Override
