@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
-import com.napzak.domain.interest.core.entity.QInterestEntity;
 import com.napzak.domain.product.core.entity.ProductEntity;
 import com.napzak.domain.product.core.entity.QProductEntity;
 import com.napzak.domain.product.core.entity.enums.ProductCondition;
