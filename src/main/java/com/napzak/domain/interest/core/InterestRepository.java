@@ -24,6 +24,14 @@ public interface InterestRepository extends JpaRepository<InterestEntity, Long> 
 	List<Long> findLikedProductIdsByStore(@Param("productIds") List<Long> productIds,
 		@Param("storeId") Long storeId);
 
+	@Query("""
+				SELECT i
+				FROM InterestEntity i
+				WHERE i.storeId = :storeId
+				ORDER BY i.createdAt DESC
+		""")
+	List<InterestEntity> findLikedProductsByStoreId(@Param("storeId") Long storeId);
+
 	@Modifying
 	@Query("""
                 DELETE FROM InterestEntity i
@@ -53,5 +61,7 @@ public interface InterestRepository extends JpaRepository<InterestEntity, Long> 
 				WHERE i.storeId = :storeId
 				AND i.productId = :productId
 			""")
-	InterestEntity findByProductIdAndStoreId(Long productId, Long storeId);
+	InterestEntity findByProductIdAndStoreId(
+		@Param("productId") Long productId,
+		@Param("storeId") Long storeId);
 }

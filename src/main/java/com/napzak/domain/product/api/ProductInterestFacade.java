@@ -32,4 +32,9 @@ public class ProductInterestFacade {
 	public void deleteAllByProductId(Long productId) {
 		interestRemover.deleteAllInterest(productId);
 	}
+
+	public List<Interest> findInterestsByStoreId(Long storeId) {
+		return interestRetriever.retrieveInterestsByStoreId(storeId);
+	}
+
 }

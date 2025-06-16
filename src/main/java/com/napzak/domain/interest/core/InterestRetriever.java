@@ -7,8 +7,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.napzak.domain.interest.api.exception.InterestErrorCode;
 import com.napzak.domain.interest.core.entity.InterestEntity;
 import com.napzak.domain.interest.core.vo.Interest;
+import com.napzak.global.common.exception.NapzakException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,8 +39,22 @@ public class InterestRetriever {
 
 	@Transactional(readOnly = true)
 	public Interest retrieveInterestByProductIdAndStoreId(Long productId, Long storeId) {
-		InterestEntity interestEntity = interestRepository.findByProductIdAndStoreId(productId, storeId);
+		try {
+			InterestEntity interestEntity = interestRepository.findByProductIdAndStoreId(productId, storeId);
+			return Interest.fromEntity(interestEntity);
+		} catch (Exception e) {
+			throw new NapzakException(InterestErrorCode.INTEREST_NOT_FOUND);
+		}
 
-		return Interest.fromEntity(interestEntity);
 	}
+
+	@Transactional(readOnly = true)
+	public List<Interest> retrieveInterestsByStoreId(Long storeId) {
+		List<InterestEntity> interestEntities = interestRepository.findLikedProductsByStoreId(storeId);
+
+		return interestEntities.stream()
+			.map(Interest::fromEntity)
+			.toList();
+	}
+
 }
