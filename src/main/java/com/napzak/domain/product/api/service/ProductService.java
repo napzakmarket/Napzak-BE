@@ -80,20 +80,19 @@ public class ProductService {
 
 	@Transactional(readOnly = true)
 	public ProductPagination getInterestedProducts(
-		Long storeId, Long cursorInterestId, int size, TradeType tradeType
+		Map<Long, Long> interestIdToProductIdMap, Long cursorInterestId, int size
 	) {
 		return retrieveAndPreparePagination(
-			() -> productRetriever.retrieveInterestedProducts(storeId, cursorInterestId, size, tradeType),
+			() -> productRetriever.retrieveInterestedProducts(interestIdToProductIdMap, cursorInterestId, size),
 			size
 		);
 	}
 
-	public String generateInterestCursor(ProductPagination pagination, Long storeId) {
-		Long lastProductId = pagination.getLastProductId();
-		if (lastProductId == null) return null;
-
-		Interest lastInterest = productInterestFacade.findInterestByProductIdAndStoreId(lastProductId, storeId);
-		return String.valueOf(lastInterest.getId());
+	public Set<Long> getTypeFilteredProductIdsByProductIds(List<Long> productIds, TradeType tradeType) {
+		List<Product> productList = productRetriever.retrieveTypeFilteredproducts(productIds, tradeType);
+		return productList.stream()
+			.map(Product::getId)
+			.collect(Collectors.toSet());
 	}
 
 	public ProductPagination searchSellProducts(
