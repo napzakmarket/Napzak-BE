@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.napzak.domain.interest.core.vo.Interest;
+import com.napzak.domain.product.api.ProductInterestFacade;
 import com.napzak.domain.product.api.dto.request.ProductPhotoModifyDto;
 import com.napzak.domain.product.api.dto.response.RecommendSearchWordDto;
 import com.napzak.domain.product.api.service.enums.SortOption;
@@ -48,6 +50,7 @@ public class ProductService {
 	private final ProductPhotoUpdater productPhotoUpdater;
 	private final SearchWordRetriever searchWordRetriever;
 	private final ProductReportSaver productReportSaver;
+	private final ProductInterestFacade productInterestFacade;
 
 	public ProductPagination getSellProducts(
 		SortOption sortOption, Long cursorProductId, Integer cursorOptionalValue, int size,
@@ -73,6 +76,23 @@ public class ProductService {
 			),
 			size
 		);
+	}
+
+	@Transactional(readOnly = true)
+	public ProductPagination getInterestedProducts(
+		Map<Long, Long> interestIdToProductIdMap, Long cursorInterestId, int size
+	) {
+		return retrieveAndPreparePagination(
+			() -> productRetriever.retrieveInterestedProducts(interestIdToProductIdMap, cursorInterestId, size),
+			size
+		);
+	}
+
+	public Set<Long> getTypeFilteredProductIdsByProductIds(List<Long> productIds, TradeType tradeType) {
+		List<Product> productList = productRetriever.retrieveTypeFilteredproducts(productIds, tradeType);
+		return productList.stream()
+			.map(Product::getId)
+			.collect(Collectors.toSet());
 	}
 
 	public ProductPagination searchSellProducts(

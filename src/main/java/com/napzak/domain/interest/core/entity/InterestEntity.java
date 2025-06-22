@@ -2,6 +2,8 @@ package com.napzak.domain.interest.core.entity;
 
 import static com.napzak.domain.interest.core.entity.InterestTableConstants.*;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,6 +31,9 @@ public class InterestEntity {
 
 	@Column(name = COLUMN_STORE_ID, nullable = false)
 	private Long storeId;
+
+	@Column(name = COLUMN_CREATED_AT, nullable = false)
+	private LocalDateTime createdAt = LocalDateTime.now();
 
 	@Builder
 	public InterestEntity(

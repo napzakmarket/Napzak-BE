@@ -17,6 +17,8 @@ public abstract class Cursor {
 				return LowPriceCursor.fromString(cursor);
 			case HIGH_PRICE:
 				return HighPriceCursor.fromString(cursor);
+			case INTEREST:
+				return InterestCursor.fromString(cursor);
 			default:
 				throw new NapzakException(ErrorCode.INVALID_SORT_OPTION);
 		}

@@ -1,9 +1,13 @@
 package com.napzak.domain.product.api.controller;
 
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,9 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.napzak.domain.genre.core.vo.Genre;
+import com.napzak.domain.interest.core.vo.Interest;
 import com.napzak.domain.product.api.ProductGenreFacade;
 import com.napzak.domain.product.api.ProductInterestFacade;
-import com.napzak.domain.product.api.ProductReviewFacade;
 import com.napzak.domain.product.api.ProductStoreFacade;
 import com.napzak.domain.product.api.dto.request.ProductBuyCreateRequest;
 import com.napzak.domain.product.api.dto.request.ProductBuyModifyRequest;
@@ -30,9 +34,12 @@ import com.napzak.domain.product.api.dto.request.ProductSellCreateRequest;
 import com.napzak.domain.product.api.dto.request.ProductSellModifyRequest;
 import com.napzak.domain.product.api.dto.request.TradeStatusRequest;
 import com.napzak.domain.product.api.dto.request.cursor.HighPriceCursor;
+import com.napzak.domain.product.api.dto.request.cursor.InterestCursor;
 import com.napzak.domain.product.api.dto.request.cursor.LowPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.PopularCursor;
 import com.napzak.domain.product.api.dto.request.cursor.RecentCursor;
+import com.napzak.domain.product.api.dto.response.InterestedBuyProductResponse;
+import com.napzak.domain.product.api.dto.response.InterestedSellProductResponse;
 import com.napzak.domain.product.api.dto.response.ProductBuyListResponse;
 import com.napzak.domain.product.api.dto.response.ProductBuyModifyResponse;
 import com.napzak.domain.product.api.dto.response.ProductBuyResponse;
@@ -75,7 +82,6 @@ public class ProductController implements ProductApi {
 
 	private final ProductInterestFacade productInterestFacade;
 	private final ProductGenreFacade productGenreFacade;
-	private final ProductReviewFacade productReviewFacade;
 	private final ProductStoreFacade productStoreFacade;
 
 	@Override
@@ -96,7 +102,7 @@ public class ProductController implements ProductApi {
 		// 2. 상품 데이터 조회
 		ProductPagination pagination = productService.getSellProducts(
 			parsedSortOption,
-			cursorValues.getCursorProductId(),
+			cursorValues.getCursorId(),
 			cursorValues.getCursorOptionalValue(),
 			size,
 			isOnSale,
@@ -138,7 +144,7 @@ public class ProductController implements ProductApi {
 
 		ProductPagination pagination = productService.getBuyProducts(
 			parsedSortOption,
-			cursorValues.getCursorProductId(),
+			cursorValues.getCursorId(),
 			cursorValues.getCursorOptionalValue(),
 			size,
 			isOnSale,
@@ -181,7 +187,7 @@ public class ProductController implements ProductApi {
 		ProductPagination pagination = productService.searchSellProducts(
 			searchWord,
 			parsedSortOption,
-			cursorValues.getCursorProductId(),
+			cursorValues.getCursorId(),
 			cursorValues.getCursorOptionalValue(),
 			size,
 			isOnSale,
@@ -224,7 +230,7 @@ public class ProductController implements ProductApi {
 		ProductPagination pagination = productService.searchBuyProducts(
 			searchWord,
 			parsedSortOption,
-			cursorValues.getCursorProductId(),
+			cursorValues.getCursorId(),
 			cursorValues.getCursorOptionalValue(),
 			size,
 			isOnSale,
@@ -267,7 +273,7 @@ public class ProductController implements ProductApi {
 		ProductPagination pagination = productService.getStoreSellProducts(
 			storeOwnerId,
 			parsedSortOption,
-			cursorValues.getCursorProductId(),
+			cursorValues.getCursorId(),
 			cursorValues.getCursorOptionalValue(),
 			size,
 			isOnSale,
@@ -310,7 +316,7 @@ public class ProductController implements ProductApi {
 		ProductPagination pagination = productService.getStoreBuyProducts(
 			storeOwnerId,
 			parsedSortOption,
-			cursorValues.getCursorProductId(),
+			cursorValues.getCursorId(),
 			cursorValues.getCursorOptionalValue(),
 			size,
 			isOnSale,
@@ -539,7 +545,8 @@ public class ProductController implements ProductApi {
 			productSellModifyRequest.genreId()
 		);
 
-		List<ProductPhoto> productPhotoList = productService.modifyProductPhotos(product.getId(), productSellModifyRequest.productPhotoList());
+		List<ProductPhoto> productPhotoList = productService.modifyProductPhotos(product.getId(),
+			productSellModifyRequest.productPhotoList());
 
 		ProductSellResponse response = ProductSellResponse.from(product, productPhotoList);
 
@@ -567,7 +574,8 @@ public class ProductController implements ProductApi {
 			.toList();
 
 		ProductBuyModifyResponse productBuyModifyResponse = ProductBuyModifyResponse.from(
-			product.getId(), product.getGenreId(), genreName, product.getTitle(), product.getDescription(), product.getPrice(),
+			product.getId(), product.getGenreId(), genreName, product.getTitle(), product.getDescription(),
+			product.getPrice(),
 			product.getIsPriceNegotiable(), photoDtoList
 		);
 
@@ -593,7 +601,8 @@ public class ProductController implements ProductApi {
 			productBuyModifyRequest.genreId()
 		);
 
-		List<ProductPhoto> productPhotoList = productService.modifyProductPhotos(product.getId(), productBuyModifyRequest.productPhotoList());
+		List<ProductPhoto> productPhotoList = productService.modifyProductPhotos(product.getId(),
+			productBuyModifyRequest.productPhotoList());
 
 		ProductBuyResponse response = ProductBuyResponse.from(product, productPhotoList);
 
@@ -618,7 +627,8 @@ public class ProductController implements ProductApi {
 		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, currentStoreId);
 		Map<Long, String> genreMap = fetchGenreMap(pagination);
 
-		ProductRecommendListResponse productListResponse = ProductRecommendListResponse.from(nickname, pagination, interestMap,
+		ProductRecommendListResponse productListResponse = ProductRecommendListResponse.from(nickname, pagination,
+			interestMap,
 			genreMap, currentStoreId);
 
 		return ResponseEntity.ok()
@@ -689,7 +699,7 @@ public class ProductController implements ProductApi {
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productChatResponse));
 
 	}
-  
+
 	@GetMapping("/search/recommend")
 	public ResponseEntity<SuccessResponse<RecommendResponse>> getRecommendSearchWordAndGenre(
 		@CurrentMember Long currentStoreId
@@ -704,8 +714,9 @@ public class ProductController implements ProductApi {
 		RecommendResponse recommendResponse = new RecommendResponse(recommendSearchWordDtoList, recommendGenreDtoList);
 
 		return ResponseEntity.ok()
-			.body(SuccessResponse.of(ProductSuccessCode.RECOMMEND_SEARCH_WORD_AND_GENRE_GET_SUCCESS, recommendResponse));
-  }
+			.body(
+				SuccessResponse.of(ProductSuccessCode.RECOMMEND_SEARCH_WORD_AND_GENRE_GET_SUCCESS, recommendResponse));
+	}
 
 	@PostMapping("/report/{productId}")
 	public ResponseEntity<SuccessResponse<ProductReportResponse>> reportProduct(
@@ -739,6 +750,109 @@ public class ProductController implements ProductApi {
 				response
 			)
 		);
+	}
+
+	@GetMapping("/interest/sell")
+	public ResponseEntity<SuccessResponse<InterestedSellProductResponse>> getInterestedSellProducts(
+		@RequestParam(required = false) String cursor,
+		@RequestParam(defaultValue = "100") int size,
+		@CurrentMember Long currentStoreId
+	) {
+		CursorValues cursorValues = parseCursorValues(cursor, SortOption.INTEREST);
+
+		// 1. 사용자의 좋아요 목록을 조회함 (최신순 정렬)
+		List<Interest> interestList = productInterestFacade.findInterestsByStoreId(currentStoreId);
+
+		// 2. 원하는 tradeType의 interest data를 추출해 <interestId, productId> 로 구성
+		Map<Long, Long> interestIdToProductIdMap = getInterestIdToproductIdMap(interestList, TradeType.SELL);
+
+		// 3. pagination 생성
+		ProductPagination pagination = productService.getInterestedProducts(
+			interestIdToProductIdMap,
+			cursorValues.getCursorId(),
+			size
+		);
+
+		// 4. 다음 커서 생성을 위해 마지막 product와 해당 product의 interest id, interest createdAt을 구함
+		Long lastProductId = pagination.getLastProductId();
+
+		LocalDateTime lastInterestCreatedAt = getLastInterestLocalDateTime(lastProductId, currentStoreId);
+		Long lastInterestId = getLastInterestId(lastProductId, currentStoreId);
+
+		List<ProductWithFirstPhoto> productList = pagination.getProductList();
+
+		Map<Long, String> genreMap = fetchGenreMap(pagination);
+		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, currentStoreId);
+
+		// 5. 응답 생성
+		InterestedSellProductResponse response = InterestedSellProductResponse.from(
+			productList,
+			interestMap,
+			genreMap,
+			currentStoreId,
+			pagination,
+			SortOption.INTEREST,
+			lastInterestId,
+			lastInterestCreatedAt
+		);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+			ProductSuccessCode.INTERESTED_PRODUCT_RETRIEVE_SUCCESS,
+			response
+		));
+
+	}
+
+	@GetMapping("/interest/buy")
+	public ResponseEntity<SuccessResponse<InterestedBuyProductResponse>> getInterestedBuyProducts(
+		@RequestParam(required = false) String cursor,
+		@RequestParam(defaultValue = "100") int size,
+		@CurrentMember Long currentStoreId
+	) {
+		CursorValues cursorValues = parseCursorValues(cursor, SortOption.INTEREST);
+
+		// 1. 사용자의 좋아요 목록을 조회함 (최신순 정렬)
+		List<Interest> interestList = productInterestFacade.findInterestsByStoreId(currentStoreId);
+
+		// 2. 원하는 tradeType의 interest data를 추출해 <interestId, productId> 로 구성
+		Map<Long, Long> interestIdToProductIdMap = getInterestIdToproductIdMap(interestList, TradeType.BUY);
+
+		// 3. pagination 생성
+		ProductPagination pagination = productService.getInterestedProducts(
+			interestIdToProductIdMap,
+			cursorValues.getCursorId(),
+			size
+		);
+
+		// 4. 다음 커서 생성을 위해 마지막 product와 해당 product의 interest id, interest createdAt을 구함
+		Long lastProductId = pagination.getLastProductId();
+
+		LocalDateTime lastInterestCreatedAt = getLastInterestLocalDateTime(lastProductId, currentStoreId);
+		Long lastInterestId = getLastInterestId(lastProductId, currentStoreId);
+
+		List<ProductWithFirstPhoto> productList = pagination.getProductList();
+
+		Map<Long, String> genreMap = fetchGenreMap(pagination);
+		Map<Long, Boolean> interestMap = fetchInterestMap(pagination, currentStoreId);
+
+		// 5. 응답 생성
+		InterestedBuyProductResponse response = InterestedBuyProductResponse.from(
+			productList,
+			interestMap,
+			genreMap,
+			currentStoreId,
+			pagination,
+			SortOption.INTEREST,
+			lastInterestId,
+			lastInterestCreatedAt
+		);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+				ProductSuccessCode.INTERESTED_PRODUCT_RETRIEVE_SUCCESS,
+				response
+			));
 	}
 
 	private void authChecker(Long currentStoreId, Product product) {
@@ -796,6 +910,10 @@ public class ProductController implements ProductApi {
 					HighPriceCursor priceCursor = HighPriceCursor.fromString(cursor);
 					return new CursorValues(priceCursor.getId(), priceCursor.getPrice());
 				}
+				case INTEREST -> {
+					Long id = InterestCursor.fromString(cursor).getId();
+					return new CursorValues(id, null);
+				}
 				default -> throw new NapzakException(ErrorCode.INVALID_SORT_OPTION);
 			}
 		} catch (IllegalArgumentException e) {
@@ -804,20 +922,44 @@ public class ProductController implements ProductApi {
 	}
 
 	private static class CursorValues {
-		private final Long cursorProductId;
+		private final Long cursorId;
 		private final Integer cursorOptionalValue;
 
-		public CursorValues(Long cursorProductId, Integer cursorOptionalValue) {
-			this.cursorProductId = cursorProductId;
+		public CursorValues(Long cursorId, Integer cursorOptionalValue) {
+			this.cursorId = cursorId;
 			this.cursorOptionalValue = cursorOptionalValue;
 		}
 
-		public Long getCursorProductId() {
-			return cursorProductId;
+		public Long getCursorId() {
+			return cursorId;
 		}
 
 		public Integer getCursorOptionalValue() {
 			return cursorOptionalValue;
 		}
+	}
+
+	@Nullable
+	private LocalDateTime getLastInterestLocalDateTime(Long lastProductId, Long storeId) {
+		if (lastProductId == null) { return null; }
+		return productInterestFacade.findInterestByProductIdAndStoreId(lastProductId, storeId).getCreatedAt();
+	}
+
+	@Nullable
+	private Long getLastInterestId(Long lastProductId, Long storeId) {
+		if (lastProductId == null) { return null; }
+		return productInterestFacade.findInterestByProductIdAndStoreId(lastProductId, storeId).getId();
+	}
+
+	private Map<Long, Long> getInterestIdToproductIdMap(List<Interest> interestList, TradeType tradeType) {
+		List<Long> productIds = interestList.stream().map(Interest::getProductId).distinct().toList();
+		Set<Long> typeFilteredProductIds = productService.getTypeFilteredProductIdsByProductIds(productIds, tradeType);
+		List<Interest> filteredInterestList = interestList.stream()
+			.filter(interest -> typeFilteredProductIds.contains(interest.getProductId()))
+			.toList();
+
+		return filteredInterestList.stream()
+			.collect(Collectors.toMap(Interest::getId, Interest::getProductId, (a, b) -> a, LinkedHashMap::new)
+			);
 	}
 }

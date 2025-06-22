@@ -1,9 +1,11 @@
 package com.napzak.domain.product.api.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.napzak.domain.product.api.dto.request.cursor.InterestCursor;
 import com.napzak.global.common.exception.code.ErrorCode;
 import com.napzak.domain.product.api.dto.request.cursor.HighPriceCursor;
 import com.napzak.domain.product.api.dto.request.cursor.LowPriceCursor;
@@ -51,6 +53,21 @@ public class ProductPagination {
 			default:
 				throw new NapzakException(ErrorCode.INVALID_SORT_OPTION);
 		}
+	}
+
+	@Nullable
+	public String generateNextInterestCursor(SortOption sortOption, Long lastInterestId, LocalDateTime lastInterestCreatedAt) {
+		if (lastInterestId == null || lastInterestCreatedAt == null) {
+			return null;
+		} else if (sortOption == SortOption.INTEREST) {
+			return new InterestCursor(lastInterestId, lastInterestCreatedAt).toString();
+		}
+		throw new NapzakException(ErrorCode.INVALID_SORT_OPTION);
+	}
+
+	public Long getLastProductId() {
+		if (!hasMoreData()) return null;
+		return productList.getProductList().get(needSize).getId();
 	}
 
 	// 클라이언트에 반환할 데이터만 제공

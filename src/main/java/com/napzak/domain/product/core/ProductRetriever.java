@@ -2,6 +2,7 @@ package com.napzak.domain.product.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,23 @@ public class ProductRetriever {
 			.stream()
 			.map(Product::fromEntity)
 			.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public List<Product> retrieveInterestedProducts(
+		Map<Long, Long> interestIdToProductIdMap, Long cursorInterestId, int size
+	) {
+		return productRepository.findInterestedProducts(
+			interestIdToProductIdMap, cursorInterestId, size
+		).stream().map(Product::fromEntity).toList();
+	}
+
+	@Transactional(readOnly = true)
+	public List<Product> retrieveTypeFilteredproducts(List<Long> productIds, TradeType tradeType) {
+		List<ProductEntity> productEntityList = productRepository.findByIdInAndTradeType(productIds, tradeType);
+		return productEntityList.stream()
+			.map(Product::fromEntity)
+			.collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)
@@ -161,6 +179,7 @@ public class ProductRetriever {
 		// [5] 정렬 후 DTO 변환
 		return convertToProductList(reorderSellBuy(bestFourProducts));
 	}
+
 
 	private List<ProductEntity> pickBestFourAllowingGenreOverlap(List<ProductEntity> productList, int needSell, int needBuy) {
 		if (productList.size() < 4) return List.of();
