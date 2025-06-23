@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,7 @@ import com.napzak.domain.product.api.dto.response.RecommendSearchWordDto;
 import com.napzak.domain.product.api.exception.ProductErrorCode;
 import com.napzak.domain.product.api.exception.ProductSuccessCode;
 import com.napzak.domain.product.api.service.ProductPagination;
+import com.napzak.domain.product.api.service.ProductPhotoS3ImageCleaner;
 import com.napzak.domain.product.api.service.ProductService;
 import com.napzak.domain.product.api.service.enums.SortOption;
 import com.napzak.domain.product.core.entity.enums.TradeType;
@@ -83,6 +85,7 @@ public class ProductController implements ProductApi {
 	private final ProductInterestFacade productInterestFacade;
 	private final ProductGenreFacade productGenreFacade;
 	private final ProductStoreFacade productStoreFacade;
+	private final ProductPhotoS3ImageCleaner productPhotoS3ImageCleaner;
 
 	@Override
 	@GetMapping("/sell")
@@ -852,6 +855,21 @@ public class ProductController implements ProductApi {
 			SuccessResponse.of(
 				ProductSuccessCode.INTERESTED_PRODUCT_RETRIEVE_SUCCESS,
 				response
+			));
+	}
+
+	@PostMapping("/clean")
+	public ResponseEntity<SuccessResponse<Void>> productPhotoCleanUp(@CurrentMember Long currentStoreId) {
+		String currentStoreRole = productStoreFacade.getStoreRole(currentStoreId).toString();
+		if(!Objects.equals(currentStoreRole, "ADMIN")) {
+			throw new NapzakException(ProductErrorCode.ACCESS_DENIED);
+		}
+
+		productPhotoS3ImageCleaner.cleanUnusedProductImages();
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+				ProductSuccessCode.PRODUCT_PHOTO_DELETE_SUCCESS
 			));
 	}
 
