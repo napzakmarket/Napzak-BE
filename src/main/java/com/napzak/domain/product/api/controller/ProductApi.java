@@ -270,7 +270,7 @@ public interface ProductApi {
 		@ApiResponse(responseCode = "200", description = "s3 이미지 삭제 성공"),
 		@ApiResponse(responseCode = "403", description = "접근 권한이 없습니다.")
 	})
-	@GetMapping("/clean")
+	@PostMapping("/clean")
 	ResponseEntity<SuccessResponse<Void>> productPhotoCleanUp(
 		@CurrentMember Long currentStoreId
 	);
