@@ -23,7 +23,7 @@ public class ProductPhotoS3ImageCleaner {
 	private final ProductReportRepository productReportRepository;
 	private final S3ImageCleaner s3ImageCleaner;
 
-	@Scheduled(cron = "0 0 3 * * ?", zone = "Asia/Seoul")
+	//@Scheduled(cron = "0 0 3 * * ?", zone = "Asia/Seoul")
 	public void cleanUnusedProductImagesScheduled() {
 		cleanUnusedProductImages();
 	}
