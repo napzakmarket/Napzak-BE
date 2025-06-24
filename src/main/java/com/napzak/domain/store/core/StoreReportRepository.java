@@ -12,6 +12,6 @@ public interface StoreReportRepository extends JpaRepository<StoreReportEntity, 
 	@Query("SELECT s.reportedStoreCover FROM StoreReportEntity s")
 	List<String> findAllReportedStoreCover();
 
-	@Query("SELECT s.reportedStoreProfile FROm StoreReportEntity s")
+	@Query("SELECT s.reportedStoreProfile FROM StoreReportEntity s")
 	List<String> findAllReportedStoreProfile();
 }
