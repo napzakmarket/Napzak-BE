@@ -29,7 +29,7 @@ public class StorePhotoS3ImageCleaner {
 	@Value("${cloud.s3.base-url}")
 	private String baseUrl;
 
-	@Scheduled(cron = "0 15 00 ? * WED", zone = "Asia/Seoul")
+	@Scheduled(cron = "0 20 00 ? * WED", zone = "Asia/Seoul")
 	public void cleanUnusedStoreImagesScheduled() {
 		cleanUnusedStoreImages();
 	}
