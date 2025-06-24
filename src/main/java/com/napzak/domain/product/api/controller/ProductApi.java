@@ -264,4 +264,14 @@ public interface ProductApi {
 		@PathVariable Long productId,
 		@CurrentMember Long storeId
 	);
+
+	@Operation(summary = "사용하지 않는 S3 product 이미지 삭제", description = "사용하지 않는 s3 이미지를 일괄 삭제")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "s3 이미지 삭제 성공"),
+		@ApiResponse(responseCode = "403", description = "접근 권한이 없습니다.")
+	})
+	@PostMapping("/clean")
+	ResponseEntity<SuccessResponse<Void>> productPhotoCleanUp(
+		@CurrentMember Long currentStoreId
+	);
 }

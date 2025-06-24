@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import com.napzak.domain.store.api.dto.response.StoreStatusDto;
 import com.napzak.domain.store.core.GenrePreferenceRetriever;
 import com.napzak.domain.store.core.StoreRetriever;
+import com.napzak.domain.store.core.entity.enums.Role;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,5 +30,7 @@ public class ProductStoreFacade {
 	public String getStoreNickname(Long storeId) {
 		return storeRetriever.findNicknameByStoreId(storeId);
 	}
+
+	public Role getStoreRole(Long storeId) { return storeRetriever.findStoreByStoreId(storeId).getRole();}
 }
 
