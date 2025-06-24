@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.napzak.domain.store.core.StorePhotoRepository;
@@ -28,7 +29,7 @@ public class StorePhotoS3ImageCleaner {
 	@Value("${cloud.s3.base-url}")
 	private String baseUrl;
 
-	//@Scheduled(cron = "")
+	@Scheduled(cron = "0 15 00 ? * WED", zone = "Asia/Seoul")
 	public void cleanUnusedStoreImagesScheduled() {
 		cleanUnusedStoreImages();
 	}
