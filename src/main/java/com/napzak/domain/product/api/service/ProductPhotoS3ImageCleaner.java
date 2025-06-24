@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,9 @@ public class ProductPhotoS3ImageCleaner {
 	private final ProductPhotoRepository productPhotoRepository;
 	private final ProductReportRepository productReportRepository;
 	private final S3ImageCleaner s3ImageCleaner;
+
+	@Value("${cloud.s3.base-url}")
+	private String baseUrl;
 
 	//@Scheduled(cron = "0 0 3 * * ?", zone = "Asia/Seoul")
 	public void cleanUnusedProductImagesScheduled() {
@@ -63,6 +67,5 @@ public class ProductPhotoS3ImageCleaner {
 
 	//photoUrl에서 prefix를 제거하는 메서드
 	private String toKey(String url) {
-		return url.replace("https://napzak-dev-bucket.s3.ap-northeast-2.amazonaws.com/", "");
-	}
+		return url.replace(baseUrl + "/", "");	}
 }
