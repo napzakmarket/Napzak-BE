@@ -26,6 +26,7 @@ public enum StoreSuccessCode implements BaseSuccessCode {
 	GET_PROFILE_SUCCESS(HttpStatus.OK, "상점 프로필이 성공적으로 조회되었습니다."),
 	PROFILE_UPDATE_SUCCESS(HttpStatus.OK, "상점 프로필이 성공적으로 수정되었습니다."),
 	CHANGE_STORE_ROLE_SUCCESS(HttpStatus.OK, "유저 role 변경이 완료되었습니다."),
+	STORE_PHOTO_DELETE_SUCCESS(HttpStatus.OK, "사용하지 않는 S3 유저 이미지가 삭제되었습니다."),
 	/*
 	201 Created
 	 */
