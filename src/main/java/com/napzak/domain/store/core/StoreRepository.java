@@ -1,5 +1,6 @@
 package com.napzak.domain.store.core;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,4 +38,9 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
 
 	boolean existsByNickname(String nickname);
 
+	@Query("SELECT s.cover FROM StoreEntity s")
+	List<String> findAllCover();
+
+	@Query("SELECT s.photo FROM StoreEntity s")
+	List<String> findAllPhoto();
 }

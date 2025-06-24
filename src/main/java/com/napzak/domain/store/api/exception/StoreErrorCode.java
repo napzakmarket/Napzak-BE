@@ -19,6 +19,11 @@ public enum StoreErrorCode implements BaseErrorCode {
 	SOCIAL_TYPE_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "지원하지 않는 소셜 로그인 타입입니다."),
 
 	/*
+	403 Forbidden
+	 */
+	ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
+	/*
+
 	404 Not Found
 	 */
 	STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 사용자가 없습니다."),

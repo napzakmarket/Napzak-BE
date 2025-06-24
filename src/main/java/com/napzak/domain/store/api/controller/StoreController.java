@@ -27,6 +27,8 @@ import com.napzak.domain.genre.api.dto.response.GenreNameDto;
 import com.napzak.domain.genre.api.dto.response.GenreNameListResponse;
 import com.napzak.domain.genre.api.exception.GenreErrorCode;
 import com.napzak.domain.genre.core.vo.Genre;
+import com.napzak.domain.product.api.exception.ProductErrorCode;
+import com.napzak.domain.product.api.exception.ProductSuccessCode;
 import com.napzak.domain.product.core.entity.enums.TradeType;
 import com.napzak.domain.store.api.StoreGenreFacade;
 import com.napzak.domain.store.api.StoreInterestFacade;
@@ -55,8 +57,11 @@ import com.napzak.domain.store.api.exception.StoreErrorCode;
 import com.napzak.domain.store.api.exception.StoreSuccessCode;
 import com.napzak.domain.store.api.service.AuthenticationService;
 import com.napzak.domain.store.api.service.LoginService;
+import com.napzak.domain.store.api.service.StorePhotoS3ImageCleaner;
 import com.napzak.domain.store.api.service.StoreRegistrationService;
 import com.napzak.domain.store.api.service.StoreService;
+import com.napzak.domain.store.core.StoreRetriever;
+import com.napzak.domain.store.core.entity.enums.Role;
 import com.napzak.domain.store.core.vo.GenrePreference;
 import com.napzak.domain.store.core.vo.Store;
 import com.napzak.global.auth.annotation.CurrentMember;
@@ -87,6 +92,8 @@ public class StoreController implements StoreApi {
 	private final StoreUseTermsFacade storeUseTermsFacade;
 	private final StoreTermsBundleFacade storeTermsBundleFacade;
 	private final StoreInterestFacade storeInterestFacade;
+	private final StoreRetriever storeRetriever;
+	private final StorePhotoS3ImageCleaner storePhotoS3ImageCleaner;
 
 	@PostMapping("/login")
 	public ResponseEntity<SuccessResponse<LoginSuccessResponse>> login(
@@ -347,6 +354,21 @@ public class StoreController implements StoreApi {
 	) {
 		storeService.changeStoreRole(storeId, roleDto.role());
 		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.CHANGE_STORE_ROLE_SUCCESS));
+	}
+
+	@PostMapping("/clean")
+	public ResponseEntity<SuccessResponse<Void>> storePhotoCleanUp(@CurrentMember Long currentStoreId) {
+		Role currentStoreRole = storeRetriever.findStoreByStoreId(currentStoreId).getRole();
+		if(currentStoreRole != Role.ADMIN) {
+			throw new NapzakException(StoreErrorCode.ACCESS_DENIED);
+		}
+
+		storePhotoS3ImageCleaner.cleanUnusedStoreImages();
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(
+				StoreSuccessCode.STORE_PHOTO_DELETE_SUCCESS
+			));
 	}
 
 
