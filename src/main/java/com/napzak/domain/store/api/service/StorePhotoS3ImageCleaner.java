@@ -16,7 +16,9 @@ import com.napzak.domain.store.core.StoreRepository;
 import com.napzak.global.external.s3.api.service.S3ImageCleaner;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class StorePhotoS3ImageCleaner {
@@ -29,7 +31,7 @@ public class StorePhotoS3ImageCleaner {
 	@Value("${cloud.s3.base-url}")
 	private String baseUrl;
 
-	@Scheduled(cron = "0 20 00 ? * WED", zone = "Asia/Seoul")
+	@Scheduled(cron = "0 00 04 ? * MON", zone = "Asia/Seoul")
 	public void cleanUnusedStoreImagesScheduled() {
 		cleanUnusedStoreImages();
 	}
@@ -44,9 +46,9 @@ public class StorePhotoS3ImageCleaner {
 			.filter(key -> !key.equals("store/"))
 			.toList();
 
-		System.out.println("----------validKeys = " + validKeys);
-		System.out.println("----------allS3Keys: " + allS3Keys);
-		System.out.println("----------Unused keys: " + unusedKeys);
+		log.info("----------validKeys = {}", validKeys);
+		log.info("----------allS3Keys: {}", allS3Keys);
+		log.info("----------Unused keys: {}", unusedKeys);
 
 		s3ImageCleaner.deleteS3Keys(unusedKeys);
 	}
@@ -72,7 +74,8 @@ public class StorePhotoS3ImageCleaner {
 	}
 
 	private String toKey(String url) {
-		if (url == null) return null;
+		if (url == null)
+			return null;
 		return url.replace(baseUrl + "/", "");
 	}
 }
