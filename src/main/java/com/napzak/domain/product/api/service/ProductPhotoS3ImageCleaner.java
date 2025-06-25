@@ -15,7 +15,9 @@ import com.napzak.domain.product.core.ProductReportRepository;
 import com.napzak.global.external.s3.api.service.S3ImageCleaner;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ProductPhotoS3ImageCleaner {
@@ -27,7 +29,7 @@ public class ProductPhotoS3ImageCleaner {
 	@Value("${cloud.s3.base-url}")
 	private String baseUrl;
 
-	@Scheduled(cron = "0 00 20 ? * TUE", zone = "Asia/Seoul")
+	@Scheduled(cron = "0 00 04 ? * MON", zone = "Asia/Seoul")
 	public void cleanUnusedProductImagesScheduled() {
 		cleanUnusedProductImages();
 	}
@@ -41,9 +43,9 @@ public class ProductPhotoS3ImageCleaner {
 			.filter(key -> !validKeys.contains(key))
 			.toList();
 
-		System.out.println("----------validKeys = " + validKeys);
-		System.out.println("----------allS3Keys: " + allS3Keys);
-		System.out.println("----------Unused keys: " + unusedKeys);
+		log.info("----------validKeys = {}", validKeys);
+		log.info("----------allS3Keys: {}", allS3Keys);
+		log.info("----------Unused keys: {}", unusedKeys);
 
 		s3ImageCleaner.deleteS3Keys(unusedKeys);
 	}
@@ -67,5 +69,6 @@ public class ProductPhotoS3ImageCleaner {
 
 	//photoUrl에서 prefix를 제거하는 메서드
 	private String toKey(String url) {
-		return url.replace(baseUrl + "/", "");	}
+		return url.replace(baseUrl + "/", "");
+	}
 }
