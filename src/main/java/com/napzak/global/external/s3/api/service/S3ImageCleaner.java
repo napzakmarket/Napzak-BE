@@ -62,11 +62,11 @@ public class S3ImageCleaner {
 						Math.min(i + 1000, unusedKeys.size()))
 					.stream().map(DeleteObjectsRequest.KeyVersion::new).toList();
 
-				System.out.println("batch = " + batch);
+				log.info("batch = {}", batch);
 				amazonS3.deleteObjects(new DeleteObjectsRequest(bucket).withKeys(batch));
 			}
 		} catch (Exception e) {
-			log.info("S3 키 삭제 실패", e);
+			log.error("S3 키 삭제 실패", e);
 			throw new NapzakException(FileErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
