@@ -122,7 +122,7 @@ public class AuthenticationService {
 			log.info("Creating AdminAuthentication for storeId: {}", storeId);
 			return new AdminAuthentication(storeId, null, authorities);
 		} else {
-			log.info("Creating StoreAuthentication for storeId: {}", storeId);
+			log.info("Creating MemberAuthentication for storeId: {}", storeId);
 			return new MemberAuthentication(storeId, null, authorities);
 		}
 	}
