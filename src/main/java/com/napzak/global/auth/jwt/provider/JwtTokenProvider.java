@@ -7,6 +7,7 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -95,7 +96,12 @@ public class JwtTokenProvider {
 		String enumValue = roleName.replace("ROLE_", "");
 		log.info("Final role after processing: {}", enumValue);
 
-		return Role.valueOf(enumValue.toUpperCase());
+		try{
+			return Role.valueOf(enumValue.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			log.error("Unknown role in JWT: {}", enumValue);
+			throw new AccessDeniedException("Unknown role in JWT: " + enumValue);
+		}
 	}
 
 	private String issueToken(final Authentication authentication, final long expiredTime) {

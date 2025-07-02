@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.napzak.domain.store.api.dto.response.StoreStatusDto;
 import com.napzak.domain.store.core.entity.StoreEntity;
+import com.napzak.domain.store.core.entity.enums.Role;
 import com.napzak.domain.store.core.entity.enums.SocialType;
 
 import feign.Param;
@@ -38,6 +39,8 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
 
 	boolean existsByNickname(String nickname);
 
+	@Query("SELECT u.role FROM StoreEntity u WHERE u.id = :storeId")
+	Optional<Role> findRoleByStoreId(@Param("storeId") Long storeId);
 	@Query("SELECT s.cover FROM StoreEntity s")
 	List<String> findAllCover();
 
