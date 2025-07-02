@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,23 +40,32 @@ public class AuthorizedRoleAspect {
 		Object principal = authentication.getPrincipal();
 		String authType = authentication.getClass().getSimpleName();
 		Long userId = extractUserId(principal);
-
 		AuthorizedRole authorizedRole = getAuthorizedRole(joinPoint);
+
+		List<Role> triedRoles = new ArrayList<>();
 
 		for (RoleProvider provider : roleProviders) {
 			if (!provider.supports(authType)) continue;
 
 			Role role = provider.provideRole(userId);
-			StoreSessionContextHolder.clear();
+			triedRoles.add(role);
+
 			StoreSessionContextHolder.set(StoreSession.of(userId, role));
 
 			if (Arrays.asList(authorizedRole.value()).contains(role)) {
-				return; // 접근 허용
+				log.debug("권한 검증 성공 - 인증타입: {}, 현재 역할: {}, 허용 역할: {}",
+					authType, role, Arrays.toString(authorizedRole.value()));
+				return;
+			} else {
+				log.warn("역할 불일치 - 인증타입: {}, 현재 역할: {}, 필요 역할: {}",
+					authType, role, Arrays.toString(authorizedRole.value()));
 			}
-			throw new AccessDeniedException("접근 권한이 없습니다. 현재 역할: " + role);
 		}
 
-		throw new AccessDeniedException("지원되지 않는 인증 유형: " + authType);
+		throw new AccessDeniedException(String.format(
+			"접근 권한이 없습니다. 현재 역할: %s, 필요 역할: %s, 인증 유형: %s",
+			triedRoles, Arrays.toString(authorizedRole.value()), authType
+		));
 	}
 
 	private AuthorizedRole getAuthorizedRole(JoinPoint joinPoint) {
@@ -65,11 +75,9 @@ public class AuthorizedRoleAspect {
 		if (authorizedRole == null) {
 			authorizedRole = joinPoint.getTarget().getClass().getAnnotation(AuthorizedRole.class);
 		}
-
 		if (authorizedRole == null) {
 			throw new AccessDeniedException("권한 정보가 없습니다.");
 		}
-
 		return authorizedRole;
 	}
 
