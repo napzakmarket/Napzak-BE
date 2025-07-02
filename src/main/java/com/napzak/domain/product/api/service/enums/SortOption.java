@@ -9,7 +9,9 @@ public enum SortOption {
 	RECENT("id", com.querydsl.core.types.Order.DESC),
 	POPULAR("interestCount", com.querydsl.core.types.Order.DESC),
 	LOW_PRICE("price", com.querydsl.core.types.Order.ASC),
-	HIGH_PRICE("price", com.querydsl.core.types.Order.DESC);
+	HIGH_PRICE("price", com.querydsl.core.types.Order.DESC),
+	INTEREST("createdAt", com.querydsl.core.types.Order.DESC),
+	;
 
 	private final String fieldName;
 	private final com.querydsl.core.types.Order order;

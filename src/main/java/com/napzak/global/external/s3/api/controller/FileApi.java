@@ -1,6 +1,7 @@
 package com.napzak.global.external.s3.api.controller;
 
 import com.napzak.global.common.exception.dto.SuccessResponse;
+import com.napzak.global.external.s3.api.dto.ChatPresignedUrlFindAllResponse;
 import com.napzak.global.external.s3.api.dto.ProductPresignedUrlFindAllResponse;
 import com.napzak.global.external.s3.api.dto.StorePresignedUrlFindAllResponse;
 import com.napzak.global.swagger.annotation.DisableSwaggerSecurity;
@@ -40,5 +41,17 @@ public interface FileApi {
 	@GetMapping("/stores")
 	ResponseEntity<SuccessResponse<StorePresignedUrlFindAllResponse>> generatePresignedUrlsForStore(
 		@RequestParam List<String> profileImages);
+
+	@DisableSwaggerSecurity
+	@Operation(summary = "채팅 이미지 Presigned URL 발급", description = "채팅 이미지 메시지 업로드용 Presigned URL을 발급합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "201", description = "Presigned URL 발급 성공",
+			content = @Content(schema = @Schema(implementation = ChatPresignedUrlFindAllResponse.class))),
+		@ApiResponse(responseCode = "400", description = "이미지 리스트가 비어있음")
+	})
+	@GetMapping("/chat")
+	ResponseEntity<SuccessResponse<ChatPresignedUrlFindAllResponse>> generatePresignedUrlsForChat(
+		@RequestParam List<String> chatImages);
+
 
 }

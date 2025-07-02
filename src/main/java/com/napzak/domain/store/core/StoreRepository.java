@@ -1,5 +1,6 @@
 package com.napzak.domain.store.core;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -40,4 +41,9 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
 
 	@Query("SELECT u.role FROM StoreEntity u WHERE u.id = :storeId")
 	Optional<Role> findRoleByStoreId(@Param("storeId") Long storeId);
+	@Query("SELECT s.cover FROM StoreEntity s")
+	List<String> findAllCover();
+
+	@Query("SELECT s.photo FROM StoreEntity s")
+	List<String> findAllPhoto();
 }

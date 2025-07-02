@@ -1,8 +1,7 @@
 package com.napzak.domain.interest.core.vo;
 
+import java.time.LocalDateTime;
 import com.napzak.domain.interest.core.entity.InterestEntity;
-import com.napzak.domain.product.core.entity.ProductEntity;
-import com.napzak.domain.store.core.entity.StoreEntity;
 import lombok.Getter;
 
 @Getter
@@ -10,18 +9,21 @@ public class Interest {
     private final Long id;
     private final Long storeId;
     private final Long productId;
+    private final LocalDateTime createdAt;
 
-    public Interest(Long id, Long storeId, Long productId) {
+    public Interest(Long id, Long storeId, Long productId, LocalDateTime createdAt) {
         this.id = id;
         this.storeId = storeId;
         this.productId = productId;
+        this.createdAt = createdAt;
     }
 
     public static Interest fromEntity(InterestEntity interestEntity) {
         return new Interest(
             interestEntity.getId(),
             interestEntity.getStoreId(),
-            interestEntity.getProductId()
+            interestEntity.getProductId(),
+            interestEntity.getCreatedAt()
         );
     }
 }

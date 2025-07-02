@@ -3,10 +3,14 @@ package com.napzak.domain.product.core;
 import static com.napzak.domain.product.core.entity.QProductEntity.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
 import com.napzak.domain.product.core.entity.ProductEntity;
+import com.napzak.domain.product.core.entity.QProductEntity;
 import com.napzak.domain.product.core.entity.enums.ProductCondition;
 import com.napzak.domain.product.core.entity.enums.TradeStatus;
 import com.napzak.domain.product.core.entity.enums.TradeType;
@@ -39,11 +43,48 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 				isUnopenedFilter(isUnopened),
 				tradeTypeFilter(tradeType),
 				isOnSaleFilter(isOnSale),
+				isVisibleFilter(),
 				cursorFilter(cursorProductId, cursorOptionalValue, orderSpecifier)
 			)
 			.orderBy(tradeStatusOrder().asc(), orderSpecifier)
 			.limit(size + 1)
 			.fetch();
+	}
+
+	@Override
+	public List<ProductEntity> findInterestedProducts(
+		Map<Long, Long> interestIdToProductIdMap, Long cursorInterestId, int size
+	) {
+
+		QProductEntity product = QProductEntity.productEntity;
+
+		List<Long> filteredProductIds = interestIdToProductIdMap.entrySet().stream()
+			.filter(entry -> cursorInterestId == null || entry.getKey() <= cursorInterestId)
+			.map(Map.Entry::getValue)
+			.toList();
+
+		System.out.println("Filtered ProductIds: " + filteredProductIds);
+
+		List<ProductEntity> products = queryFactory
+			.selectFrom(product)
+			.where(
+				product.id.in(filteredProductIds),
+				product.isVisible.isTrue()
+			)
+			.fetch();
+
+		System.out.println("Products: " + products);
+
+		Map<Long, ProductEntity> productMap = products.stream()
+			.collect(Collectors.toMap(ProductEntity::getId, p -> p));
+
+		System.out.println("ProductMap: " + productMap);
+
+		return filteredProductIds.stream()
+			.map(productMap::get)
+			.filter(Objects::nonNull)
+			.limit(size + 1)
+			.toList();
 	}
 
 	@Override
@@ -57,6 +98,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 				isUnopenedFilter(isUnopened),
 				tradeTypeFilter(tradeType),
 				isOnSaleFilter(isOnSale),
+				isVisibleFilter(),
 				cursorFilter(cursorProductId, cursorOptionalValue, orderSpecifier)
 			)
 			.orderBy(tradeStatusOrder().asc(), orderSpecifier)
@@ -75,6 +117,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 				isUnopenedFilter(isUnopened),
 				tradeTypeFilter(tradeType),
 				isOnSaleFilter(isOnSale),
+				isVisibleFilter(),
 				cursorFilter(cursorProductId, cursorOptionalValue, orderSpecifier)
 			)
 			.orderBy(tradeStatusOrder().asc(), orderSpecifier)
@@ -89,7 +132,9 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 		return queryFactory.selectFrom(productEntity)
 			.where(
 				tradeTypeFilter(tradeType),
-				productEntity.storeId.ne(storeId)
+				productEntity.storeId.ne(storeId),
+				productEntity.tradeStatus.eq(TradeStatus.BEFORE_TRADE),
+				isVisibleFilter()
 			)
 			.orderBy(orderSpecifier)
 			.limit(size)
@@ -104,7 +149,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 				genreFilter(genreIds),
 				isUnopenedFilter(isUnopened),
 				tradeTypeFilter(tradeType),
-				isOnSaleFilter(isOnSale)
+				isOnSaleFilter(isOnSale),
+				isVisibleFilter()
 			)
 			.fetchOne();
 		return count != null ? count : 0L;
@@ -120,7 +166,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 				genreFilter(genreIds),
 				isUnopenedFilter(isUnopened),
 				tradeTypeFilter(tradeType),
-				isOnSaleFilter(isOnSale)
+				isOnSaleFilter(isOnSale),
+				isVisibleFilter()
 			)
 			.fetchOne();
 		return count != null ? count : 0L;
@@ -136,7 +183,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 				genreFilter(genreIds),
 				isUnopenedFilter(isUnopened),
 				tradeTypeFilter(tradeType),
-				isOnSaleFilter(isOnSale)
+				isOnSaleFilter(isOnSale),
+				isVisibleFilter()
 			)
 			.fetchOne();
 		return count != null ? count : 0L;
@@ -154,7 +202,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 				productEntity.genreId.in(genreIds),
 				productEntity.tradeType.in(tradeTypes),
 				productEntity.storeId.ne(excludeStoreId),
-				productEntity.tradeStatus.eq(TradeStatus.BEFORE_TRADE)
+				productEntity.tradeStatus.eq(TradeStatus.BEFORE_TRADE),
+				isVisibleFilter()
 			)
 			.orderBy(productEntity.createdAt.desc())
 			.limit(limit)
@@ -171,7 +220,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 			.where(
 				productEntity.storeId.ne(excludeStoreId),  // 본인 상품 제외
 				productEntity.tradeType.eq(tradeType),     // SELL 또는 BUY 필터링
-				productEntity.tradeStatus.eq(TradeStatus.BEFORE_TRADE) // 거래 가능 상태
+				productEntity.tradeStatus.eq(TradeStatus.BEFORE_TRADE), // 거래 가능 상태
+				isVisibleFilter()
 			)
 			.orderBy(productEntity.createdAt.desc())       // 최신순 정렬
 			.limit(limit)                             // 원하는 개수만큼 조회
@@ -204,6 +254,10 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 			return productEntity.genreId.in(genreIds);
 		}
 		return null;
+	}
+
+	private BooleanExpression isVisibleFilter() {
+		return productEntity.isVisible.isTrue();
 	}
 
 	private BooleanExpression cursorFilter(Long cursorProductId, Integer cursorOptionalValue,

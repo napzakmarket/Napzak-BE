@@ -51,4 +51,9 @@ public class ProductUpdater {
 
 		return Product.fromEntity(productEntity);
 	}
+
+	@Transactional
+	public void updateProductIsVisibleByStoreId(Long storeId) {
+		productRepository.updateIsVisible(storeId);
+	}
 }

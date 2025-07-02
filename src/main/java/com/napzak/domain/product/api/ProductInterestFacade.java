@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.napzak.domain.interest.core.InterestRemover;
 import com.napzak.domain.interest.core.InterestRetriever;
+import com.napzak.domain.interest.core.vo.Interest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +25,16 @@ public class ProductInterestFacade {
 		return interestRetriever.areProductsInterested(productIds, storeId);
 	}
 
+	public Interest findInterestByProductIdAndStoreId(Long productId, Long storeId) {
+		return interestRetriever.retrieveInterestByProductIdAndStoreId(productId, storeId);
+	}
+
 	public void deleteAllByProductId(Long productId) {
 		interestRemover.deleteAllInterest(productId);
 	}
+
+	public List<Interest> findInterestsByStoreId(Long storeId) {
+		return interestRetriever.retrieveInterestsByStoreId(storeId);
+	}
+
 }

@@ -2,6 +2,7 @@ package com.napzak.domain.product.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,11 +28,6 @@ public class ProductRetriever {
 	private static final List<Long> FALLBACK_GENRES = List.of(1L, 7L, 4L, 5L);
 
 	@Transactional(readOnly = true)
-	public boolean existsById(Long productId) {
-		return productRepository.existsById(productId);
-	}
-
-	@Transactional(readOnly = true)
 	public Product findById(Long id) {
 		ProductEntity productEntity = productRepository.findById(id)
 			.orElseThrow(() -> new NapzakException(ProductErrorCode.PRODUCT_NOT_FOUND));
@@ -40,7 +36,7 @@ public class ProductRetriever {
 
 	@Transactional(readOnly = true)
 	public int countProductsByStoreIdAndTradeType(Long storeId, TradeType tradeType) {
-		return productRepository.countByStoreIdAndTradeType(storeId, tradeType);
+		return productRepository.countByStoreIdAndTradeTypeAndIsVisibleTrue(storeId, tradeType);
 	}
 
 	@Transactional(readOnly = true)
@@ -52,6 +48,23 @@ public class ProductRetriever {
 			.stream()
 			.map(Product::fromEntity)
 			.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public List<Product> retrieveInterestedProducts(
+		Map<Long, Long> interestIdToProductIdMap, Long cursorInterestId, int size
+	) {
+		return productRepository.findInterestedProducts(
+			interestIdToProductIdMap, cursorInterestId, size
+		).stream().map(Product::fromEntity).toList();
+	}
+
+	@Transactional(readOnly = true)
+	public List<Product> retrieveTypeFilteredproducts(List<Long> productIds, TradeType tradeType) {
+		List<ProductEntity> productEntityList = productRepository.findByIdInAndTradeType(productIds, tradeType);
+		return productEntityList.stream()
+			.map(Product::fromEntity)
+			.collect(Collectors.toList());
 	}
 
 	@Transactional(readOnly = true)
@@ -166,6 +179,7 @@ public class ProductRetriever {
 		// [5] 정렬 후 DTO 변환
 		return convertToProductList(reorderSellBuy(bestFourProducts));
 	}
+
 
 	private List<ProductEntity> pickBestFourAllowingGenreOverlap(List<ProductEntity> productList, int needSell, int needBuy) {
 		if (productList.size() < 4) return List.of();

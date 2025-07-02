@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.napzak.global.common.exception.dto.SuccessResponse;
+import com.napzak.global.external.s3.api.dto.ChatPresignedUrlFindAllResponse;
 import com.napzak.global.external.s3.api.dto.ProductPresignedUrlFindAllResponse;
 import com.napzak.global.external.s3.api.dto.StorePresignedUrlFindAllResponse;
 import com.napzak.global.external.s3.api.service.FileService;
 import com.napzak.global.external.s3.exception.FileSuccessCode;
 
+import feign.Response;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -48,4 +50,18 @@ public class FileController implements FileApi {
 		return ResponseEntity.ok(
 			SuccessResponse.of(FileSuccessCode.PRESIGNED_URL_ISSUED, response));
 	}
+
+	@Override
+	@GetMapping("/chat")
+	public ResponseEntity<SuccessResponse<ChatPresignedUrlFindAllResponse>> generatePresignedUrlsForChat(
+		@RequestParam List<String> chatImages) {
+		if (chatImages == null || chatImages.isEmpty()) {
+			throw new IllegalArgumentException("chatImages 리스트는 비어 있을 수 없습니다.");
+		}
+		Map<String, String> urls = fileService.generateAllPresignedUrls(chatImages, "chat");
+		ChatPresignedUrlFindAllResponse response = ChatPresignedUrlFindAllResponse.from(urls);
+		return ResponseEntity.ok(
+			SuccessResponse.of(FileSuccessCode.PRESIGNED_URL_ISSUED, response));
+	}
+
 }

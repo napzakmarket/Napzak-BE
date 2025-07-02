@@ -35,4 +35,7 @@ public interface ProductPhotoRepository extends JpaRepository<ProductPhotoEntity
 	@Query("DELETE FROM ProductPhotoEntity p WHERE p.productId = :productId")
 	void deleteAllByProductId(@Param("productId") Long productId);
 
+	@Query("SELECT p.photoUrl FROM ProductPhotoEntity p")
+	List<String> findAllPhotoUrls();
+
 }

@@ -1,5 +1,6 @@
 package com.napzak.domain.product.core;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -47,10 +48,19 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, P
 		""")
 	void updateTradeStatus(@Param("productId") Long productId, @Param("tradeStatus") TradeStatus tradeStatus);
 
+	@Modifying
+	@Query("""
+		UPDATE ProductEntity p
+		SET p.isVisible = false
+		WHERE p.storeId = :storeId
+		""")
+	void updateIsVisible(@Param("storeId") Long storeId);
+
+	List<ProductEntity> findByIdInAndTradeType(List<Long> ids, TradeType tradeType);
+
+	@Query("SELECT p FROM ProductEntity p where p.id = :productId AND p.isVisible = true")
 	Optional<ProductEntity> findById(Long productId);
 
-	boolean existsById(Long productId);
-
-	int countByStoreIdAndTradeType(Long storeId, TradeType tradeType);
+	int countByStoreIdAndTradeTypeAndIsVisibleTrue(Long storeId, TradeType tradeType);
 }
 
