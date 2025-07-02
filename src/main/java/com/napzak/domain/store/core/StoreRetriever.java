@@ -1,11 +1,14 @@
 package com.napzak.domain.store.core;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.domain.store.api.dto.response.StoreStatusDto;
 import com.napzak.domain.store.api.exception.StoreErrorCode;
 import com.napzak.domain.store.core.entity.StoreEntity;
+import com.napzak.domain.store.core.entity.enums.Role;
 import com.napzak.domain.store.core.entity.enums.SocialType;
 import com.napzak.domain.store.core.vo.Store;
 import com.napzak.global.common.exception.NapzakException;
@@ -64,4 +67,6 @@ public class StoreRetriever {
 	public boolean existsByNickname(String nickname) {
 		return storeRepository.existsByNickname(nickname);
 	}
+
+	public Optional<Role> findRoleByStoreId(Long storeId) { return storeRepository.findRoleByStoreId(storeId); }
 }
