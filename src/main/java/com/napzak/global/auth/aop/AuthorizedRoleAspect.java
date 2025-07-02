@@ -50,9 +50,8 @@ public class AuthorizedRoleAspect {
 			Role role = provider.provideRole(userId);
 			triedRoles.add(role);
 
-			StoreSessionContextHolder.set(StoreSession.of(userId, role));
-
 			if (Arrays.asList(authorizedRole.value()).contains(role)) {
+				StoreSessionContextHolder.set(StoreSession.of(userId, role));
 				log.debug("권한 검증 성공 - 인증타입: {}, 현재 역할: {}, 허용 역할: {}",
 					authType, role, Arrays.toString(authorizedRole.value()));
 				return;
