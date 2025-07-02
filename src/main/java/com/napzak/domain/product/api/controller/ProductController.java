@@ -58,6 +58,8 @@ import com.napzak.domain.product.core.vo.Product;
 import com.napzak.domain.product.core.vo.ProductPhoto;
 import com.napzak.domain.product.core.vo.ProductWithFirstPhoto;
 import com.napzak.domain.store.api.dto.response.StoreStatusDto;
+import com.napzak.domain.store.core.entity.enums.Role;
+import com.napzak.global.auth.annotation.AuthorizedRole;
 import com.napzak.global.auth.annotation.CurrentMember;
 import com.napzak.global.common.exception.NapzakException;
 import com.napzak.global.common.exception.code.ErrorCode;
@@ -78,6 +80,7 @@ public class ProductController implements ProductApi {
 	private final ProductReviewFacade productReviewFacade;
 	private final ProductStoreFacade productStoreFacade;
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@Override
 	@GetMapping("/sell")
 	public ResponseEntity<SuccessResponse<ProductSellListResponse>> getSellProducts(
