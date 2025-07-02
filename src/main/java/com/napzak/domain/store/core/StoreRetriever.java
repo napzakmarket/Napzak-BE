@@ -68,5 +68,6 @@ public class StoreRetriever {
 		return storeRepository.existsByNickname(nickname);
 	}
 
+	@Transactional(readOnly = true)
 	public Optional<Role> findRoleByStoreId(Long storeId) { return storeRepository.findRoleByStoreId(storeId); }
 }
