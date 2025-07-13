@@ -1,13 +1,11 @@
 # docker-compose-dev.yml
+
 version: "3.8"
 
 services:
   api-server:
     container_name: napzak-api-dev
     image: "sailin1367/napzak-api-dev:latest"
-    build:
-      context: .
-      dockerfile: Dockerfile-api-dev
     ports:
       - "8080:8080"
     depends_on:
@@ -21,9 +19,6 @@ services:
   chat-server:
     container_name: napzak-chat-dev
     image: "sailin1367/napzak-chat-dev:latest"
-    build:
-      context: .
-      dockerfile: Dockerfile-chat-dev
     ports:
       - "8081:8080"
     depends_on:
@@ -59,7 +54,7 @@ services:
       - "15672:15672"
       - "61613:61613"
     environment:
-      RABBITMQ_DEFAULT_USER: napzak_user      # ← spring 설정과 동일
+      RABBITMQ_DEFAULT_USER: napzak_user
       RABBITMQ_DEFAULT_PASS: napzak_pw
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
