@@ -1,18 +1,16 @@
-# Dockerfile-chat-dev
+# ---------------- Dockerfile-chat-dev ----------------
 FROM gradle:8.8-jdk17 AS builder
 WORKDIR /usr/src/app
 
-# --- build stage --------------------------------------------------
 COPY . .
-
 RUN chmod +x ./gradlew \
-  && ./gradlew :chat-server:clean :chat-server:build -x test
+ && ./gradlew :chat-server:clean :chat-server:bootJar -x test
 
-# --- runtime stage ------------------------------------------------
+# ---------- runtime ----------
 FROM openjdk:17-jdk-alpine
 WORKDIR /app
 
-COPY --from=builder /usr/src/app/chat-server/build/libs/*-SNAPSHOT.jar /app/app.jar
+COPY --from=builder /usr/src/app/chat-server/build/libs/chat-server-*-SNAPSHOT.jar /app/app.jar
 COPY --from=builder /usr/src/app/chat-server/src/main/resources/application-dev.yml /app/application-dev.yml
 COPY --from=builder /usr/src/app/chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json /app/firebase/napzak-firebase-adminsdk.json
 
