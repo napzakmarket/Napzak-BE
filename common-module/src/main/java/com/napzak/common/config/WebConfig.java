@@ -1,4 +1,4 @@
-package com.napzak.global.common.config;
+package com.napzak.common.config;
 
 import java.util.List;
 
@@ -10,9 +10,9 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.napzak.global.auth.resolver.CurrentMemberArgumentResolver;
-import com.napzak.global.common.converter.StringToEnumCustomConverterFactory;
-import com.napzak.global.common.util.discord.DiscordWebhookProperties;
+import com.napzak.common.auth.resolver.CurrentMemberArgumentResolver;
+import com.napzak.common.converter.StringToEnumCustomConverterFactory;
+import com.napzak.common.util.discord.DiscordWebhookProperties;
 
 import lombok.RequiredArgsConstructor;
 
