@@ -1,0 +1,198 @@
+package com.napzak.api.domain.store.controller;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.napzak.api.domain.genre.dto.response.GenreNameListResponse;
+import com.napzak.api.domain.store.dto.request.GenrePreferenceRequest;
+import com.napzak.api.domain.store.dto.request.NicknameRequest;
+import com.napzak.api.domain.store.dto.request.StoreProfileModifyRequest;
+import com.napzak.api.domain.store.dto.request.StoreReportRequest;
+import com.napzak.api.domain.store.dto.request.StoreWithdrawRequest;
+import com.napzak.api.domain.store.dto.response.AccessTokenGenerateResponse;
+import com.napzak.api.domain.store.dto.response.LoginSuccessResponse;
+import com.napzak.api.domain.store.dto.response.MyPageResponse;
+import com.napzak.api.domain.store.dto.response.StoreInfoResponse;
+import com.napzak.api.domain.store.dto.response.StoreProfileModifyResponse;
+import com.napzak.api.domain.store.dto.response.StoreReportResponse;
+import com.napzak.api.domain.store.dto.response.StoreWithdrawResponse;
+import com.napzak.common.auth.annotation.CurrentMember;
+import com.napzak.common.auth.client.dto.StoreSocialLoginRequest;
+import com.napzak.common.exception.dto.SuccessResponse;
+import com.napzak.common.swagger.annotation.DisableSwaggerSecurity;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+
+@Tag(name = "Store", description = "스토어 관련 API")
+@RequestMapping("api/v1/stores")
+public interface StoreApi {
+
+	@DisableSwaggerSecurity
+	@Operation(summary = "스토어 로그인", description = "소셜 로그인 API")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "로그인 성공",
+			content = @Content(schema = @Schema(implementation = LoginSuccessResponse.class))),
+		@ApiResponse(responseCode = "400", description = "잘못된 요청")
+	})
+	@PostMapping("/login")
+	ResponseEntity<SuccessResponse<LoginSuccessResponse>> login(
+		@Parameter(description = "소셜 인증 코드")
+		@RequestParam("authorizationCode") String authorizationCode,
+
+		@RequestBody StoreSocialLoginRequest storeSocialLoginRequest,
+
+		HttpServletResponse httpServletResponse
+	);
+
+	@Operation(summary = "로그아웃", description = "스토어 로그아웃 API")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "로그아웃 성공"),
+		@ApiResponse(responseCode = "401", description = "권한 없음")
+	})
+	@PostMapping("/logout")
+	ResponseEntity<SuccessResponse<Void>> logOut(@CurrentMember Long currentStoreId);
+
+	@Operation(summary = "액세스 토큰 재발급", description = "Refresh Token을 기반으로 Access Token을 재발급받는 API")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "Access Token 재발급 성공",
+			content = @Content(schema = @Schema(implementation = AccessTokenGenerateResponse.class))),
+		@ApiResponse(responseCode = "401", description = "Refresh Token이 유효하지 않음"),
+		@ApiResponse(responseCode = "404", description = "해당 사용자를 찾을 수 없음")
+	})
+	@PostMapping("/refresh-token")
+	ResponseEntity<SuccessResponse<AccessTokenGenerateResponse>> reissue(
+		@Parameter(description = "HttpOnly Cookie에 담긴 Refresh Token", hidden = true)
+		@CookieValue("refreshToken") String refreshToken
+	);
+
+	@Operation(summary = "닉네임 중복 및 비속어 검증", description = "닉네임의 중복 여부와 비속어 포함 여부를 검증합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "유효한 닉네임"),
+		@ApiResponse(responseCode = "400", description = "닉네임에 비속어 포함"),
+		@ApiResponse(responseCode = "409", description = "중복된 닉네임")
+	})
+	@PostMapping("/nickname/check")
+	ResponseEntity<SuccessResponse<Void>> checkNickname(
+		@io.swagger.v3.oas.annotations.parameters.RequestBody(
+			description = "닉네임 검증 요청", required = true,
+			content = @Content(schema = @Schema(implementation = NicknameRequest.class))
+		)
+		@RequestBody NicknameRequest request
+	);
+
+	@Operation(summary = "닉네임 등록", description = "스토어의 닉네임을 등록하고, 역할을 STORE로 설정합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "닉네임 등록 성공")
+	})
+	@PostMapping("/nickname/register")
+	ResponseEntity<SuccessResponse<Void>> registerNickname(
+		@CurrentMember Long currentStoreId,
+		@RequestBody @Valid NicknameRequest request
+	);
+
+	@Operation(summary = "상점 프로필 수정용 정보 조회", description = "상점 프로필 수정을 위한 커버, 프로필, 닉네임, 설명, 장르 목록을 조회합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "상점 프로필이 성공적으로 조회되었습니다.",
+			content = @Content(schema = @Schema(implementation = StoreProfileModifyResponse.class))),
+		@ApiResponse(responseCode = "404", description = "스토어를 찾을 수 없습니다.")
+	})
+	@GetMapping("/modify/profile")
+	ResponseEntity<SuccessResponse<StoreProfileModifyResponse>> getProfileForModify(@CurrentMember Long currentStoreId);
+
+	@Operation(summary = "상점 프로필 수정", description = "상점의 커버, 프로필 사진, 닉네임, 설명, 선호 장르를 수정합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "상점 프로필이 성공적으로 수정되었습니다.",
+			content = @Content(schema = @Schema(implementation = StoreProfileModifyResponse.class))),
+		@ApiResponse(responseCode = "400", description = "요청 필드 값이 유효하지 않습니다.")
+	})
+	@PutMapping("/modify/profile")
+	ResponseEntity<SuccessResponse<StoreProfileModifyResponse>> modifyProfile(
+		@CurrentMember Long currentStoreId,
+		@RequestBody @Valid StoreProfileModifyRequest request
+	);
+
+	@Operation(summary = "마이페이지 조회", description = "마이페이지 정보 조회 API")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "마이페이지 조회 성공",
+			content = @Content(schema = @Schema(implementation = MyPageResponse.class))),
+		@ApiResponse(responseCode = "404", description = "스토어를 찾을 수 없습니다.")
+	})
+	@GetMapping("/mypage")
+	ResponseEntity<SuccessResponse<MyPageResponse>> getMyPageInfo(@CurrentMember Long currentStoreId);
+
+	@Operation(summary = "스토어 정보 조회", description = "스토어 ID 기반 스토어 정보 조회 API")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "스토어 정보 조회 성공",
+			content = @Content(schema = @Schema(implementation = StoreInfoResponse.class))),
+		@ApiResponse(responseCode = "404", description = "스토어를 찾을 수 없습니다.")
+	})
+	@GetMapping("/{storeId}")
+	ResponseEntity<SuccessResponse<StoreInfoResponse>> getStoreInfo(
+		@Parameter(description = "스토어 ID")
+		@PathVariable("storeId") Long ownerId,
+
+		@CurrentMember Long currentStoreId
+	);
+
+	@Operation(summary = "스토어 장르 등록", description = "스토어 선호 장르 등록 API")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "선호 장르 등록 성공",
+			content = @Content(schema = @Schema(implementation = GenreNameListResponse.class))),
+		@ApiResponse(responseCode = "400", description = "유효하지 않은 장르 요청")
+	})
+	@PostMapping("/register")
+	ResponseEntity<SuccessResponse<GenreNameListResponse>> register(
+		@CurrentMember Long currentMemberId,
+
+		@Valid @RequestBody GenrePreferenceRequest genrePreferenceList
+	);
+
+	@Operation(summary = "스토어 신고", description = "특정 스토어를 신고하는 API입니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "스토어 신고 성공",
+			content = @Content(schema = @Schema(implementation = StoreReportResponse.class))),
+		@ApiResponse(responseCode = "404", description = "스토어를 찾을 수 없습니다.")
+	})
+	@PostMapping("/report/{storeId}")
+	ResponseEntity<SuccessResponse<StoreReportResponse>> reportStore(
+		@Parameter(description = "신고 대상 스토어 ID")
+		@PathVariable("storeId") Long reportedStoreId,
+		@CurrentMember Long reporterStoreId,
+		@RequestBody @Valid StoreReportRequest request
+	);
+
+	@Operation(summary = "스토어 탈퇴", description = "스토어 회원 탈퇴를 요청하는 API입니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "스토어 탈퇴 성공",
+			content = @Content(schema = @Schema(implementation = StoreWithdrawResponse.class))),
+		@ApiResponse(responseCode = "400", description = "잘못된 요청")
+	})
+	@PostMapping("/withdraw")
+	ResponseEntity<SuccessResponse<StoreWithdrawResponse>> withdraw(
+		@CurrentMember Long storeId,
+		@RequestBody @Valid StoreWithdrawRequest request
+	);
+
+	@Operation(summary = "비속어 Redis 동기화", description = "DB의 비속어 목록을 Redis로 동기화합니다. (관리자 전용)")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "Redis 비속어 목록 동기화 성공")
+	})
+	@PostMapping("/admin/sync-redis/slangs")
+	ResponseEntity<SuccessResponse<Void>> syncSlangToRedis(@CurrentMember Long currentStoreId);
+
+}
