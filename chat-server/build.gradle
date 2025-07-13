@@ -1,0 +1,36 @@
+plugins {
+    id 'org.springframework.boot'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+dependencies {
+    implementation project(':core-domain')
+    implementation project(':common-module')
+
+    // WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // RabbitMQ (AMQP)
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // DB
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // STOMP
+    implementation 'org.webjars:sockjs-client:1.5.1'
+    implementation 'org.webjars:stomp-websocket:2.3.4'
+
+    // Spring Security for WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.security:spring-security-messaging'
+}
