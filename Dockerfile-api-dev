@@ -2,21 +2,16 @@
 FROM gradle:8.8-jdk17 AS builder
 WORKDIR /usr/src/app
 
-# --- build stage --------------------------------------------------
 COPY . .
 
 RUN chmod +x ./gradlew \
-  && ./gradlew :api-server:clean :api-server:build -x test
+    && ./gradlew :api-server:bootJar -x test
 
-# --- runtime stage ------------------------------------------------
 FROM openjdk:17-jdk-alpine
 WORKDIR /app
 
-# fat‑jar
-COPY --from=builder /usr/src/app/api-server/build/libs/*-SNAPSHOT.jar /app/app.jar
-
-# external config & firebase key
+COPY --from=builder /usr/src/app/api-server/build/libs/*SNAPSHOT.jar /app/app.jar
 COPY --from=builder /usr/src/app/api-server/src/main/resources/application-dev.yml /app/application-dev.yml
 COPY --from=builder /usr/src/app/api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json /app/firebase/napzak-firebase-adminsdk.json
 
-ENTRYPOINT ["java","-jar","/app/app.jar","--spring.profiles.active=dev"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar", "--spring.profiles.active=dev"]
