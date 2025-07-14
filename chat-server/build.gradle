@@ -13,6 +13,8 @@ dependencies {
     implementation project(':core-domain')
     implementation project(':common-module')
 
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
     // WebSocket
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-web'
