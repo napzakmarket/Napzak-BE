@@ -42,7 +42,8 @@ public class SecurityConfig {
 		"/ws/v1/**",
 		"/",
 		"/stomp-test.html",
-		"/ws-test.html"
+		"/ws-test.html",
+		"/favicon.ico"
 	};
 
 	private static final String[] AUTH_ADMIN_ONLY = {
@@ -67,11 +68,5 @@ public class SecurityConfig {
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
-	}
-
-	@Bean
-	public WebSecurityCustomizer webSecurityCustomizer() {
-		return (web) -> web.ignoring()
-			.requestMatchers("/ws/v1/**", "/ws-test.html", "/favicon.ico");
 	}
 }
