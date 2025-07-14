@@ -76,7 +76,7 @@ public record ChatMessageListResponse(
 				m.getSenderId(),
 				m.getType().name(),
 				m.getContent(),
-				m.getMetadata(),
+				m.getMetadataMap(),
 				TimeUtils.formatChatMessageTime(m.getCreatedAt()),
 				isRead,
 				isOwner,
