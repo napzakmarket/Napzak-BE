@@ -1,3 +1,4 @@
+// core-domain build.gradle
 plugins {
     id 'java'
     id 'java-library'
