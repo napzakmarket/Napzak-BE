@@ -26,6 +26,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@Value("${spring.rabbitmq.relay.passcode}")
 	private String relayPasscode;
 
+	@Value("${spring.rabbitmq.relay.system-login}")
+	private String systemLogin;
+
+	@Value("${spring.rabbitmq.relay.system-passcode}")
+	private String systemPasscode;
+
 	private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
 
 	@Override
@@ -41,7 +47,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 			.setRelayHost(relayHost)
 			.setRelayPort(relayPort)
 			.setClientLogin(relayLogin)
-			.setClientPasscode(relayPasscode);
+			.setClientPasscode(relayPasscode)
+			.setSystemLogin(systemLogin)
+			.setSystemPasscode(systemPasscode);
 		config.setApplicationDestinationPrefixes("/pub");
 	}
 }
