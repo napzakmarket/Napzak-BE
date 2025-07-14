@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.napzak.chat.domain.chat.api.ChatPushFacade;
 import com.napzak.chat.domain.chat.api.ChatStoreFacade;
 import com.napzak.chat.domain.chat.api.dto.request.ChatRoomCreateRequest;
 import com.napzak.chat.domain.chat.api.dto.request.ChatRoomProductIdUpdateRequest;
@@ -51,6 +52,7 @@ public class ChatRestController {
 	private final ChatRestService chatRestService;
 	private final ChatWebSocketService chatWebSocketService;
 	private final ChatStoreFacade chatStoreFacade;
+	private final ChatPushFacade chatPushFacade;
 
 	@PostMapping
 	public ResponseEntity<SuccessResponse<ChatRoomCreateResponse>> createChatRoom(
@@ -63,8 +65,14 @@ public class ChatRestController {
 
 	@GetMapping
 	public ResponseEntity<SuccessResponse<ChatRoomListResponse>> getChatRooms(
+		@RequestParam(required = false) String deviceToken,
 		@CurrentMember Long storeId
 	) {
+		Boolean isMessageAllowed = null;
+		if (deviceToken != null) {
+			isMessageAllowed = chatPushFacade.findAllowMessageByStoreIdAndDeviceToken(storeId, deviceToken);
+		}
+
 		List<ChatParticipant> myRooms = chatRestService.findMyChatRooms(storeId);
 		List<Long> roomIds = myRooms.stream().map(ChatParticipant::getRoomId).distinct().toList();
 
@@ -88,7 +96,8 @@ public class ChatRestController {
 			}).toList();
 
 		return ResponseEntity.ok(
-			SuccessResponse.of(ChatSuccessCode.CHATROOM_LIST_RETRIEVE_SUCCESS, ChatRoomListResponse.of(summaries))
+			SuccessResponse.of(ChatSuccessCode.CHATROOM_LIST_RETRIEVE_SUCCESS,
+				ChatRoomListResponse.of(summaries, isMessageAllowed))
 		);
 	}
 

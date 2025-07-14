@@ -1,5 +1,6 @@
 package com.napzak.chat.domain.chat.api.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,7 +23,9 @@ import com.napzak.domain.chat.vo.ChatParticipant;
 import com.napzak.domain.chat.vo.ChatRoom;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatRestService {
@@ -79,10 +82,20 @@ public class ChatRestService {
 
 	@Transactional(readOnly = true)
 	public Map<Long, Long> findUnreadCounts(List<ChatParticipant> rooms, Long storeId) {
-		Map<Long, Long> lastReadMap = rooms.stream()
-			.collect(Collectors.toMap(ChatParticipant::getRoomId, ChatParticipant::getLastReadMessageId));
-		List<Long> roomIds = rooms.stream().map(ChatParticipant::getRoomId).toList();
-		return chatMessageRetriever.findUnreadCounts(roomIds, storeId, lastReadMap);
+		try {
+			Map<Long, Long> lastReadMap = rooms.stream()
+				.collect(Collectors.toMap(
+					ChatParticipant::getRoomId,
+					p -> Optional.ofNullable(p.getLastReadMessageId()).orElse(0L) // ✅ null-safe 처리
+				));
+				List<Long> roomIds = new ArrayList<>(lastReadMap.keySet());
+			Map<Long, Long> result = chatMessageRetriever.findUnreadCounts(roomIds, storeId, lastReadMap);
+			return result;
+
+		} catch (Exception e) {
+			log.error("🔥 예외 발생: {}, {}", e.getClass().getName(), e.getMessage(), e);
+			throw e;
+		}
 	}
 
 	@Transactional

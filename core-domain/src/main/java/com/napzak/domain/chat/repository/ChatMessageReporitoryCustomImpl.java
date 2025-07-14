@@ -6,6 +6,7 @@ import static com.napzak.domain.chat.entity.enums.MessageType.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
@@ -13,10 +14,13 @@ import org.springframework.stereotype.Repository;
 import com.napzak.domain.chat.entity.ChatMessageEntity;
 import com.napzak.domain.chat.entity.enums.MessageType;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class ChatMessageReporitoryCustomImpl implements ChatMessageRepositoryCustom{
@@ -24,9 +28,12 @@ public class ChatMessageReporitoryCustomImpl implements ChatMessageRepositoryCus
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public Map<Long, Long> findUnreadCountsByRoomIdsAndStoreId(List<Long> roomIds, Long storeId, Map<Long, Long> lastReadMap) {
+	public Map<Long, Long> findUnreadCountsByRoomIdsAndStoreId(
+		List<Long> roomIds,
+		Long storeId,
+		Map<Long, Long> lastReadMap
+	) {
 		BooleanBuilder lastReadCondition = new BooleanBuilder();
-
 		lastReadMap.forEach((roomId, lastReadId) -> {
 			if (lastReadId != null) {
 				lastReadCondition.or(
@@ -34,30 +41,33 @@ public class ChatMessageReporitoryCustomImpl implements ChatMessageRepositoryCus
 						.and(chatMessageEntity.id.gt(lastReadId))
 				);
 			} else {
-				// null이면 0보다 큰 모든 메시지를 unread로 간주
 				lastReadCondition.or(
 					chatMessageEntity.roomId.eq(roomId)
-						.and(chatMessageEntity.id.gt(0L))
 				);
 			}
 		});
-
-		return queryFactory
-			.select(chatMessageEntity.roomId, chatMessageEntity.id.count())
-			.from(chatMessageEntity)
-			.where(
-				chatMessageEntity.roomId.in(roomIds),
-				chatMessageEntity.senderId.ne(storeId),
-				chatMessageEntity.type.in(TEXT, IMAGE),
-				lastReadCondition
-			)
-			.groupBy(chatMessageEntity.roomId)
-			.fetch()
-			.stream()
-			.collect(Collectors.toMap(
-				tuple -> tuple.get(chatMessageEntity.roomId),
-				tuple -> tuple.get(chatMessageEntity.id.count())
-			));
+		try {
+			List<Tuple> tuples = queryFactory
+				.select(chatMessageEntity.roomId, chatMessageEntity.id.count())
+				.from(chatMessageEntity)
+				.where(
+					chatMessageEntity.roomId.in(roomIds),
+					chatMessageEntity.senderId.ne(storeId),
+					chatMessageEntity.type.in(TEXT, IMAGE),
+					lastReadCondition
+				)
+				.groupBy(chatMessageEntity.roomId)
+				.fetch();
+			Map<Long, Long> result = tuples.stream()
+				.collect(Collectors.toMap(
+					t -> t.get(chatMessageEntity.roomId),
+					t -> Optional.ofNullable(t.get(chatMessageEntity.id.count())).orElse(0L)
+				));
+			return result;
+		} catch (Exception e) {
+			log.error("🔥 예외 발생: class={}, message={}", e.getClass().getName(), e.getMessage(), e);
+			throw e;
+		}
 	}
 
 	@Override
