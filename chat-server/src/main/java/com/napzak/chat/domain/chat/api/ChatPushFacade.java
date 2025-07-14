@@ -17,4 +17,8 @@ public class ChatPushFacade {
 	public List<String> findAllowMessageDeviceTokensByStoreId(Long storeId) {
 		return pushDeviceTokenRetriever.findAllowMessageDeviceTokensByStoreId(storeId);
 	}
+
+	public boolean findAllowMessageByStoreIdAndDeviceToken(Long storeId, String deviceToken) {
+		return pushDeviceTokenRetriever.findAllowMessageByStoreIdAndDeviceToken(storeId, deviceToken);
+	}
 }
