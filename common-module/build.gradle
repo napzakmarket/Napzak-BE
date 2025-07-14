@@ -1,3 +1,4 @@
+// common-module build.gradle
 plugins {
     id 'java'
     id 'java-library'
