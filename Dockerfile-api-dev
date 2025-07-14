@@ -8,7 +8,12 @@ RUN chmod +x ./gradlew && ./gradlew :api-server:bootJar -x test
 # ---------- runtime ----------
 FROM openjdk:17-jdk-alpine
 WORKDIR /app
+
+# ✅ CI에서 주입된 파일 COPY (빌더에서 복사하지 않음!)
+COPY api-server/src/main/resources/application-dev.yml /app/
+COPY api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json /app/firebase/
+
+# ✅ JAR 파일은 builder에서 복사
 COPY --from=builder /usr/src/app/api-server/build/libs/api-server.jar /app/
-COPY --from=builder /usr/src/app/api-server/src/main/resources/application-dev.yml /app/
-COPY --from=builder /usr/src/app/api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json /app/firebase/
-ENTRYPOINT ["java","-jar","/app/api-server.jar","--spring.profiles.active=dev"]
+
+ENTRYPOINT ["java", "-jar", "/app/api-server.jar", "--spring.profiles.active=dev"]

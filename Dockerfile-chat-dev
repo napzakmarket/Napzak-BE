@@ -1,15 +1,19 @@
 # ---------------- Dockerfile-chat-dev ----------------
+# ---------- build ----------
 FROM gradle:8.8-jdk17 AS builder
 WORKDIR /usr/src/app
 COPY . .
-RUN chmod +x ./gradlew \
- && ./gradlew :chat-server:clean :chat-server:bootJar -x test
+RUN chmod +x ./gradlew && ./gradlew :chat-server:bootJar -x test
 
 # ---------- runtime ----------
 FROM openjdk:17-jdk-alpine
 WORKDIR /app
 
+# ✅ CI에서 주입된 파일 COPY
+COPY chat-server/src/main/resources/application-dev.yml /app/
+COPY chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json /app/firebase/
+
+# ✅ JAR 파일은 builder에서 복사
 COPY --from=builder /usr/src/app/chat-server/build/libs/chat-server.jar /app/
-COPY --from=builder /usr/src/app/chat-server/src/main/resources/application-dev.yml /app/
-COPY --from=builder /usr/src/app/chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json /app/firebase/
-ENTRYPOINT ["java","-jar","/app/chat-server.jar","--spring.profiles.active=dev"]
+
+ENTRYPOINT ["java", "-jar", "/app/chat-server.jar", "--spring.profiles.active=dev"]
