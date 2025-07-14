@@ -1,3 +1,4 @@
+// api-server build.gradle
 plugins {
     id 'org.springframework.boot'
 }
@@ -64,8 +65,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-jar {
-    enabled = false
+jar { enabled = false }                    // plain-jar 제거
+tasks.named('bootJar') {                   // fat-jar 이름 고정
+    archiveFileName = 'api-server.jar'
 }
 
 def queryDslSrcDir = 'src/main/generated/querydsl/'
