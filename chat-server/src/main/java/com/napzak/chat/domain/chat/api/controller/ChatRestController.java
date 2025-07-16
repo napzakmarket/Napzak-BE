@@ -30,7 +30,9 @@ import com.napzak.chat.domain.chat.api.code.ChatSuccessCode;
 import com.napzak.chat.domain.chat.api.service.ChatMessagePagination;
 import com.napzak.chat.domain.chat.api.service.ChatRestService;
 import com.napzak.chat.domain.chat.api.service.ChatWebSocketService;
+import com.napzak.common.auth.annotation.AuthorizedRole;
 import com.napzak.common.auth.annotation.CurrentMember;
+import com.napzak.common.auth.role.enums.Role;
 import com.napzak.common.exception.NapzakException;
 import com.napzak.common.exception.code.ErrorCode;
 import com.napzak.common.exception.dto.SuccessResponse;
@@ -54,6 +56,7 @@ public class ChatRestController {
 	private final ChatStoreFacade chatStoreFacade;
 	private final ChatPushFacade chatPushFacade;
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@PostMapping
 	public ResponseEntity<SuccessResponse<ChatRoomCreateResponse>> createChatRoom(
 		@RequestBody ChatRoomCreateRequest request,
@@ -63,6 +66,7 @@ public class ChatRestController {
 		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_CREATE_SUCCESS, ChatRoomCreateResponse.of(roomId)));
 	}
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
 	@GetMapping
 	public ResponseEntity<SuccessResponse<ChatRoomListResponse>> getChatRooms(
 		@RequestParam(required = false) String deviceToken,
@@ -101,6 +105,7 @@ public class ChatRestController {
 		);
 	}
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
 	@GetMapping("/{roomId}/messages")
 	public ResponseEntity<SuccessResponse<ChatMessageListResponse>> getMessages(
 		@PathVariable Long roomId,
@@ -133,6 +138,7 @@ public class ChatRestController {
 				ChatRoomProductIdUpdateResponse.of(updatedProductId)));
 	}
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@PatchMapping("/{roomId}/enter")
 	public ResponseEntity<SuccessResponse<ChatRoomEnterResponse>> enterChatRoom(
 		@PathVariable Long roomId,
@@ -143,6 +149,7 @@ public class ChatRestController {
 		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_ENTER_SUCCESS, ChatRoomEnterResponse.of(productId)));
 	}
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@PatchMapping("/{roomId}/leave")
 	public ResponseEntity<SuccessResponse<Void>> leaveChatRoom(
 		@PathVariable Long roomId,
@@ -152,6 +159,7 @@ public class ChatRestController {
 		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_LEAVE_SUCCESS));
 	}
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@PatchMapping("/{roomId}/exit")
 	public ResponseEntity<SuccessResponse<Void>> exitChatRoom(
 		@PathVariable Long roomId,
