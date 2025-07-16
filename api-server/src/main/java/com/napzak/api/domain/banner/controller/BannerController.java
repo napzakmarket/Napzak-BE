@@ -11,6 +11,8 @@ import com.napzak.api.domain.banner.dto.response.BannerResponseList;
 import com.napzak.api.domain.banner.dto.response.HomeBannerResponse;
 import com.napzak.api.domain.banner.code.BannerSuccessCode;
 import com.napzak.api.domain.banner.service.BannerService;
+import com.napzak.common.auth.annotation.AuthorizedRole;
+import com.napzak.common.auth.role.enums.Role;
 import com.napzak.common.exception.dto.SuccessResponse;
 import com.napzak.domain.banner.entity.enums.BannerType;
 
@@ -24,6 +26,7 @@ public class BannerController implements BannerApi {
 	private final BannerService bannerService;
 
 	@Override
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.BLOCKED, Role.REPORTED})
 	@GetMapping("/home")
 	public ResponseEntity<SuccessResponse<BannerResponseList>> getBanners() {
 
