@@ -1,6 +1,5 @@
-package com.napzak.api.domain.store.service;
+package com.napzak.domain.store.crud.store;
 
-import com.napzak.domain.store.crud.store.StoreRetriever;
 import com.napzak.common.auth.role.RoleProvider;
 import com.napzak.common.auth.role.enums.Role;
 
