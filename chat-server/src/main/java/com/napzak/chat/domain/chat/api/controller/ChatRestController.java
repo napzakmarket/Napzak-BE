@@ -23,6 +23,7 @@ import com.napzak.chat.domain.chat.api.dto.request.cursor.ChatMessageCursor;
 import com.napzak.chat.domain.chat.api.dto.response.ChatMessageListResponse;
 import com.napzak.chat.domain.chat.api.dto.response.ChatRoomCreateResponse;
 import com.napzak.chat.domain.chat.api.dto.response.ChatRoomEnterResponse;
+import com.napzak.chat.domain.chat.api.dto.response.ChatRoomIdListResponse;
 import com.napzak.chat.domain.chat.api.dto.response.ChatRoomListResponse;
 import com.napzak.chat.domain.chat.api.dto.response.ChatRoomProductIdUpdateResponse;
 import com.napzak.chat.domain.chat.api.dto.response.ChatRoomSummary;
@@ -30,7 +31,9 @@ import com.napzak.chat.domain.chat.api.code.ChatSuccessCode;
 import com.napzak.chat.domain.chat.api.service.ChatMessagePagination;
 import com.napzak.chat.domain.chat.api.service.ChatRestService;
 import com.napzak.chat.domain.chat.api.service.ChatWebSocketService;
+import com.napzak.common.auth.annotation.AuthorizedRole;
 import com.napzak.common.auth.annotation.CurrentMember;
+import com.napzak.common.auth.role.enums.Role;
 import com.napzak.common.exception.NapzakException;
 import com.napzak.common.exception.code.ErrorCode;
 import com.napzak.common.exception.dto.SuccessResponse;
@@ -61,6 +64,16 @@ public class ChatRestController {
 	){
 		Long roomId = chatRestService.createChatRoom(senderId, request.receiverId(), request.productId());
 		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_CREATE_SUCCESS, ChatRoomCreateResponse.of(roomId)));
+	}
+
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
+	@GetMapping("/ids")
+	public ResponseEntity<SuccessResponse<ChatRoomIdListResponse>> getChatRoomIds(
+		@CurrentMember Long storeId
+	) {
+		List<ChatParticipant> myRooms = chatRestService.findMyChatRooms(storeId);
+		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_LIST_RETRIEVE_SUCCESS,
+			ChatRoomIdListResponse.of(myRooms.stream().map(ChatParticipant::getRoomId).distinct().toList())));
 	}
 
 	@GetMapping
