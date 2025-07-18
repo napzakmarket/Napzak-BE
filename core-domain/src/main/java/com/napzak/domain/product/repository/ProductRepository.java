@@ -20,7 +20,7 @@ import jakarta.persistence.LockModeType;
 public interface ProductRepository extends JpaRepository<ProductEntity, Long>, ProductRepositoryCustom {
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("SELECT p FROM ProductEntity p where p.id = :productId")
-	Optional<ProductEntity> lockById(Long productId);
+	Optional<ProductEntity> lockById(@Param("productId") Long productId);
 
 	@Modifying
 	@Query("""
