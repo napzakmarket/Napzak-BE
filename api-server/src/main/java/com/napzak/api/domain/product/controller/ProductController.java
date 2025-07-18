@@ -699,6 +699,7 @@ public class ProductController implements ProductApi {
 		@CurrentMember Long currentStoreId
 	) {
 		ProductWithFirstPhoto product = productService.getProductChatInfo(productId);
+		if(currentStoreId.equals(product.getStoreId())) throw new NapzakException(ProductErrorCode.PRODUCT_CHAT_SELF_REQUEST_NOT_ALLOWED);
 		Store store = productStoreFacade.getStoreById(product.getStoreId());
 		String genreName = productGenreFacade.getGenreName(product.getGenreId());
 		Long roomId = productChatFacade.findCommonRoomIdByStores(
