@@ -9,7 +9,6 @@ import lombok.Getter;
 
 @RedisHash(value = "refreshToken", timeToLive = 1209600)
 @Getter
-@Builder
 public class Token {
 
 	@Id
@@ -18,10 +17,14 @@ public class Token {
 	@Indexed
 	private String refreshToken;
 
-	public static Token of(final Long id, final String refreshToken) {
-		return Token.builder()
-			.id(id)
-			.refreshToken(refreshToken)
-			.build();
+	public Token() {}
+
+	public Token(Long id, String refreshToken) {
+		this.id = id;
+		this.refreshToken = refreshToken;
+	}
+
+	public static Token of(Long id, String refreshToken) {
+		return new Token(id, refreshToken);
 	}
 }
