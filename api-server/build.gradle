@@ -73,6 +73,7 @@ tasks.named('bootJar') {                   // fat-jar 이름 고정
 def queryDslSrcDir = 'src/main/generated/querydsl/'
 
 tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += "-parameters"
     options.getGeneratedSourceOutputDirectory().set(file(queryDslSrcDir))
 }
 
