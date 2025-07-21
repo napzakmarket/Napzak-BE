@@ -3,23 +3,21 @@ package com.napzak.chat.domain.chat.api.controller;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+
 import com.napzak.chat.domain.chat.api.ChatPushFacade;
 import com.napzak.chat.domain.chat.api.ChatStoreFacade;
 import com.napzak.chat.domain.chat.api.dto.request.ChatMessageRequest;
 import com.napzak.chat.domain.chat.api.service.ChatRestService;
 import com.napzak.chat.domain.chat.api.service.ChatWebSocketService;
 import com.napzak.common.auth.context.StoreSession;
-import com.napzak.common.auth.context.StoreSessionContextHolder;
 import com.napzak.domain.chat.entity.enums.MessageType;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
 
 @Slf4j
 @Controller
@@ -40,6 +38,9 @@ public class ChatWebSocketController {
 			log.warn("storeSession is null! rejecting");
 			return;
 		}
+		log.info("📨 Received chat.send: {}", request);
+		log.info("📌 session info: {}", session);
+
 		Long senderId = session.getId();
 
 		List<String> deviceTokens = Collections.emptyList();
