@@ -30,12 +30,12 @@ public class ChatWebSocketController {
 	private final ChatPushFacade chatPushFacade;
 	private final SimpMessagingTemplate messagingTemplate;
 
-	@MessageMapping("/chat.send")
+	@MessageMapping("/chat/send")
 	public void sendMessage(ChatMessageRequest request, SimpMessageHeaderAccessor headerAccessor) {
 		// 현재 유저 정보
 		StoreSession session = (StoreSession) headerAccessor.getSessionAttributes().get("storeSession");
 		if (session == null) {
-			log.warn("storeSession is null! rejecting");
+			log.info("storeSession is null! rejecting");
 			return;
 		}
 		log.info("📨 Received chat.send: {}", request);
