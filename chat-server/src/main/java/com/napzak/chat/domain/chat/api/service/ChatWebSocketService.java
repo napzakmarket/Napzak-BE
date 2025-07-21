@@ -17,7 +17,9 @@ import com.napzak.domain.chat.entity.enums.MessageType;
 import com.napzak.domain.chat.vo.ChatMessage;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatWebSocketService {
@@ -38,14 +40,26 @@ public class ChatWebSocketService {
 		String opponentNickname,
 		Long opponentId
 	){
-		sendDateMessage(roomId); // 조건 만족 시 DATE 삽입 후 broadcast
+		log.info("🧵 sendStoreMessage called: roomId={}, senderId={}, type={}, content={}", roomId, senderId, type, content);
+		try {
+			sendDateMessage(roomId);
+			log.info("✅ Date message check complete");
 
-		ChatMessage storeMessage = chatMessageSaver.save(roomId, senderId, type, content, metadata);
-		chatParticipantUpdater.updateLastReadMessage(roomId, senderId, storeMessage.getId());
-		chatMessageSender.sendStoreMessage(storeMessage);
+			ChatMessage storeMessage = chatMessageSaver.save(roomId, senderId, type, content, metadata);
+			log.info("💾 Message saved: {}", storeMessage);
 
-		if (opponentNickname != null && !deviceTokens.isEmpty()) {
-			sendChatPush(deviceTokens, opponentNickname, type, roomId, content, opponentId);
+			chatParticipantUpdater.updateLastReadMessage(roomId, senderId, storeMessage.getId());
+			log.info("👁 Last read message updated for senderId={}", senderId);
+
+			chatMessageSender.sendStoreMessage(storeMessage);
+			log.info("📤 Message sent to MQ");
+
+			if (opponentNickname != null && !deviceTokens.isEmpty()) {
+				log.info("📱 Sending push to opponent: {}", opponentId);
+				sendChatPush(deviceTokens, opponentNickname, type, roomId, content, opponentId);
+			}
+		} catch (Exception e) {
+			log.error("💥 Exception in sendStoreMessage: {}", e.getMessage(), e);
 		}
 	}
 
