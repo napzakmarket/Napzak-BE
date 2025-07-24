@@ -37,7 +37,7 @@ public class GenreController implements GenreApi {
 	private final GenreLinkFacade genreLinkFacade;
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.ONBOARDING})
+	@AuthorizedRole({Role.ADMIN, Role.ONBOARDING, Role.STORE})
 	@GetMapping("/onboarding/genres")
 	public ResponseEntity<SuccessResponse<GenreListResponse>> getGenres(
 		@RequestParam(required = false) String cursor,
@@ -56,7 +56,7 @@ public class GenreController implements GenreApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.ONBOARDING})
+	@AuthorizedRole({Role.ADMIN, Role.ONBOARDING, Role.STORE})
 	@GetMapping("/onboarding/genres/search")
 	public ResponseEntity<SuccessResponse<GenreListResponse>> searchGenres(
 		@RequestParam String searchWord,
@@ -86,7 +86,7 @@ public class GenreController implements GenreApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.BLOCKED, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/genres")
 	public ResponseEntity<SuccessResponse<GenreNameListResponse>> getGenreNames(
 		@RequestParam(required = false) String cursor,
@@ -106,7 +106,7 @@ public class GenreController implements GenreApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.BLOCKED, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("genres/search")
 	public ResponseEntity<SuccessResponse<GenreNameListResponse>> searchGenreNames(
 		@RequestParam String searchWord,
@@ -136,7 +136,7 @@ public class GenreController implements GenreApi {
 		);
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.BLOCKED, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("genres/detail/{genreId}")
 	public ResponseEntity<SuccessResponse<GenrePageResponse>> getGenrePage(
 		@CurrentMember Long storeId,

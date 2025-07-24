@@ -151,7 +151,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.ACCESS_TOKEN_REISSUE_SUCCESS, accessTokenGenerateResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.ONBOARDING})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
 	@PostMapping("/nickname/check")
 	public ResponseEntity<SuccessResponse<Void>> checkNickname(
 		@RequestBody @Valid NicknameRequest request
@@ -160,7 +160,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.VALID_NICKNAME_SUCCESS));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.ONBOARDING})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
 	@PostMapping("/nickname/register")
 	public ResponseEntity<SuccessResponse<Void>> registerNickname(
 		@CurrentMember final Long currentStoreId,
@@ -170,7 +170,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.NICKNAME_REGISTER_SUCCESS));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("/modify/profile")
 	public ResponseEntity<SuccessResponse<StoreProfileModifyResponse>> getProfileForModify(
 		@CurrentMember final Long currentStoreId
@@ -185,7 +185,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.GET_PROFILE_SUCCESS, response));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PutMapping("/modify/profile")
 	public ResponseEntity<SuccessResponse<StoreProfileModifyResponse>> modifyProfile(
 		@CurrentMember final Long currentStoreId,
@@ -207,7 +207,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.PROFILE_UPDATE_SUCCESS, response));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/mypage")
 	public ResponseEntity<SuccessResponse<MyPageResponse>> getMyPageInfo(
 		@CurrentMember final Long currentStoreId
@@ -222,7 +222,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_MYPAGE_INFO_SUCCESS, myPageResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/mypage/setting")
 	public ResponseEntity<SuccessResponse<SettingLinkResponse>> getSettingLink(
 		@CurrentMember final Long currentStoreId
@@ -239,7 +239,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_SETTING_LINK_SUCCESS, settingLinkResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED, Role.ONBOARDING})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.ONBOARDING})
 	@GetMapping("/terms")
 	public ResponseEntity<SuccessResponse<OnboardingTermsListResponse>> getOnboardingTerms() {
 		int activeBundleId = storeTermsBundleFacade.findActiveBundleId();
@@ -257,7 +257,7 @@ public class StoreController implements StoreApi {
 			SuccessResponse.of(StoreSuccessCode.GET_ONBOARDING_TERMS_SUCCESS, onboardingTermsListResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED, Role.ONBOARDING})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.ONBOARDING})
 	@PostMapping("/terms/{bundleId}")
 	public ResponseEntity<SuccessResponse<Void>> registerAgreement(
 		@PathVariable("bundleId") int bundleId,
@@ -269,7 +269,7 @@ public class StoreController implements StoreApi {
 			SuccessResponse.of(StoreSuccessCode.REGISTER_TERMS_AGREEMENT_SUCCESS));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/{storeId}")
 	public ResponseEntity<SuccessResponse<StoreInfoResponse>> getStoreInfo(
 		@PathVariable("storeId") Long ownerId,
@@ -289,7 +289,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_STORE_INFO_SUCCESS, storeInfoResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.ONBOARDING})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
 	@PostMapping("genres/register")
 	public ResponseEntity<SuccessResponse<GenreNameListResponse>> register(
 		@CurrentMember final Long currentStoreId,
@@ -307,7 +307,7 @@ public class StoreController implements StoreApi {
 			.body(SuccessResponse.of(StoreSuccessCode.GENRE_PREPERENCE_REGISTER_SUCCESS, response));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PostMapping("/report/{storeId}")
 	public ResponseEntity<SuccessResponse<StoreReportResponse>> reportStore(
 		@PathVariable("storeId") final Long reportedStoreId,
@@ -332,7 +332,7 @@ public class StoreController implements StoreApi {
 			.body(SuccessResponse.of(StoreSuccessCode.STORE_REPORT_SUCCESS, response));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@PostMapping("/withdraw")
 	public ResponseEntity<SuccessResponse<StoreWithdrawResponse>> withdraw(
 		@CurrentMember final Long storeId,

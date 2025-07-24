@@ -26,7 +26,7 @@ public class BannerController implements BannerApi {
 	private final BannerService bannerService;
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.BLOCKED, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/home")
 	public ResponseEntity<SuccessResponse<BannerResponseList>> getBanners() {
 

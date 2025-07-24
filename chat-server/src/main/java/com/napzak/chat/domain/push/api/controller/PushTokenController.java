@@ -45,7 +45,7 @@ public class PushTokenController {
 		return ResponseEntity.ok(SuccessResponse.of(PushSuccessCode.PUSH_TOKEN_CREATE_SUCCESS));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/{deviceToken}/settings")
 	public ResponseEntity<SuccessResponse<PushSettingResponse>> getPushSetting(
 		@PathVariable String deviceToken,
@@ -57,7 +57,7 @@ public class PushTokenController {
 		);
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@PatchMapping("/{deviceToken}/settings")
 	public ResponseEntity<SuccessResponse<Void>> updatePushSetting(
 		@PathVariable String deviceToken,

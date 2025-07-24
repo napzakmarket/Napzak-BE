@@ -28,7 +28,7 @@ public class InterestController implements InterestApi {
 	private final InterestProductFacade interestProductFacade;
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PostMapping("/{productId}")
 	public ResponseEntity<SuccessResponse<Void>> postInterest(
 		@PathVariable("productId") Long productId,
@@ -43,7 +43,7 @@ public class InterestController implements InterestApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@DeleteMapping("/{productId}")
 	public ResponseEntity<SuccessResponse<Void>> deleteInterest(
 		@PathVariable("productId") Long productId,

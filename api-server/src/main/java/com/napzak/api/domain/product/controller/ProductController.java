@@ -91,7 +91,7 @@ public class ProductController implements ProductApi {
 	private final ProductPhotoS3ImageCleaner productPhotoS3ImageCleaner;
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/sell")
 	public ResponseEntity<SuccessResponse<ProductSellListResponse>> getSellProducts(
 		@RequestParam(defaultValue = "RECENT") String sortOption,
@@ -137,7 +137,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/buy")
 	public ResponseEntity<SuccessResponse<ProductBuyListResponse>> getBuyProducts(
 		@RequestParam(defaultValue = "RECENT") String sortOption,
@@ -178,7 +178,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/sell/search")
 	public ResponseEntity<SuccessResponse<ProductSellListResponse>> searchSellProducts(
 		@RequestParam String searchWord,
@@ -223,7 +223,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/buy/search")
 	public ResponseEntity<SuccessResponse<ProductBuyListResponse>> searchBuyProducts(
 		@RequestParam String searchWord,
@@ -266,7 +266,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("sell/stores/{storeOwnerId}")
 	public ResponseEntity<SuccessResponse<ProductSellListResponse>> getStoreSellProducts(
 		@RequestParam(defaultValue = "RECENT") String sortOption,
@@ -311,7 +311,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/buy/stores/{storeOwnerId}")
 	public ResponseEntity<SuccessResponse<ProductBuyListResponse>> getStoreBuyProducts(
 		@RequestParam(defaultValue = "RECENT") String sortOption,
@@ -354,7 +354,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PostMapping("/sell")
 	public ResponseEntity<SuccessResponse<ProductSellResponse>> createSellProduct(
 		@Valid @RequestBody ProductSellCreateRequest productSellCreateRequest,
@@ -393,7 +393,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PostMapping("/buy")
 	public ResponseEntity<SuccessResponse<ProductBuyResponse>> createBuyProduct(
 		@Valid @RequestBody ProductBuyCreateRequest productBuyCreateRequest,
@@ -429,7 +429,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/{productId}")
 	public ResponseEntity<SuccessResponse<ProductDetailResponse>> getDetailProductInfo(
 		@PathVariable("productId") Long productId,
@@ -481,7 +481,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PatchMapping("/{productId}")
 	public ResponseEntity<SuccessResponse<Void>> updateTradeStatus(
 		@CurrentMember Long currentStoreId,
@@ -499,7 +499,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@DeleteMapping("{productId}")
 	public ResponseEntity<SuccessResponse<Void>> deleteProduct(
 		@CurrentMember Long currentStoreId,
@@ -516,7 +516,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("/sell/modify/{productId}")
 	public ResponseEntity<SuccessResponse<ProductSellModifyResponse>> getSellProductForModify(
 		@CurrentMember Long currentStoreId,
@@ -542,7 +542,7 @@ public class ProductController implements ProductApi {
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productSellModifyresponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PutMapping("/sell/modify/{productId}")
 	public ResponseEntity<SuccessResponse<ProductSellResponse>> modifySellProduct(
 		@CurrentMember Long currentStoreId,
@@ -578,7 +578,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("/buy/modify/{productId}")
 	public ResponseEntity<SuccessResponse<ProductBuyModifyResponse>> getBuyProductForModify(
 		@CurrentMember Long currentStoreId,
@@ -603,7 +603,7 @@ public class ProductController implements ProductApi {
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_RETRIEVE_SUCCESS, productBuyModifyResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PutMapping("/buy/modify/{productId}")
 	public ResponseEntity<SuccessResponse<ProductBuyResponse>> modifyBuyProduct(
 		@CurrentMember Long currentStoreId,
@@ -636,7 +636,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/home/recommend")
 	public ResponseEntity<SuccessResponse<ProductRecommendListResponse>> getRecommendProducts(
 		@CurrentMember Long currentStoreId
@@ -658,7 +658,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/home/sell")
 	public ResponseEntity<SuccessResponse<ProductSellListResponse>> getTopSellProducts(
 		@RequestParam(defaultValue = "6") int size,
@@ -684,7 +684,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/home/buy")
 	public ResponseEntity<SuccessResponse<ProductBuyListResponse>> getTopBuyProducts(
 		@RequestParam(defaultValue = "6") int size,
@@ -710,7 +710,7 @@ public class ProductController implements ProductApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/chat/{productId}")
 	public ResponseEntity<SuccessResponse<ProductChatInfoResponse>> getProductChatInfo(
 		@PathVariable Long productId,
@@ -728,7 +728,7 @@ public class ProductController implements ProductApi {
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_CHAT_INFO_GET_SUCCESS, productChatInfoResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@GetMapping("/search/recommend")
 	public ResponseEntity<SuccessResponse<RecommendResponse>> getRecommendSearchWordAndGenre(
 		@CurrentMember Long currentStoreId
@@ -747,7 +747,7 @@ public class ProductController implements ProductApi {
 				SuccessResponse.of(ProductSuccessCode.RECOMMEND_SEARCH_WORD_AND_GENRE_GET_SUCCESS, recommendResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PostMapping("/report/{productId}")
 	public ResponseEntity<SuccessResponse<ProductReportResponse>> reportProduct(
 		@PathVariable("productId") Long productId,
@@ -782,7 +782,7 @@ public class ProductController implements ProductApi {
 		);
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("/interest/sell")
 	public ResponseEntity<SuccessResponse<InterestedSellProductResponse>> getInterestedSellProducts(
 		@RequestParam(required = false) String cursor,
@@ -835,7 +835,7 @@ public class ProductController implements ProductApi {
 
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.BLOCKED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("/interest/buy")
 	public ResponseEntity<SuccessResponse<InterestedBuyProductResponse>> getInterestedBuyProducts(
 		@RequestParam(required = false) String cursor,

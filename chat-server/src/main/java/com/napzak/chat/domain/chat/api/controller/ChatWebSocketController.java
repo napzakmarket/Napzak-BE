@@ -8,8 +8,10 @@ import com.napzak.chat.domain.chat.api.ChatStoreFacade;
 import com.napzak.chat.domain.chat.api.dto.request.ChatMessageRequest;
 import com.napzak.chat.domain.chat.api.service.ChatRestService;
 import com.napzak.chat.domain.chat.api.service.ChatWebSocketService;
+import com.napzak.common.auth.annotation.AuthorizedRole;
 import com.napzak.common.auth.context.StoreSession;
 import com.napzak.common.auth.context.StoreSessionContextHolder;
+import com.napzak.common.auth.role.enums.Role;
 import com.napzak.domain.chat.entity.enums.MessageType;
 
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ public class ChatWebSocketController {
 	private final ChatPushFacade chatPushFacade;
 	private final SimpMessagingTemplate messagingTemplate;
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@MessageMapping("/chat.send")
 	public void sendMessage(ChatMessageRequest request, SimpMessageHeaderAccessor headerAccessor) {
 		// 현재 유저 정보
