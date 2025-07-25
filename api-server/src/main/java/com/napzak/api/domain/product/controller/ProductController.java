@@ -443,7 +443,19 @@ public class ProductController implements ProductApi {
 			.map(ProductPhotoDto::from)
 			.toList();
 
-		StoreStatus storeStatus = productStoreFacade.getStoreStatusByStoreId(product.getStoreId());
+		Store productOwner = productStoreFacade.getStoreById(product.getStoreId());
+		int productOwnerSellCount = productService.countByStoreIdAndTradeTypeAndIsVisibleTrue(productOwner.getId(),
+			TradeType.SELL);
+		int productOwnerBuyCount = productService.countByStoreIdAndTradeTypeAndIsVisibleTrue(productOwner.getId(),
+			TradeType.BUY);
+
+		StoreStatus storeStatus = StoreStatus.from(
+			productOwner.getId(),
+			productOwner.getPhoto(),
+			productOwner.getNickname(),
+			productOwnerSellCount,
+			productOwnerBuyCount
+		);
 
 		// List<Review> reviewList = productReviewFacade.findAllByStoreId(product.getStoreId());
 		//

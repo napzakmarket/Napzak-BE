@@ -4,15 +4,15 @@ public record StoreStatus(
 	Long userId,
 	String storePhoto,
 	String nickname,
-	Long totalSellCount,
-	Long totalBuyCount
+	int totalSellCount,
+	int totalBuyCount
 ) {
 	public static StoreStatus from(
 		Long userId,
 		String storePhoto,
 		String nickname,
-		Long totalSellCount,
-		Long totalBuyCount
+		int totalSellCount,
+		int totalBuyCount
 	) {
 		return new StoreStatus(userId, storePhoto, nickname, totalSellCount, totalBuyCount);
 	}
