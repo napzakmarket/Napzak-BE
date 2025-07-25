@@ -84,13 +84,20 @@ public class PushTokenController {
 		@CurrentMember Long storeId,
 		@RequestBody @Valid PushTestRequest request
 	) {
-		// fcmPushSender.sendMessage(
-		// 	storeId,
-		// 	request.deviceToken(),
-		// 	request.title(),
-		// 	request.body(),
-		// 	request.data() != null ? request.data() : Map.of()
-		// );
+		String body = switch (request.messageType()) {
+			case TEXT -> request.notification().body();
+			case IMAGE -> "(사진)";
+			default -> null;
+		};
+
+			fcmPushSender.sendMessage(
+				request.opponentId(),
+				request.token(),
+				request.notification().title(),
+				body,
+				Map.of("type", "chat", "roomId", String.valueOf(request.data().roomId()))
+		);
+
 		return ResponseEntity.ok(SuccessResponse.of(PushSuccessCode.PUSH_TEST_SUCCESS));
 	}
 }
