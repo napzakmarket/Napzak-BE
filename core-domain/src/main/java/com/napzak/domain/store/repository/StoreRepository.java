@@ -18,21 +18,6 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
 	Optional<StoreEntity> findBySocialTypeAndSocialId(@Param("socialId") String socialId,
 		@Param("socialType") SocialType socialType);
 
-	@Query("""
-			SELECT new com.napzak.domain.store.vo.StoreStatus(
-			s.id,
-			s.photo,
-			s.nickname,
-			COALESCE(SUM(CASE WHEN p.tradeType = 'SELL' THEN 1 ELSE 0 END), 0),
-			COALESCE(SUM(CASE WHEN p.tradeType = 'BUY' THEN 1 ELSE 0 END), 0)
-			)
-			FROM StoreEntity s
-			LEFT JOIN ProductEntity p ON s.id = p.storeId
-			WHERE s.id = :storeId
-			GROUP BY s.id, s.nickname
-		""")
-	StoreStatus findStoreStatusById(@Param("storeId") Long storeId);
-
 	@Query("SELECT u.nickname FROM StoreEntity u WHERE u.id = :storeId")
 	String findNicknameById(@Param("storeId") Long storeId);
 

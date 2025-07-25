@@ -48,11 +48,6 @@ public class StoreRetriever {
 	}
 
 	@Transactional(readOnly = true)
-	public StoreStatus getStoreStatusDtoById(final Long storeId) {
-		return storeRepository.findStoreStatusById(storeId);
-	}
-
-	@Transactional(readOnly = true)
 	public Store findBySocialTypeAndSocialId(String socialId, SocialType socialType) {
 		StoreEntity storeEntity = storeRepository.findBySocialTypeAndSocialId(socialId, socialType)
 			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
