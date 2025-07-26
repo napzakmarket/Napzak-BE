@@ -19,7 +19,9 @@ import com.napzak.chat.domain.push.api.dto.request.PushTokenSettingUpdateRequest
 import com.napzak.chat.domain.push.api.dto.response.PushSettingResponse;
 import com.napzak.chat.domain.push.api.service.PushTokenService;
 import com.napzak.common.auth.annotation.CurrentMember;
+import com.napzak.common.exception.NapzakException;
 import com.napzak.common.exception.dto.SuccessResponse;
+import com.napzak.domain.push.code.PushErrorCode;
 import com.napzak.domain.push.util.FcmPushSender;
 
 import jakarta.validation.Valid;
@@ -87,16 +89,18 @@ public class PushTokenController {
 		String body = switch (request.messageType()) {
 			case TEXT -> request.notification().body();
 			case IMAGE -> "(사진)";
-			default -> null;
+			default -> throw new NapzakException(PushErrorCode.TYPE_NOT_SERVICED);
 		};
 
+		try {
 			fcmPushSender.sendMessage(
 				request.opponentId(),
 				request.token(),
 				request.notification().title(),
 				body,
 				Map.of("type", "chat", "roomId", String.valueOf(request.data().roomId()))
-		);
+			);
+		} catch (Exception e) { throw new NapzakException(PushErrorCode.PUSH_DELIVERY_FAILED); }
 
 		return ResponseEntity.ok(SuccessResponse.of(PushSuccessCode.PUSH_TEST_SUCCESS));
 	}
