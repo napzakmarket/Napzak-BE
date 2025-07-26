@@ -26,7 +26,9 @@ import com.napzak.domain.push.util.FcmPushSender;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("api/v1/push-tokens")
 @RequiredArgsConstructor
@@ -100,7 +102,12 @@ public class PushTokenController {
 				body,
 				Map.of("type", "chat", "roomId", String.valueOf(request.data().roomId()))
 			);
-		} catch (Exception e) { throw new NapzakException(PushErrorCode.PUSH_DELIVERY_FAILED); }
+
+			log.info("테스트 푸시 전송 성공 - storeId: {}, opponentId: {}", storeId, request.opponentId());
+
+		} catch (Exception e) {
+			log.error("테스트 푸시 전송 실패 - storeId: {}, opponentId: {}, error: {}", storeId, request.opponentId(), e.getMessage(), e);
+			throw new NapzakException(PushErrorCode.PUSH_DELIVERY_FAILED); }
 
 		return ResponseEntity.ok(SuccessResponse.of(PushSuccessCode.PUSH_TEST_SUCCESS));
 	}
