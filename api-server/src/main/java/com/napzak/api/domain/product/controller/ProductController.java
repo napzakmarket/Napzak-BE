@@ -704,18 +704,26 @@ public class ProductController implements ProductApi {
 			.body(SuccessResponse.of(ProductSuccessCode.TOP_BUY_PRODUCT_GET_SUCCESS, response));
 	}
 
+	// 자신의 상품에 대해 요청할 경우, 채팅방 목록에서 진입하거나 알림 통해서 진입할 때 nullable하게 roomId 받아서 그대로 반환
 	@Override
 	@GetMapping("/chat/{productId}")
 	public ResponseEntity<SuccessResponse<ProductChatInfoResponse>> getProductChatInfo(
 		@PathVariable Long productId,
+		@RequestParam(required = false) Long roomId,
 		@CurrentMember Long currentStoreId
 	) {
 		ProductWithFirstPhoto product = productService.getProductChatInfo(productId);
-		if(currentStoreId.equals(product.getStoreId())) throw new NapzakException(ProductErrorCode.PRODUCT_CHAT_SELF_REQUEST_NOT_ALLOWED);
 		Store store = productStoreFacade.getStoreById(product.getStoreId());
 		String genreName = productGenreFacade.getGenreName(product.getGenreId());
-		Long roomId = productChatFacade.findCommonRoomIdByStores(
-			currentStoreId, product.getStoreId()).orElse(null);
+
+		if (roomId == null) {
+			if (currentStoreId.equals(product.getStoreId())) {
+				throw new NapzakException(ProductErrorCode.PRODUCT_CHAT_SELF_ROOM_ID_REQUIRED);
+			}
+			roomId = productChatFacade.findCommonRoomIdByStores(
+				currentStoreId, product.getStoreId()).orElse(null);
+		}
+
 		ProductChatInfoResponse productChatInfoResponse = ProductChatInfoResponse
 			.from(product, store, genreName, roomId);
 

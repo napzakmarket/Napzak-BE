@@ -271,6 +271,7 @@ public interface ProductApi {
 	@GetMapping("/chat/{productId}")
 	ResponseEntity<SuccessResponse<ProductChatInfoResponse>> getProductChatInfo(
 		@PathVariable Long productId,
+		@RequestParam(required = false) Long roomId,
 		@CurrentMember Long storeId
 	);
 
