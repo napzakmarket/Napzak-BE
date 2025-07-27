@@ -15,7 +15,7 @@ public enum ProductErrorCode implements BaseErrorCode {
 	*/
 	INVALID_CURSOR_FORMAT(HttpStatus.BAD_REQUEST, "유효하지 않은 커서입니다."),
 	PRODUCT_PHOTO_SEQUENCE_DUPLICATED(HttpStatus.BAD_REQUEST, "사진 순서는 중복될 수 없습니다."),
-	PRODUCT_CHAT_SELF_REQUEST_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "자신의 상품에는 채팅 정보 조회를 요청할 수 없습니다."),
+	PRODUCT_CHAT_SELF_ROOM_ID_REQUIRED(HttpStatus.BAD_REQUEST, "자신의 상품에 채팅 정보 조회를 요청 시 roomId를 포함해야합니다."),
 
 	/*
 	403 Forbidden
