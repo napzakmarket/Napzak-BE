@@ -86,7 +86,7 @@ public class GenreController implements GenreApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("/genres")
 	public ResponseEntity<SuccessResponse<GenreNameListResponse>> getGenreNames(
 		@RequestParam(required = false) String cursor,
@@ -106,7 +106,7 @@ public class GenreController implements GenreApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("genres/search")
 	public ResponseEntity<SuccessResponse<GenreNameListResponse>> searchGenreNames(
 		@RequestParam String searchWord,
@@ -136,7 +136,7 @@ public class GenreController implements GenreApi {
 		);
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("genres/detail/{genreId}")
 	public ResponseEntity<SuccessResponse<GenrePageResponse>> getGenrePage(
 		@CurrentMember Long storeId,

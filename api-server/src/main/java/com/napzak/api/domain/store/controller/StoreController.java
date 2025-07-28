@@ -207,7 +207,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.PROFILE_UPDATE_SUCCESS, response));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("/mypage")
 	public ResponseEntity<SuccessResponse<MyPageResponse>> getMyPageInfo(
 		@CurrentMember final Long currentStoreId
@@ -222,7 +222,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_MYPAGE_INFO_SUCCESS, myPageResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("/mypage/setting")
 	public ResponseEntity<SuccessResponse<SettingLinkResponse>> getSettingLink(
 		@CurrentMember final Long currentStoreId
@@ -239,7 +239,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_SETTING_LINK_SUCCESS, settingLinkResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.ONBOARDING})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
 	@GetMapping("/terms")
 	public ResponseEntity<SuccessResponse<OnboardingTermsListResponse>> getOnboardingTerms() {
 		int activeBundleId = storeTermsBundleFacade.findActiveBundleId();
@@ -257,7 +257,7 @@ public class StoreController implements StoreApi {
 			SuccessResponse.of(StoreSuccessCode.GET_ONBOARDING_TERMS_SUCCESS, onboardingTermsListResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED, Role.ONBOARDING})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
 	@PostMapping("/terms/{bundleId}")
 	public ResponseEntity<SuccessResponse<Void>> registerAgreement(
 		@PathVariable("bundleId") int bundleId,
@@ -269,7 +269,7 @@ public class StoreController implements StoreApi {
 			SuccessResponse.of(StoreSuccessCode.REGISTER_TERMS_AGREEMENT_SUCCESS));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("/{storeId}")
 	public ResponseEntity<SuccessResponse<StoreInfoResponse>> getStoreInfo(
 		@PathVariable("storeId") Long ownerId,
@@ -332,7 +332,7 @@ public class StoreController implements StoreApi {
 			.body(SuccessResponse.of(StoreSuccessCode.STORE_REPORT_SUCCESS, response));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PostMapping("/withdraw")
 	public ResponseEntity<SuccessResponse<StoreWithdrawResponse>> withdraw(
 		@CurrentMember final Long storeId,

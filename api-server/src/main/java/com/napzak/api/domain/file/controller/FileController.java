@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.napzak.common.auth.annotation.AuthorizedRole;
+import com.napzak.common.auth.role.enums.Role;
 import com.napzak.common.exception.dto.SuccessResponse;
 import com.napzak.api.domain.file.dto.ProductPresignedUrlFindAllResponse;
 import com.napzak.api.domain.file.dto.StorePresignedUrlFindAllResponse;
@@ -25,6 +27,7 @@ public class FileController implements FileApi {
 
 	private final FileService fileService;
 
+	@AuthorizedRole({Role.ADMIN})
 	@Override
 	@GetMapping("/product")
 	public ResponseEntity<SuccessResponse<ProductPresignedUrlFindAllResponse>> generatePresignedUrlsForProduct(
@@ -38,6 +41,7 @@ public class FileController implements FileApi {
 			SuccessResponse.of(FileSuccessCode.PRESIGNED_URL_ISSUED, response));
 	}
 
+	@AuthorizedRole({Role.ADMIN})
 	@GetMapping("/stores")
 	public ResponseEntity<SuccessResponse<StorePresignedUrlFindAllResponse>> generatePresignedUrlsForStore(
 		@RequestParam List<String> profileImages) {
@@ -50,6 +54,7 @@ public class FileController implements FileApi {
 			SuccessResponse.of(FileSuccessCode.PRESIGNED_URL_ISSUED, response));
 	}
 
+	@AuthorizedRole({Role.ADMIN})
 	@Override
 	@GetMapping("/chat")
 	public ResponseEntity<SuccessResponse<ChatPresignedUrlFindAllResponse>> generatePresignedUrlsForChat(
