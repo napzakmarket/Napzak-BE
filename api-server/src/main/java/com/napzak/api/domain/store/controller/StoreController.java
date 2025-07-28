@@ -369,6 +369,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.CHANGE_STORE_ROLE_SUCCESS));
 	}
 
+	@AuthorizedRole({Role.ADMIN})
 	@PostMapping("/clean")
 	public ResponseEntity<SuccessResponse<Void>> storePhotoCleanUp(@CurrentMember Long currentStoreId) {
 		Role currentStoreRole = storeService.findRoleByStoreId(currentStoreId);

@@ -887,6 +887,7 @@ public class ProductController implements ProductApi {
 			));
 	}
 
+	@AuthorizedRole({Role.ADMIN})
 	@PostMapping("/clean")
 	public ResponseEntity<SuccessResponse<Void>> productPhotoCleanUp(@CurrentMember Long currentStoreId) {
 		Role currentStoreRole = productStoreFacade.getStoreRole(currentStoreId);

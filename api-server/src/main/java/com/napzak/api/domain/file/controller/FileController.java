@@ -27,7 +27,6 @@ public class FileController implements FileApi {
 
 	private final FileService fileService;
 
-	@AuthorizedRole({Role.ADMIN})
 	@Override
 	@GetMapping("/product")
 	public ResponseEntity<SuccessResponse<ProductPresignedUrlFindAllResponse>> generatePresignedUrlsForProduct(
@@ -41,7 +40,6 @@ public class FileController implements FileApi {
 			SuccessResponse.of(FileSuccessCode.PRESIGNED_URL_ISSUED, response));
 	}
 
-	@AuthorizedRole({Role.ADMIN})
 	@GetMapping("/stores")
 	public ResponseEntity<SuccessResponse<StorePresignedUrlFindAllResponse>> generatePresignedUrlsForStore(
 		@RequestParam List<String> profileImages) {
@@ -54,7 +52,6 @@ public class FileController implements FileApi {
 			SuccessResponse.of(FileSuccessCode.PRESIGNED_URL_ISSUED, response));
 	}
 
-	@AuthorizedRole({Role.ADMIN})
 	@Override
 	@GetMapping("/chat")
 	public ResponseEntity<SuccessResponse<ChatPresignedUrlFindAllResponse>> generatePresignedUrlsForChat(

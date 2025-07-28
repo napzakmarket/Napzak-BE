@@ -34,7 +34,6 @@ public class ChatWebSocketController {
 	private final ChatPushFacade chatPushFacade;
 	private final SimpMessagingTemplate messagingTemplate;
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@MessageMapping("/chat.send")
 	public void sendMessage(ChatMessageRequest request, SimpMessageHeaderAccessor headerAccessor) {
 		// 현재 유저 정보
