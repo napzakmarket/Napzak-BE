@@ -3,6 +3,11 @@ package com.napzak.chat.domain.chat.api.controller;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+
 import com.napzak.chat.domain.chat.api.ChatPushFacade;
 import com.napzak.chat.domain.chat.api.ChatStoreFacade;
 import com.napzak.chat.domain.chat.api.dto.request.ChatMessageRequest;
@@ -12,16 +17,11 @@ import com.napzak.common.auth.annotation.AuthorizedRole;
 import com.napzak.common.auth.context.StoreSession;
 import com.napzak.common.auth.context.StoreSessionContextHolder;
 import com.napzak.common.auth.role.enums.Role;
+
 import com.napzak.domain.chat.entity.enums.MessageType;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
 
 @Slf4j
 @Controller
@@ -34,14 +34,17 @@ public class ChatWebSocketController {
 	private final ChatPushFacade chatPushFacade;
 	private final SimpMessagingTemplate messagingTemplate;
 
-	@MessageMapping("/chat.send")
+	@MessageMapping("/chat/send")
 	public void sendMessage(ChatMessageRequest request, SimpMessageHeaderAccessor headerAccessor) {
 		// 현재 유저 정보
 		StoreSession session = (StoreSession) headerAccessor.getSessionAttributes().get("storeSession");
 		if (session == null) {
-			log.warn("storeSession is null! rejecting");
+			log.info("storeSession is null! rejecting");
 			return;
 		}
+		log.info("📨 Received chat.send: {}", request);
+		log.info("📌 session info: {}", session);
+
 		Long senderId = session.getId();
 
 		List<String> deviceTokens = Collections.emptyList();

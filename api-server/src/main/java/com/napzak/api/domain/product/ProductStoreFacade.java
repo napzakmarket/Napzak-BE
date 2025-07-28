@@ -23,11 +23,6 @@ public class ProductStoreFacade {
 		return storeRetriever.findStoreByStoreId(storeId);
 	}
 
-	public StoreStatus getStoreStatusByStoreId(Long storeId) {
-
-		return storeRetriever.getStoreStatusDtoById(storeId);
-	}
-
 	public List<Long> getGenrePreferenceIds(Long storeId) {
 		return genrePreferenceRetriever.getGenrePreferenceIds(storeId);
 	}

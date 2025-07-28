@@ -51,12 +51,12 @@ public interface ChatParticipantRepository extends JpaRepository<ChatParticipant
 		@Param("storeId") Long storeId
 	);
 
+	// 상대방이 isExited true여도 조회 가능해야하므로 isExited 관련 조건 없음
 	@Query("""
     SELECT cp
     FROM ChatParticipantEntity cp
     WHERE cp.roomId IN :roomIds
       AND cp.storeId <> :storeId
-      AND cp.isExited = false
 """)
 	List<ChatParticipantEntity> findOpponentsByRoomIds(
 		@Param("roomIds") List<Long> roomIds,

@@ -1,4 +1,4 @@
-// api-server build.gradle
+// chat-server build.gradle
 plugins {
     id 'org.springframework.boot'
 }
@@ -36,6 +36,8 @@ dependencies {
     // Spring Security for WebSocket
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.security:spring-security-messaging'
+
+    implementation 'com.fasterxml.jackson.module:jackson-modules-java8:2.17.0'
 }
 
 jar { enabled = false }

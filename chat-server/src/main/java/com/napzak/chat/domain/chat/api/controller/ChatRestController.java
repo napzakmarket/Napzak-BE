@@ -23,6 +23,7 @@ import com.napzak.chat.domain.chat.api.dto.request.cursor.ChatMessageCursor;
 import com.napzak.chat.domain.chat.api.dto.response.ChatMessageListResponse;
 import com.napzak.chat.domain.chat.api.dto.response.ChatRoomCreateResponse;
 import com.napzak.chat.domain.chat.api.dto.response.ChatRoomEnterResponse;
+import com.napzak.chat.domain.chat.api.dto.response.ChatRoomIdListResponse;
 import com.napzak.chat.domain.chat.api.dto.response.ChatRoomListResponse;
 import com.napzak.chat.domain.chat.api.dto.response.ChatRoomProductIdUpdateResponse;
 import com.napzak.chat.domain.chat.api.dto.response.ChatRoomSummary;
@@ -67,6 +68,16 @@ public class ChatRestController {
 	}
 
 	@AuthorizedRole({Role.ADMIN, Role.STORE})
+	@GetMapping("/ids")
+	public ResponseEntity<SuccessResponse<ChatRoomIdListResponse>> getChatRoomIds(
+		@CurrentMember Long storeId
+	) {
+		List<ChatParticipant> myRooms = chatRestService.findMyChatRooms(storeId);
+		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_LIST_RETRIEVE_SUCCESS,
+			ChatRoomIdListResponse.of(myRooms.stream().map(ChatParticipant::getRoomId).distinct().toList())));
+	}
+
+  @AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping
 	public ResponseEntity<SuccessResponse<ChatRoomListResponse>> getChatRooms(
 		@RequestParam(required = false) String deviceToken,

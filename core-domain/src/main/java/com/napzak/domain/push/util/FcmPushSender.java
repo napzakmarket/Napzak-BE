@@ -34,10 +34,13 @@ public class FcmPushSender {
 				.build();
 
 			firebaseMessaging.send(message);
+
+			//log.info("푸시 메시지가 보내졌음." + message);
 		} catch (FirebaseMessagingException e) {
 			if (e.getMessagingErrorCode() == MessagingErrorCode.UNREGISTERED) {
 				// DB에서 무효 토큰 삭제
 				pushDeviceTokenRemover.delete(storeId, deviceToken);
+				log.warn("무효 토큰 삭제됨.");
 			} else {
 				log.warn("FCM Push 실패: {}", e.getMessagingErrorCode());
 			}

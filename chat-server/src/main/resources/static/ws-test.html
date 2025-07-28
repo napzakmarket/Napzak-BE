@@ -5,7 +5,16 @@
     <title>Napzak Chat WebSocket Tester</title>
     <style>
         body { font-family: sans-serif; margin: 20px; }
-        #log { height: 320px; overflow-y: auto; background: #111; color: #0f0; padding: 10px; font-family: monospace; white-space: pre-wrap; }
+        #log, #chatWindow, #debugWindow {
+            height: 200px;
+            overflow-y: auto;
+            background: #111;
+            color: #0f0;
+            padding: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-top: 10px;
+        }
         label { display:block; margin-top: 10px; }
         input[type=text] { width: 100%; }
         button { margin-right: 5px; margin-top: 10px; }
@@ -37,7 +46,14 @@
     <button onclick="sendPing()">Ping</button>
 </div>
 
+<h3>🟢 Chat Messages</h3>
+<pre id="chatWindow"></pre>
+
+<h3>🛠️ Debug Log</h3>
 <pre id="log"></pre>
+
+<h3>🔍 STOMP Debug (Wire log)</h3>
+<pre id="debugWindow"></pre>
 
 <script>
     let client = null;
@@ -49,30 +65,39 @@
         el.scrollTop = el.scrollHeight;
     }
 
+    function debug(message) {
+        const el = document.getElementById('debugWindow');
+        el.textContent += message + "\n";
+        el.scrollTop = el.scrollHeight;
+    }
+
+    function printChat(message) {
+        const el = document.getElementById('chatWindow');
+        el.textContent += message + "\n";
+        el.scrollTop = el.scrollHeight;
+    }
+
     function connect() {
         if (connected) { log("이미 연결되어 있습니다"); return; }
         const baseUrl = document.getElementById('url').value;
         const token = document.getElementById('token').value.trim();
 
-        // 🔑 토큰은 쿼리 파라미터로 전달 (브라우저는 WebSocket 핸드셰이크에 커스텀 헤더 불가)
         const wsUrl = `${baseUrl}?token=${encodeURIComponent(token)}`;
         const ws = new WebSocket(wsUrl);
 
         client = Stomp.over(ws);
-        client.debug = null; // 필요하면 console 로그 활성화
+        client.debug = debug;
 
-        // 💓 하트비트 설정 추가
         client.heartbeat.outgoing = 10000;
         client.heartbeat.incoming = 10000;
 
-        client.connect({}, frame => {
-                connected = true;
-                log("✅ CONNECTED\n" + (frame.headers['server'] || ''));
-                subscribeRoom();
-            }, err => {
-                log("❌ CONNECT ERROR: " + JSON.stringify(err));
-            }
-        );
+        client.connect({ host: "/" }, frame => {
+            connected = true;
+            log("✅ CONNECTED\n" + (frame.headers['server'] || ''));
+            subscribeRoom();
+        }, err => {
+            log("❌ CONNECT ERROR: " + JSON.stringify(err));
+        });
     }
 
     function disconnect() {
@@ -88,7 +113,7 @@
         if (!connected) { log("먼저 연결하세요"); return; }
         const roomId = document.getElementById('roomId').value;
         client.subscribe(`/topic/chat.room.${roomId}`, msg => {
-            log(`📩 ${msg.body}`);
+            printChat(`📩 ${msg.body}`);
         });
         log(`🔔 SUBSCRIBED /topic/chat.room.${roomId}`);
     }
@@ -103,14 +128,14 @@
             content,
             metadata: null
         };
-        client.send('/pub/chat.send', {}, JSON.stringify(payload));
+        client.send('/pub/chat/send', {}, JSON.stringify(payload));
         log(`➡️ SENT: ${JSON.stringify(payload)}`);
     }
 
     function subscribePong() {
         if (!connected) { log("먼저 연결하세요"); return; }
         client.subscribe("/topic/pong", msg => {
-            log(`🔥 PONG received: ${msg.body}`);
+            printChat(`🔥 PONG received: ${msg.body}`);
         });
         log("🔔 SUBSCRIBED /topic/pong");
     }

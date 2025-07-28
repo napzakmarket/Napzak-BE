@@ -323,6 +323,10 @@ public class ProductService {
 		productReportSaver.save(reporterId, product, photoList, title, description, contact);
 	}
 
+	public int countByStoreIdAndTradeTypeAndIsVisibleTrue(Long storeId, TradeType tradeType) {
+		return productRetriever.countProductsByStoreIdAndTradeType(storeId, tradeType);
+	}
+
 	private ProductPagination retrieveAndPreparePagination(
 		ProductRetrieval retrievalLogic,
 		int size

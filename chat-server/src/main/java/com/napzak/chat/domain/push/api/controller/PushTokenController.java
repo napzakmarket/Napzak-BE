@@ -1,5 +1,7 @@
 package com.napzak.chat.domain.push.api.controller;
 
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.napzak.chat.domain.push.api.code.PushSuccessCode;
+import com.napzak.chat.domain.push.api.dto.request.PushTestRequest;
 import com.napzak.chat.domain.push.api.dto.request.PushTokenRegisterRequest;
 import com.napzak.chat.domain.push.api.dto.request.PushTokenSettingUpdateRequest;
 import com.napzak.chat.domain.push.api.dto.response.PushSettingResponse;
@@ -18,17 +21,25 @@ import com.napzak.chat.domain.push.api.service.PushTokenService;
 import com.napzak.common.auth.annotation.AuthorizedRole;
 import com.napzak.common.auth.annotation.CurrentMember;
 import com.napzak.common.auth.role.enums.Role;
+
+import com.napzak.common.exception.NapzakException;
 import com.napzak.common.exception.dto.SuccessResponse;
+import com.napzak.domain.push.code.PushErrorCode;
+import com.napzak.domain.push.util.FcmPushSender;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("api/v1/push-tokens")
 @RequiredArgsConstructor
 public class PushTokenController {
 
 	private final PushTokenService pushTokenService;
+	//테스트용
+	private final FcmPushSender fcmPushSender;
 
 	@PostMapping
 	public ResponseEntity<SuccessResponse<Void>> registerPushToken(
@@ -75,5 +86,34 @@ public class PushTokenController {
 	) {
 		pushTokenService.deletePushToken(storeId, deviceToken);
 		return ResponseEntity.ok(SuccessResponse.of(PushSuccessCode.PUSH_TOKEN_DELETE_SUCCESS));
+	}
+
+	@PostMapping("/test")
+	public ResponseEntity<SuccessResponse<Void>> sendTestPush(
+		@CurrentMember Long storeId,
+		@RequestBody @Valid PushTestRequest request
+	) {
+		String body = switch (request.messageType()) {
+			case TEXT -> request.notification().body();
+			case IMAGE -> "(사진)";
+			default -> throw new NapzakException(PushErrorCode.TYPE_NOT_SERVICED);
+		};
+
+		try {
+			fcmPushSender.sendMessage(
+				request.opponentId(),
+				request.token(),
+				request.notification().title(),
+				body,
+				Map.of("type", "chat", "roomId", String.valueOf(request.data().roomId()))
+			);
+
+			log.info("테스트 푸시 전송 성공 - storeId: {}, opponentId: {}", storeId, request.opponentId());
+
+		} catch (Exception e) {
+			log.error("테스트 푸시 전송 실패 - storeId: {}, opponentId: {}, error: {}", storeId, request.opponentId(), e.getMessage(), e);
+			throw new NapzakException(PushErrorCode.PUSH_DELIVERY_FAILED); }
+
+		return ResponseEntity.ok(SuccessResponse.of(PushSuccessCode.PUSH_TEST_SUCCESS));
 	}
 }
