@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.napzak.api.domain.genre.dto.request.cursor.OldestCursor;
 import com.napzak.api.domain.genre.dto.response.GenreListResponse;
 import com.napzak.api.domain.genre.service.GenrePagination;
+import com.napzak.common.auth.annotation.AuthorizedRole;
+import com.napzak.common.auth.role.enums.Role;
 import com.napzak.domain.external.entity.enums.LinkType;
 import com.napzak.common.auth.annotation.CurrentMember;
 import com.napzak.common.exception.NapzakException;
@@ -35,6 +37,7 @@ public class GenreController implements GenreApi {
 	private final GenreLinkFacade genreLinkFacade;
 
 	@Override
+	@AuthorizedRole({Role.ADMIN, Role.ONBOARDING, Role.STORE})
 	@GetMapping("/onboarding/genres")
 	public ResponseEntity<SuccessResponse<GenreListResponse>> getGenres(
 		@RequestParam(required = false) String cursor,
@@ -53,6 +56,7 @@ public class GenreController implements GenreApi {
 	}
 
 	@Override
+	@AuthorizedRole({Role.ADMIN, Role.ONBOARDING, Role.STORE})
 	@GetMapping("/onboarding/genres/search")
 	public ResponseEntity<SuccessResponse<GenreListResponse>> searchGenres(
 		@RequestParam String searchWord,
@@ -82,6 +86,7 @@ public class GenreController implements GenreApi {
 	}
 
 	@Override
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("/genres")
 	public ResponseEntity<SuccessResponse<GenreNameListResponse>> getGenreNames(
 		@RequestParam(required = false) String cursor,
@@ -101,6 +106,7 @@ public class GenreController implements GenreApi {
 	}
 
 	@Override
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("genres/search")
 	public ResponseEntity<SuccessResponse<GenreNameListResponse>> searchGenreNames(
 		@RequestParam String searchWord,
@@ -130,6 +136,7 @@ public class GenreController implements GenreApi {
 		);
 	}
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("genres/detail/{genreId}")
 	public ResponseEntity<SuccessResponse<GenrePageResponse>> getGenrePage(
 		@CurrentMember Long storeId,

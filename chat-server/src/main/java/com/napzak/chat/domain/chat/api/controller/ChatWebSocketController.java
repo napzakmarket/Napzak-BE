@@ -13,7 +13,11 @@ import com.napzak.chat.domain.chat.api.ChatStoreFacade;
 import com.napzak.chat.domain.chat.api.dto.request.ChatMessageRequest;
 import com.napzak.chat.domain.chat.api.service.ChatRestService;
 import com.napzak.chat.domain.chat.api.service.ChatWebSocketService;
+import com.napzak.common.auth.annotation.AuthorizedRole;
 import com.napzak.common.auth.context.StoreSession;
+import com.napzak.common.auth.context.StoreSessionContextHolder;
+import com.napzak.common.auth.role.enums.Role;
+
 import com.napzak.domain.chat.entity.enums.MessageType;
 
 import lombok.RequiredArgsConstructor;

@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.napzak.common.auth.annotation.AuthorizedRole;
 import com.napzak.common.auth.annotation.CurrentMember;
+import com.napzak.common.auth.role.enums.Role;
 import com.napzak.common.exception.dto.SuccessResponse;
 import com.napzak.api.domain.interest.InterestProductFacade;
 import com.napzak.api.domain.interest.code.InterestSuccessCode;
@@ -26,6 +28,7 @@ public class InterestController implements InterestApi {
 	private final InterestProductFacade interestProductFacade;
 
 	@Override
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PostMapping("/{productId}")
 	public ResponseEntity<SuccessResponse<Void>> postInterest(
 		@PathVariable("productId") Long productId,
@@ -40,6 +43,7 @@ public class InterestController implements InterestApi {
 	}
 
 	@Override
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@DeleteMapping("/{productId}")
 	public ResponseEntity<SuccessResponse<Void>> deleteInterest(
 		@PathVariable("productId") Long productId,

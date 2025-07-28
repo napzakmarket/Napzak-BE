@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.api.domain.store.dto.response.AccessTokenGenerateResponse;
 import com.napzak.api.domain.store.dto.response.LoginSuccessResponse;
+import com.napzak.domain.store.code.StoreErrorCode;
 import com.napzak.domain.store.crud.store.StoreRetriever;
 import com.napzak.common.auth.client.dto.StoreSocialInfoResponse;
 import com.napzak.common.auth.jwt.exception.TokenErrorCode;
@@ -47,6 +48,10 @@ public class AuthenticationService {
 		Store store = storeRetriever.findStoreByStoreId(storeId);
 		final Role role = store.getRole();
 		final String nickname = store.getNickname();
+
+		if(role == Role.REPORTED) {
+			throw new NapzakException(StoreErrorCode.REPORTED_USER_ACCESS_DENIED);
+		}
 
 		Collection<GrantedAuthority> authorities = List.of(role.toGrantedAuthority());
 

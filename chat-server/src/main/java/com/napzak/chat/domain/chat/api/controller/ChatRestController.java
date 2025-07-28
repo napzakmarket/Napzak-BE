@@ -57,6 +57,7 @@ public class ChatRestController {
 	private final ChatStoreFacade chatStoreFacade;
 	private final ChatPushFacade chatPushFacade;
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PostMapping
 	public ResponseEntity<SuccessResponse<ChatRoomCreateResponse>> createChatRoom(
 		@RequestBody ChatRoomCreateRequest request,
@@ -76,6 +77,7 @@ public class ChatRestController {
 			ChatRoomIdListResponse.of(myRooms.stream().map(ChatParticipant::getRoomId).distinct().toList())));
 	}
 
+  @AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping
 	public ResponseEntity<SuccessResponse<ChatRoomListResponse>> getChatRooms(
 		@RequestParam(required = false) String deviceToken,
@@ -114,6 +116,7 @@ public class ChatRestController {
 		);
 	}
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("/{roomId}/messages")
 	public ResponseEntity<SuccessResponse<ChatMessageListResponse>> getMessages(
 		@PathVariable Long roomId,
@@ -146,6 +149,7 @@ public class ChatRestController {
 				ChatRoomProductIdUpdateResponse.of(updatedProductId)));
 	}
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PatchMapping("/{roomId}/enter")
 	public ResponseEntity<SuccessResponse<ChatRoomEnterResponse>> enterChatRoom(
 		@PathVariable Long roomId,
@@ -156,6 +160,7 @@ public class ChatRestController {
 		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_ENTER_SUCCESS, ChatRoomEnterResponse.of(productId)));
 	}
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PatchMapping("/{roomId}/leave")
 	public ResponseEntity<SuccessResponse<Void>> leaveChatRoom(
 		@PathVariable Long roomId,
@@ -165,6 +170,7 @@ public class ChatRestController {
 		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_LEAVE_SUCCESS));
 	}
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PatchMapping("/{roomId}/exit")
 	public ResponseEntity<SuccessResponse<Void>> exitChatRoom(
 		@PathVariable Long roomId,

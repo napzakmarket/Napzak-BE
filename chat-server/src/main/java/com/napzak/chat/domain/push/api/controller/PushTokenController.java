@@ -18,7 +18,10 @@ import com.napzak.chat.domain.push.api.dto.request.PushTokenRegisterRequest;
 import com.napzak.chat.domain.push.api.dto.request.PushTokenSettingUpdateRequest;
 import com.napzak.chat.domain.push.api.dto.response.PushSettingResponse;
 import com.napzak.chat.domain.push.api.service.PushTokenService;
+import com.napzak.common.auth.annotation.AuthorizedRole;
 import com.napzak.common.auth.annotation.CurrentMember;
+import com.napzak.common.auth.role.enums.Role;
+
 import com.napzak.common.exception.NapzakException;
 import com.napzak.common.exception.dto.SuccessResponse;
 import com.napzak.domain.push.code.PushErrorCode;
@@ -53,6 +56,7 @@ public class PushTokenController {
 		return ResponseEntity.ok(SuccessResponse.of(PushSuccessCode.PUSH_TOKEN_CREATE_SUCCESS));
 	}
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("/{deviceToken}/settings")
 	public ResponseEntity<SuccessResponse<PushSettingResponse>> getPushSetting(
 		@PathVariable String deviceToken,
@@ -64,6 +68,7 @@ public class PushTokenController {
 		);
 	}
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PatchMapping("/{deviceToken}/settings")
 	public ResponseEntity<SuccessResponse<Void>> updatePushSetting(
 		@PathVariable String deviceToken,
