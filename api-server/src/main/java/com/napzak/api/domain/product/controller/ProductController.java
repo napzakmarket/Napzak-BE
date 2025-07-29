@@ -721,7 +721,7 @@ public class ProductController implements ProductApi {
 			.body(SuccessResponse.of(ProductSuccessCode.TOP_BUY_PRODUCT_GET_SUCCESS, response));
 	}
 
-	// 자신의 상품에 대해 요청할 경우, 채팅방 목록에서 진입하거나 알림 통해서 진입할 때 nullable하게 roomId 받아서 그대로 반환
+	// 채팅방 목록에서 진입하거나 알림 통해서 진입할 때 자신의 상품에 대해 요청할 경우, RequestParam 으로 roomId 받아서 그대로 반환
 	@Override
 	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("/chat/{productId}")
@@ -731,9 +731,10 @@ public class ProductController implements ProductApi {
 		@CurrentMember Long currentStoreId
 	) {
 		ProductWithFirstPhoto product = productService.getProductChatInfo(productId);
-		Store store = productStoreFacade.getStoreById(product.getStoreId());
 		String genreName = productGenreFacade.getGenreName(product.getGenreId());
+		boolean isMyProduct = product.getStoreId().equals(currentStoreId);
 
+		// RequestParam 으로 roomId를 받지 않은 경우는 상품상세페이지에서 채팅뷰로 진입한 케이스로 채팅방 존재 여부 확인이 필요함
 		if (roomId == null) {
 			if (currentStoreId.equals(product.getStoreId())) {
 				throw new NapzakException(ProductErrorCode.PRODUCT_CHAT_SELF_ROOM_ID_REQUIRED);
@@ -741,9 +742,14 @@ public class ProductController implements ProductApi {
 			roomId = productChatFacade.findCommonRoomIdByStores(
 				currentStoreId, product.getStoreId()).orElse(null);
 		}
+		// roomId가 null이면 채팅방 생성 전이고, 이 경우 api를 요청한 currentStore의 상대방은 무조건 product의 주인임
+		// roomId(채팅방)가 존재한다면, roomId랑 currentStoreId로 채팅 상대방 chatParticipant 찾아서 상대방 storeId 가져옴
+		Long chatOpponentStoreId = roomId == null ?
+			product.getStoreId() : productChatFacade.findChatOpponentStoreId(roomId, currentStoreId);
+		Store store = productStoreFacade.getStoreById(chatOpponentStoreId);
 
 		ProductChatInfoResponse productChatInfoResponse = ProductChatInfoResponse
-			.from(product, store, genreName, roomId);
+			.from(product, store, genreName, roomId, isMyProduct);
 
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_CHAT_INFO_GET_SUCCESS, productChatInfoResponse));
