@@ -112,7 +112,7 @@ public class ChatRestController {
 
 		return ResponseEntity.ok(
 			SuccessResponse.of(ChatSuccessCode.CHATROOM_LIST_RETRIEVE_SUCCESS,
-				ChatRoomListResponse.of(summaries, isMessageAllowed))
+				ChatRoomListResponse.of(summaries, storeId, isMessageAllowed))
 		);
 	}
 

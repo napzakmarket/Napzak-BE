@@ -128,7 +128,9 @@
             content,
             metadata: null
         };
-        client.send('/pub/chat/send', {}, JSON.stringify(payload));
+        client.send('/pub/chat/send',
+            { 'content-type': 'application/json' },
+            JSON.stringify(payload));
         log(`➡️ SENT: ${JSON.stringify(payload)}`);
     }
 
