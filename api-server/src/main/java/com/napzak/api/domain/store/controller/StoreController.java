@@ -35,13 +35,13 @@ import com.napzak.api.domain.store.dto.response.LoginSuccessResponse;
 import com.napzak.api.domain.store.dto.response.MyPageResponse;
 import com.napzak.api.domain.store.dto.response.OnboardingTermsListResponse;
 import com.napzak.api.domain.store.dto.response.SettingLinkResponse;
+import com.napzak.api.domain.store.dto.response.StoreIdResponse;
 import com.napzak.api.domain.store.dto.response.StoreInfoResponse;
 import com.napzak.api.domain.store.dto.response.StoreProfileModifyResponse;
 import com.napzak.api.domain.store.dto.response.StoreReportResponse;
 import com.napzak.api.domain.store.dto.response.StoreWithdrawResponse;
 import com.napzak.api.domain.store.dto.response.TermsDto;
 import com.napzak.common.auth.annotation.AuthorizedRole;
-import com.napzak.domain.chat.entity.enums.MessageType;
 import com.napzak.domain.chat.entity.enums.SystemMessageType;
 import com.napzak.domain.chat.vo.ChatMessage;
 import com.napzak.domain.external.entity.enums.LinkType;
@@ -143,12 +143,20 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.LOGOUT_SUCCESS, null));
 	}
 
-	@PostMapping("refresh-token")
+	@PostMapping("/refresh-token")
 	public ResponseEntity<SuccessResponse<AccessTokenGenerateResponse>> reissue(
 		@CookieValue("refreshToken") String refreshToken
 	) {
 		AccessTokenGenerateResponse accessTokenGenerateResponse = authenticationService.generateAccessTokenFromRefreshToken(refreshToken);
 		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.ACCESS_TOKEN_REISSUE_SUCCESS, accessTokenGenerateResponse));
+	}
+
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
+	@GetMapping("/store-id")
+	public ResponseEntity<SuccessResponse<StoreIdResponse>> getStoreId(
+		@CurrentMember final Long currentStoreId
+	) {
+		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.GET_STORE_ID_SUCCESS, StoreIdResponse.of(currentStoreId)));
 	}
 
 	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
