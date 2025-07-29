@@ -22,6 +22,13 @@ public class RabbitMQConfig {
 	public static final String ROUTING_KEY = "chat.system";
 	public static final String RETRY_ROUTING_KEY = "chat.system.retry";
 
+	public static final String ROOM_CREATED_QUEUE = "chat.room-created.queue";
+	public static final String ROOM_CREATED_ROUTING_KEY = "chat.room-created";
+	public static final String ROOM_CREATED_RETRY_QUEUE = "chat.room-created.retry";
+	public static final String ROOM_CREATED_RETRY_ROUTING_KEY = "chat.room-created.retry";
+	public static final String ROOM_CREATED_DLQ_QUEUE = "chat.room-created.dlq";
+	public static final String ROOM_CREATED_DLQ_ROUTING_KEY = "chat.room-created.dlq";
+
 	// 1️⃣ Exchange
 	@Bean
 	public TopicExchange chatExchange() {
@@ -37,6 +44,14 @@ public class RabbitMQConfig {
 			.build();
 	}
 
+	@Bean
+	public Queue roomCreatedQueue() {
+		return QueueBuilder.durable(ROOM_CREATED_QUEUE)
+			.withArgument("x-dead-letter-exchange", EXCHANGE_NAME)
+			.withArgument("x-dead-letter-routing-key", ROOM_CREATED_RETRY_ROUTING_KEY)
+			.build();
+	}
+
 	// 3️⃣ Retry Queue (Delay 후 메인으로)
 	@Bean
 	public Queue retryQueue() {
@@ -47,10 +62,24 @@ public class RabbitMQConfig {
 			.build();
 	}
 
+	@Bean
+	public Queue roomCreatedRetryQueue() {
+		return QueueBuilder.durable(ROOM_CREATED_RETRY_QUEUE)
+			.withArgument("x-dead-letter-exchange", EXCHANGE_NAME)
+			.withArgument("x-dead-letter-routing-key", ROOM_CREATED_ROUTING_KEY)
+			.withArgument("x-message-ttl", 3000)
+			.build();
+	}
+
 	// 4️⃣ DLQ (최종 실패 저장)
 	@Bean
 	public Queue dlqQueue() {
 		return QueueBuilder.durable(DLQ_QUEUE).build();
+	}
+
+	@Bean
+	public Queue roomCreatedDlqQueue() {
+		return QueueBuilder.durable(ROOM_CREATED_DLQ_QUEUE).build();
 	}
 
 	// 5️⃣ Binding
@@ -67,6 +96,27 @@ public class RabbitMQConfig {
 	@Bean
 	public Binding dlqBinding() {
 		return BindingBuilder.bind(dlqQueue()).to(chatExchange()).with(DLQ_QUEUE);
+	}
+
+	@Bean
+	public Binding roomCreatedBinding() {
+		return BindingBuilder.bind(roomCreatedQueue())
+			.to(chatExchange())
+			.with(ROOM_CREATED_ROUTING_KEY);
+	}
+
+	@Bean
+	public Binding roomCreatedRetryBinding() {
+		return BindingBuilder.bind(roomCreatedRetryQueue())
+			.to(chatExchange())
+			.with(ROOM_CREATED_RETRY_ROUTING_KEY);
+	}
+
+	@Bean
+	public Binding roomCreatedDlqBinding() {
+		return BindingBuilder.bind(roomCreatedDlqQueue())
+			.to(chatExchange())
+			.with(ROOM_CREATED_DLQ_ROUTING_KEY);
 	}
 
 	// 6️⃣ Template + Retry
