@@ -5,7 +5,7 @@
     <title>Napzak Chat WebSocket Tester</title>
     <style>
         body { font-family: sans-serif; margin: 20px; }
-        #log, #chatWindow, #debugWindow {
+        #log, #roomCreatedWindow, #chatWindow, #debugWindow {
             height: 200px;
             overflow-y: auto;
             background: #111;
@@ -155,16 +155,16 @@
     function subscribeRoomCreated() {
         if (!connected) { log("먼저 연결하세요"); return; }
 
-        const storeId = prompt("🔑 내 storeId는?");  // 예: "1"
+        const storeId = prompt("🔑 내 storeId는?");
         client.subscribe(`/queue/chat.room-created.${storeId}`, msg => {
             const roomId = msg.body;
-            log(`🆕 새 채팅방 생성됨! roomId = ${roomId}`);
-            printChat(`🚨 Room created: ${roomId}`);
+            const el = document.getElementById('roomCreatedWindow');
+            el.textContent += `🆕 새 채팅방 생성됨! roomId = ${roomId}\n`;
+            el.scrollTop = el.scrollHeight;
         });
 
         log(`🔔 SUBSCRIBED /queue/chat.room-created.${storeId}`);
     }
-
 </script>
 </body>
 </html>
