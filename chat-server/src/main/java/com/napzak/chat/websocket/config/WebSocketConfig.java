@@ -43,7 +43,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
-		config.enableStompBrokerRelay("/topic")
+		config.enableStompBrokerRelay("/topic", "/queue", "/user")
 			.setRelayHost(relayHost)
 			.setRelayPort(relayPort)
 			.setClientLogin(relayLogin)
@@ -51,5 +51,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 			.setSystemLogin(systemLogin)
 			.setSystemPasscode(systemPasscode);
 		config.setApplicationDestinationPrefixes("/pub");
+		config.setUserDestinationPrefix("/user");
 	}
 }
