@@ -44,10 +44,14 @@
     <button onclick="sendMessage()">Send</button>
     <button onclick="subscribePong()">Subscribe Pong</button>
     <button onclick="sendPing()">Ping</button>
+    <button onclick="subscribeRoomCreated()">Subscribe RoomCreated</button>
 </div>
 
 <h3>🟢 Chat Messages</h3>
 <pre id="chatWindow"></pre>
+
+<h3>🆕 Room Created 알림</h3>
+<pre id="roomCreatedWindow"></pre>
 
 <h3>🛠️ Debug Log</h3>
 <pre id="log"></pre>
@@ -147,6 +151,20 @@
         client.send('/pub/ping', {}, {});
         log('🏓 PING');
     }
+
+    function subscribeRoomCreated() {
+        if (!connected) { log("먼저 연결하세요"); return; }
+
+        const storeId = prompt("🔑 내 storeId는?");  // 예: "1"
+        client.subscribe(`/queue/chat.room-created.${storeId}`, msg => {
+            const roomId = msg.body;
+            log(`🆕 새 채팅방 생성됨! roomId = ${roomId}`);
+            printChat(`🚨 Room created: ${roomId}`);
+        });
+
+        log(`🔔 SUBSCRIBED /queue/chat.room-created.${storeId}`);
+    }
+
 </script>
 </body>
 </html>
