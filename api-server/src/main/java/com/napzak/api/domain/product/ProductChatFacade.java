@@ -17,4 +17,8 @@ public class ProductChatFacade {
 	public Optional<Long> findCommonRoomIdByStores(Long myStoreId, Long opponentStoreId){
 		return chatParticipantRetriever.findCommonRoomIdByStores(myStoreId, opponentStoreId);
 	}
+
+	public Long findChatOpponentStoreId(Long roomId, Long myStoreId){
+		return chatParticipantRetriever.findOpponentStoreId(roomId, myStoreId);
+	}
 }
