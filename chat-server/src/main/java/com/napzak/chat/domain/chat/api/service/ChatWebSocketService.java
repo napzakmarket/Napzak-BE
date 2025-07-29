@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.chat.domain.chat.amqp.ChatMessageSender;
+import com.napzak.chat.domain.chat.amqp.RoomCreatedSender;
 import com.napzak.domain.push.util.FcmPushSender;
 import com.napzak.domain.chat.entity.enums.SystemMessageType;
 import com.napzak.domain.chat.crud.chatmessage.ChatMessageRetriever;
@@ -27,6 +28,7 @@ public class ChatWebSocketService {
 	private final ChatMessageSaver chatMessageSaver;
 	private final ChatParticipantUpdater chatParticipantUpdater;
 	private final ChatMessageSender chatMessageSender;
+	private final RoomCreatedSender roomCreatedSender;
 	private final FcmPushSender fcmPushSender;
 
 	@Transactional
@@ -75,6 +77,16 @@ public class ChatWebSocketService {
 		if (existsToday) return; // 이미 당일 date message 있음 → 아무것도 안함
 		ChatMessage dateMessage = chatMessageSaver.saveDateMessage(roomId);
 		chatMessageSender.sendServerMessage(dateMessage);
+	}
+
+	public void notifyRoomCreated(Long roomId, List<Long> participantStoreIds) {
+		if (roomId == null || participantStoreIds == null || participantStoreIds.isEmpty()) {
+			log.warn("Invalid parameters for room creation notification: roomId={}, participantStoreIds={}", roomId, participantStoreIds);
+			return;
+		}
+		for (Long storeId : participantStoreIds) {
+			roomCreatedSender.send(roomId, storeId);
+		}
 	}
 
 	private void sendChatPush(List<String> deviceTokens, String nickname, MessageType type, Long roomId, String content, Long opponentId) {

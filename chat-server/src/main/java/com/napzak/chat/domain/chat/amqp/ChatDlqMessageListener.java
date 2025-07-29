@@ -28,7 +28,7 @@ public class ChatDlqMessageListener {
 		log.warn("☠️ [DLQ] 최종 실패 메시지: {}", payload);
 
 		// DLQ는 이미 재시도 3회 이상 넘은 것이므로 다시 보내지 않고 알림만.
-		if (payload.retryCount() < 3) {
+		if (payload.retryCount() < MAX_RETRY_COUNT) {
 			// 만약 비즈니스상 다시 보내야 한다면 → Retry Queue로 수동 복귀 가능.
 			ChatMessagePayload retried = ChatMessagePayload.retry(payload);
 			log.info("🔁 DLQ에서 수동 재시도: retryCount = {}", retried.retryCount());
