@@ -60,16 +60,15 @@ public class ChatMessageSaver {
 	}
 
 	@Transactional
-	public ChatMessage saveDateMessage(Long roomId){
-		ChatMessageEntity entity = ChatMessageEntity.create(
-			roomId, null, MessageType.DATE, null,
-			toJson(Map.of(
-				"type", "DATE",
-				"date", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy년 M월 d일"))
-			))
-		);
-		chatMessageRepository.save(entity);
-
+	public ChatMessage saveDateMessage(Long roomId) {
+		String messageType = MessageType.DATE.name();
+		String metadata = toJson(Map.of(
+			"type", "DATE",
+			"date", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy년 M월 d일"))
+		));
+		chatMessageRepository.insertDateMessageIfNotExists(roomId, messageType, metadata);
+		ChatMessageEntity entity = chatMessageRepository.findTodayDateMessage(roomId, messageType)
+			.orElseThrow(() -> new NapzakException(ChatErrorCode.MESSAGE_NOT_FOUND));
 		return ChatMessage.fromEntity(entity);
 	}
 
