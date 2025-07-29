@@ -64,6 +64,7 @@ public class ChatRestController {
 		@CurrentMember Long senderId
 	){
 		Long roomId = chatRestService.createChatRoom(senderId, request.receiverId(), request.productId());
+		chatWebSocketService.notifyRoomCreated(roomId, List.of(senderId, request.receiverId()));
 		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_CREATE_SUCCESS, ChatRoomCreateResponse.of(roomId)));
 	}
 

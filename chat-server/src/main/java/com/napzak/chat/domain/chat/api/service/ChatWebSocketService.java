@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ public class ChatWebSocketService {
 	private final ChatMessageSaver chatMessageSaver;
 	private final ChatParticipantUpdater chatParticipantUpdater;
 	private final ChatMessageSender chatMessageSender;
+	private final SimpMessagingTemplate messagingTemplate;
 	private final FcmPushSender fcmPushSender;
 
 	@Transactional
@@ -75,6 +77,16 @@ public class ChatWebSocketService {
 		if (existsToday) return; // 이미 당일 date message 있음 → 아무것도 안함
 		ChatMessage dateMessage = chatMessageSaver.saveDateMessage(roomId);
 		chatMessageSender.sendServerMessage(dateMessage);
+	}
+
+	@Transactional
+	public void notifyRoomCreated(Long roomId, List<Long> participantStoreIds) {
+		for (Long storeId : participantStoreIds) {
+			messagingTemplate.convertAndSend(
+				"/queue/chat.room-created." + storeId,
+				roomId.toString()
+			);
+		}
 	}
 
 	private void sendChatPush(List<String> deviceTokens, String nickname, MessageType type, Long roomId, String content, Long opponentId) {
