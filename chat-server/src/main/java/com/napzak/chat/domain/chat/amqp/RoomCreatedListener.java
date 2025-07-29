@@ -1,8 +1,6 @@
 package com.napzak.chat.domain.chat.amqp;
 
-import static com.napzak.chat.domain.chat.amqp.RabbitMQConfig.ROOM_CREATED_QUEUE;
-import static com.napzak.chat.domain.chat.amqp.RabbitMQConfig.EXCHANGE_NAME;
-import static com.napzak.chat.domain.chat.amqp.RabbitMQConfig.ROOM_CREATED_RETRY_ROUTING_KEY;
+import static com.napzak.chat.domain.chat.amqp.RabbitMQConfig.*;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -30,7 +28,7 @@ public class RoomCreatedListener {
 			messagingTemplate.convertAndSend(destination, payload.roomId().toString());
 			log.info("🚀 Notified store {} about new room {}", payload.storeId(), payload.roomId());
 		} catch (Exception e) {
-			if (payload.retryCount() < 3) {
+			if (payload.retryCount() < MAX_RETRY_COUNT) {
 				RoomCreatedPayload retried = RoomCreatedPayload.retry(payload);
 				rabbitTemplate.convertAndSend(EXCHANGE_NAME, ROOM_CREATED_RETRY_ROUTING_KEY, retried);
 				log.warn("🔁 Retrying RoomCreatedPayload: {}", retried);

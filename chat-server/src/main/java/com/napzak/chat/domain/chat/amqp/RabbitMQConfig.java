@@ -29,6 +29,8 @@ public class RabbitMQConfig {
 	public static final String ROOM_CREATED_DLQ_QUEUE = "chat.room-created.dlq";
 	public static final String ROOM_CREATED_DLQ_ROUTING_KEY = "chat.room-created.dlq";
 
+	public static final int MAX_RETRY_COUNT = 3;
+
 	// 1️⃣ Exchange
 	@Bean
 	public TopicExchange chatExchange() {

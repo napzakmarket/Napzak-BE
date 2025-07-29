@@ -20,7 +20,7 @@ public class RoomCreatedDlqListener {
 	@RabbitListener(queues = ROOM_CREATED_DLQ_QUEUE)
 	public void handle(RoomCreatedPayload payload) {
 		log.warn("☠️ [DLQ] RoomCreatedPayload failed: {}", payload);
-		if (payload.retryCount() < 3) {
+		if (payload.retryCount() < MAX_RETRY_COUNT) {
 			RoomCreatedPayload retried = RoomCreatedPayload.retry(payload);
 			rabbitTemplate.convertAndSend(EXCHANGE_NAME, ROOM_CREATED_RETRY_ROUTING_KEY, retried);
 			log.info("🔁 DLQ retrying RoomCreatedPayload: {}", retried);
