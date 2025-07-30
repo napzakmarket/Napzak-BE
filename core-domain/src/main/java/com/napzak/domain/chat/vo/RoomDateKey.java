@@ -11,6 +11,9 @@ public class RoomDateKey {
 	private final LocalDate date;
 
 	public RoomDateKey(Long roomId, LocalDate date) {
+		if (roomId == null || date == null) {
+			throw new IllegalArgumentException("roomId and date can't be null");
+		}
 		this.roomId = roomId;
 		this.date = date;
 	}
