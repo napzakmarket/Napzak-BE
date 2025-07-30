@@ -19,7 +19,9 @@ import com.napzak.domain.chat.repository.ChatMessageRepository;
 import com.napzak.domain.chat.vo.ChatMessage;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ChatMessageSaver {
@@ -61,15 +63,21 @@ public class ChatMessageSaver {
 
 	@Transactional
 	public ChatMessage saveDateMessage(Long roomId) {
-		String messageType = MessageType.DATE.name();
-		String metadata = toJson(Map.of(
-			"type", "DATE",
-			"date", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy년 M월 d일"))
-		));
-		chatMessageRepository.insertDateMessageIfNotExists(roomId, messageType, metadata);
-		ChatMessageEntity entity = chatMessageRepository.findTodayDateMessage(roomId, messageType)
-			.orElseThrow(() -> new NapzakException(ChatErrorCode.MESSAGE_NOT_FOUND));
-		return ChatMessage.fromEntity(entity);
+		try {
+			String messageType = MessageType.DATE.name();
+			String metadata = toJson(Map.of(
+				"type", "DATE",
+				"date", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy년 M월 d일"))
+			));
+			chatMessageRepository.insertDateMessageIfNotExists(roomId, messageType, metadata);
+
+			return chatMessageRepository.findTodayDateMessage(roomId, messageType)
+				.map(ChatMessage::fromEntity)
+				.orElse(null); // 예외 대신 null 반환
+		} catch (Exception e) {
+			log.warn("❗ DATE 메시지 처리 실패: {}", e.getMessage(), e);
+			return null;
+		}
 	}
 
 	/**
