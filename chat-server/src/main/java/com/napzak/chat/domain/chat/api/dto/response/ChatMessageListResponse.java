@@ -1,11 +1,14 @@
 package com.napzak.chat.domain.chat.api.dto.response;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 import com.napzak.chat.domain.chat.api.service.ChatMessagePagination;
 import com.napzak.common.util.TimeUtils;
 import com.napzak.domain.chat.entity.enums.ChatMessageSortOption;
+import com.napzak.domain.chat.entity.enums.MessageType;
 import com.napzak.domain.chat.vo.ChatMessage;
 
 import jakarta.annotation.Nullable;
@@ -20,43 +23,58 @@ public record ChatMessageListResponse(
 		Long myStoreId,
 		Long opponentLastReadId
 	) {
-		List<ChatMessage> rawMessages = pagination.getMessages();
-		List<ChatMessageDto> processedMessages = new ArrayList<>();
+		List<ChatMessage> rawMessages = pagination.getMessages(); // 최신순 정렬
+		Deque<ChatMessageDto> resultDeque = new ArrayDeque<>(); // addFirst로 최신순 유지
 
 		boolean stopUnread = false;
 		Long prevSenderId = null;
+		boolean datePassed = false;  // DATE 메시지 이후 첫 메시지 플래그
 
-		for (ChatMessage m : rawMessages) {
-			// senderId null-safe 비교
-			boolean isMessageOwner = myStoreId.equals(m.getSenderId());
+		// 시간순으로 순회 (역방향)
+		for (int i = rawMessages.size() - 1; i >= 0; i--) {
+			ChatMessage message = rawMessages.get(i);
+			Long senderId = message.getSenderId();
+			boolean isOwner = myStoreId.equals(senderId);
 
-			boolean isRead;
-			switch (m.getType()) {
-				case PRODUCT, SYSTEM, DATE -> isRead = true;
+			// isRead 계산
+			boolean isRead = switch (message.getType()) {
+				case PRODUCT, SYSTEM, DATE -> true;
 				default -> {
-					if (!isMessageOwner) {
-						isRead = true;
-					} else {
-						if (opponentLastReadId == null) {
-							isRead = false;
-						} else if (m.getId() <= opponentLastReadId) {
-							stopUnread = true;
-						}
-						isRead = stopUnread;
-					}
+					if (!isOwner) yield true;
+					if (opponentLastReadId == null) yield false;
+					if (message.getId() <= opponentLastReadId) stopUnread = true;
+					yield stopUnread;
 				}
+			};
+
+			// DATE 만나면 플래그 설정
+			if (message.getType() == MessageType.DATE) {
+				prevSenderId = null;
+				datePassed = true;
 			}
 
-			// senderId null-safe 비교
-			boolean isProfileNeeded = m.getSenderId() != null && !isMessageOwner && !m.getSenderId().equals(prevSenderId);
-			prevSenderId = m.getSenderId();
+			boolean isProfileNeeded = false;
 
-			processedMessages.add(ChatMessageDto.from(m, isRead, isMessageOwner, isProfileNeeded));
+			if (message.getType() != MessageType.DATE) {
+				if (datePassed) {
+					isProfileNeeded = true;     //  DATE 뒤 첫 메시지는 무조건 true
+				} else if (senderId != null && !senderId.equals(prevSenderId)) {
+					isProfileNeeded = true;     //  sender 바뀐 경우도 true
+				}
+
+				if (senderId != null) {
+					prevSenderId = senderId;
+				}
+
+				datePassed = false;             //  DATE 이후 첫 메시지 처리 완료
+			}
+
+			// addFirst로 최신순 정렬 유지
+			resultDeque.addFirst(ChatMessageDto.from(message, isRead, isOwner, isProfileNeeded));
 		}
 
 		String nextCursor = pagination.generateNextCursor(sortOption);
-
-		return new ChatMessageListResponse(processedMessages, nextCursor);
+		return new ChatMessageListResponse(new ArrayList<>(resultDeque), nextCursor);
 	}
 
 	public record ChatMessageDto(
