@@ -16,4 +16,6 @@ COPY api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json /app/f
 # ✅ JAR 파일은 builder에서 복사
 COPY --from=builder /usr/src/app/api-server/build/libs/api-server.jar /app/
 
+ENV TZ=Asia/Seoul
+ENV JAVA_TOOL_OPTIONS="-Duser.timezone=Asia/Seoul"
 ENTRYPOINT ["java", "-jar", "/app/api-server.jar", "--spring.profiles.active=dev"]
