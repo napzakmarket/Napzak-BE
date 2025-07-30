@@ -12,13 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.chat.domain.chat.amqp.ChatMessageSender;
 import com.napzak.chat.domain.chat.amqp.RoomCreatedSender;
-import com.napzak.domain.chat.vo.RoomDateKey;
-import com.napzak.domain.push.util.FcmPushSender;
-import com.napzak.domain.chat.entity.enums.SystemMessageType;
 import com.napzak.domain.chat.crud.chatmessage.ChatMessageSaver;
 import com.napzak.domain.chat.crud.chatparticipant.ChatParticipantUpdater;
 import com.napzak.domain.chat.entity.enums.MessageType;
+import com.napzak.domain.chat.entity.enums.SystemMessageType;
 import com.napzak.domain.chat.vo.ChatMessage;
+import com.napzak.domain.chat.vo.RoomDateKey;
+import com.napzak.domain.push.util.FcmPushSender;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,19 @@ public class ChatWebSocketService {
 	private final RoomCreatedSender roomCreatedSender;
 	private final FcmPushSender fcmPushSender;
 	private final DateMessageSender dateMessageSender;
+
 	private final ConcurrentMap<RoomDateKey, AtomicBoolean> dateMessageSentMap = new ConcurrentHashMap<>();
+	private volatile LocalDate lastCleanupDate = LocalDate.now();
+
+	// TODO: 향후 caffeine 도입 예정
+	private void clearIfNewDay() {
+		LocalDate today = LocalDate.now();
+		if (!today.equals(lastCleanupDate)) {
+			dateMessageSentMap.clear();
+			lastCleanupDate = today;
+			log.info("Cleared dateMessageSentMap for new day: {}", today);
+		}
+	}
 
 	@Transactional
 	public void sendStoreMessage(
@@ -48,6 +60,8 @@ public class ChatWebSocketService {
 	){
 		log.info("🧵 sendStoreMessage called: roomId={}, senderId={}, type={}, content={}", roomId, senderId, type, content);
 		try {
+			clearIfNewDay();
+
 			RoomDateKey key = new RoomDateKey(roomId, LocalDate.now());
 			if (dateMessageSentMap.computeIfAbsent(key, k -> new AtomicBoolean(false)).compareAndSet(false, true)) {
 				dateMessageSender.sendDateMessage(roomId);
