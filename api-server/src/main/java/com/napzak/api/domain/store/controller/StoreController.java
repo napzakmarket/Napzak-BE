@@ -41,6 +41,7 @@ import com.napzak.api.domain.store.dto.response.StoreProfileModifyResponse;
 import com.napzak.api.domain.store.dto.response.StoreReportResponse;
 import com.napzak.api.domain.store.dto.response.StoreWithdrawResponse;
 import com.napzak.api.domain.store.dto.response.TermsDto;
+import com.napzak.api.domain.store.dto.response.TokensReissueResponse;
 import com.napzak.common.auth.annotation.AuthorizedRole;
 import com.napzak.domain.chat.entity.enums.SystemMessageType;
 import com.napzak.domain.chat.vo.ChatMessage;
@@ -70,6 +71,7 @@ import com.napzak.api.domain.store.service.TokenService;
 import com.napzak.common.exception.NapzakException;
 import com.napzak.common.exception.dto.SuccessResponse;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -390,6 +392,30 @@ public class StoreController implements StoreApi {
 			SuccessResponse.of(
 				StoreSuccessCode.STORE_PHOTO_DELETE_SUCCESS
 			));
+	}
+
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
+	@PostMapping("/reissue-tokens")
+	public ResponseEntity<SuccessResponse<TokensReissueResponse>> reissueTokens(
+		HttpServletRequest request,
+		@CurrentMember Long currentStoreId
+	) {
+		String authHeader = request.getHeader("Authorization");
+		String oldRefreshToken = authHeader.substring(7);
+
+		Role storeRole = storeService.findRoleByStoreId(currentStoreId);
+
+		String newRefreshToken = authenticationService.generateRefreshTokenFromOldRefreshToken(oldRefreshToken, storeRole);
+
+		tokenService.deleteRefreshToken(currentStoreId);
+		tokenService.saveRefreshToken(currentStoreId, newRefreshToken);
+
+		String newAccessToken = authenticationService.generateAccessTokenFromRefreshToken(newRefreshToken).accessToken();
+
+		TokensReissueResponse tokensReissueResponse = TokensReissueResponse.of(newAccessToken, newRefreshToken, storeRole);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(StoreSuccessCode.TOKENS_REISSUE_SUCCESS, tokensReissueResponse));
 	}
 
 	private List<GenreNameDto> genrePreferenceResponseGenerator(List<GenrePreference> genreList) {

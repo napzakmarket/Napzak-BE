@@ -35,6 +35,7 @@ public enum StoreSuccessCode implements BaseSuccessCode {
 	STORE_REPORT_SUCCESS(HttpStatus.CREATED, "상점이 신고되었습니다."),
 	STORE_WITHDRAW_SUCCESS(HttpStatus.CREATED, "상점 탈퇴가 완료되었습니다."),
 	REGISTER_TERMS_AGREEMENT_SUCCESS(HttpStatus.CREATED, "약관 동의 내용이 저장되었습니다."),
+	TOKENS_REISSUE_SUCCESS(HttpStatus.OK, "토큰 재발행에 성공하였습니다."),
 	;
 
 	private final HttpStatus httpStatus;
