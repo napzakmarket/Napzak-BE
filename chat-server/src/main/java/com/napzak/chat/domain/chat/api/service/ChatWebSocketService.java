@@ -3,15 +3,18 @@ package com.napzak.chat.domain.chat.api.service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.chat.domain.chat.amqp.ChatMessageSender;
 import com.napzak.chat.domain.chat.amqp.RoomCreatedSender;
+import com.napzak.domain.chat.vo.RoomDateKey;
 import com.napzak.domain.push.util.FcmPushSender;
 import com.napzak.domain.chat.entity.enums.SystemMessageType;
-import com.napzak.domain.chat.crud.chatmessage.ChatMessageRetriever;
 import com.napzak.domain.chat.crud.chatmessage.ChatMessageSaver;
 import com.napzak.domain.chat.crud.chatparticipant.ChatParticipantUpdater;
 import com.napzak.domain.chat.entity.enums.MessageType;
@@ -24,12 +27,13 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class ChatWebSocketService {
-	private final ChatMessageRetriever chatMessageRetriever;
 	private final ChatMessageSaver chatMessageSaver;
 	private final ChatParticipantUpdater chatParticipantUpdater;
 	private final ChatMessageSender chatMessageSender;
 	private final RoomCreatedSender roomCreatedSender;
 	private final FcmPushSender fcmPushSender;
+	private final DateMessageSender dateMessageSender;
+	private final ConcurrentMap<RoomDateKey, AtomicBoolean> dateMessageSentMap = new ConcurrentHashMap<>();
 
 	@Transactional
 	public void sendStoreMessage(
@@ -44,7 +48,10 @@ public class ChatWebSocketService {
 	){
 		log.info("🧵 sendStoreMessage called: roomId={}, senderId={}, type={}, content={}", roomId, senderId, type, content);
 		try {
-			sendDateMessage(roomId);
+			RoomDateKey key = new RoomDateKey(roomId, LocalDate.now());
+			if (dateMessageSentMap.computeIfAbsent(key, k -> new AtomicBoolean(false)).compareAndSet(false, true)) {
+				dateMessageSender.sendDateMessage(roomId);
+			}
 			log.info("✅ Date message check complete");
 
 			ChatMessage storeMessage = chatMessageSaver.save(roomId, senderId, type, content, metadata);
@@ -69,14 +76,6 @@ public class ChatWebSocketService {
 	public void sendSystemMessage(Long roomId, SystemMessageType systemMessageType) {
 		ChatMessage systemMessage = chatMessageSaver.saveSystemMessage(roomId, systemMessageType);
 		chatMessageSender.sendServerMessage(systemMessage);
-	}
-
-	@Transactional
-	public void sendDateMessage(Long roomId) {
-		boolean existsToday = chatMessageRetriever.existsDateMessageToday(roomId, LocalDate.now());
-		if (existsToday) return; // 이미 당일 date message 있음 → 아무것도 안함
-		ChatMessage dateMessage = chatMessageSaver.saveDateMessage(roomId);
-		chatMessageSender.sendServerMessage(dateMessage);
 	}
 
 	public void notifyRoomCreated(Long roomId, List<Long> participantStoreIds) {
