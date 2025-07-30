@@ -7,6 +7,15 @@ RUN chmod +x ./gradlew && ./gradlew :api-server:bootJar -x test
 
 # ---------- runtime ----------
 FROM openjdk:17-jdk-alpine
+
+# ✅ tzdata 설치 (JVM + OS에 Asia/Seoul 반영 위해 필요)
+RUN apk add --no-cache tzdata
+
+# ✅ JVM과 OS 모두 KST로 강제 설정
+ENV TZ=Asia/Seoul
+ENV JAVA_TOOL_OPTIONS="-Duser.timezone=Asia/Seoul"
+
+# ✅ 작업 디렉토리 설정
 WORKDIR /app
 
 # ✅ CI에서 주입된 파일 COPY (빌더에서 복사하지 않음!)
@@ -16,6 +25,4 @@ COPY api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json /app/f
 # ✅ JAR 파일은 builder에서 복사
 COPY --from=builder /usr/src/app/api-server/build/libs/api-server.jar /app/
 
-ENV TZ=Asia/Seoul
-ENV JAVA_TOOL_OPTIONS="-Duser.timezone=Asia/Seoul"
 ENTRYPOINT ["java", "-jar", "/app/api-server.jar", "--spring.profiles.active=dev"]
