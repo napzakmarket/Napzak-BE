@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,8 +78,12 @@ public class ChatMessageSaver {
 			return chatMessageRepository.findTodayDateMessage(roomId, messageType)
 				.map(ChatMessage::fromEntity)
 				.orElse(null); // 예외 대신 null 반환
-		} catch (Exception e) {
-			log.warn("❗ DATE 메시지 처리 실패: {}", e.getMessage(), e);
+		} catch (DataIntegrityViolationException e) {
+			log.debug("DATE 메시지 중복 삽입 시도: roomId={}", roomId);
+			return null;
+		}
+		catch (Exception e) {
+			log.warn("DATE 메시지 처리 중 예외 발생: roomId={}, error={}", roomId, e.getMessage(), e);
 			return null;
 		}
 	}
