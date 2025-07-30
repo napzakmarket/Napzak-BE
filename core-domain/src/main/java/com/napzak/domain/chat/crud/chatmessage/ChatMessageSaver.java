@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +63,7 @@ public class ChatMessageSaver {
 			.toList();
 	}
 
+	@Nullable
 	@Transactional
 	public ChatMessage saveDateMessage(Long roomId) {
 		try {
