@@ -154,7 +154,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.ACCESS_TOKEN_REISSUE_SUCCESS, accessTokenGenerateResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING, Role.WITHDRAWN})
 	@GetMapping("/store-id")
 	public ResponseEntity<SuccessResponse<StoreIdResponse>> getStoreId(
 		@CurrentMember final Long currentStoreId
@@ -162,7 +162,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.GET_STORE_ID_SUCCESS, StoreIdResponse.of(currentStoreId)));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING, Role.WITHDRAWN})
 	@PostMapping("/nickname/check")
 	public ResponseEntity<SuccessResponse<Void>> checkNickname(
 		@RequestBody @Valid NicknameRequest request
@@ -171,7 +171,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.VALID_NICKNAME_SUCCESS));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING, Role.WITHDRAWN})
 	@PostMapping("/nickname/register")
 	public ResponseEntity<SuccessResponse<Void>> registerNickname(
 		@CurrentMember final Long currentStoreId,
@@ -250,7 +250,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_SETTING_LINK_SUCCESS, settingLinkResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING, Role.WITHDRAWN})
 	@GetMapping("/terms")
 	public ResponseEntity<SuccessResponse<OnboardingTermsListResponse>> getOnboardingTerms() {
 		int activeBundleId = storeTermsBundleFacade.findActiveBundleId();
@@ -268,7 +268,7 @@ public class StoreController implements StoreApi {
 			SuccessResponse.of(StoreSuccessCode.GET_ONBOARDING_TERMS_SUCCESS, onboardingTermsListResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING, Role.WITHDRAWN})
 	@PostMapping("/terms/{bundleId}")
 	public ResponseEntity<SuccessResponse<Void>> registerAgreement(
 		@PathVariable("bundleId") int bundleId,
@@ -300,7 +300,7 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_STORE_INFO_SUCCESS, storeInfoResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING, Role.WITHDRAWN})
 	@PostMapping("genres/register")
 	public ResponseEntity<SuccessResponse<GenreNameListResponse>> register(
 		@CurrentMember final Long currentStoreId,
@@ -395,7 +395,7 @@ public class StoreController implements StoreApi {
 			));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.WITHDRAWN})
 	@PostMapping("/reissue-tokens")
 	public ResponseEntity<SuccessResponse<TokensReissueResponse>> reissueTokens(
 		HttpServletRequest request,
