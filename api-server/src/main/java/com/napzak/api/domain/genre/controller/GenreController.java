@@ -37,7 +37,7 @@ public class GenreController implements GenreApi {
 	private final GenreLinkFacade genreLinkFacade;
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.ONBOARDING, Role.STORE})
+	@AuthorizedRole({Role.ADMIN, Role.ONBOARDING, Role.STORE, Role.WITHDRAWN})
 	@GetMapping("/onboarding/genres")
 	public ResponseEntity<SuccessResponse<GenreListResponse>> getGenres(
 		@RequestParam(required = false) String cursor,
@@ -56,7 +56,7 @@ public class GenreController implements GenreApi {
 	}
 
 	@Override
-	@AuthorizedRole({Role.ADMIN, Role.ONBOARDING, Role.STORE})
+	@AuthorizedRole({Role.ADMIN, Role.ONBOARDING, Role.STORE, Role.WITHDRAWN})
 	@GetMapping("/onboarding/genres/search")
 	public ResponseEntity<SuccessResponse<GenreListResponse>> searchGenres(
 		@RequestParam String searchWord,
