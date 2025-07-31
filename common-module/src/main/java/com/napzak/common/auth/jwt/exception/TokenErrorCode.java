@@ -25,6 +25,7 @@ public enum TokenErrorCode implements BaseErrorCode {
 	 */
 	AUTHENTICATION_CODE_EXPIRED(HttpStatus.UNAUTHORIZED, "인가코드가 만료되었습니다"),
 	REFRESH_TOKEN_EXPIRED_ERROR(HttpStatus.UNAUTHORIZED, "리프레쉬 토큰이 만료되었습니다"),
+	INVALID_AUTHORIZATION_HEADER(HttpStatus.UNAUTHORIZED, "유효하지 않은 authorization 헤더입니다"),
 
 	/*
 	 404 NOT FOUND

@@ -49,7 +49,7 @@ public class AuthenticationService {
 		final Role role = store.getRole();
 		final String nickname = store.getNickname();
 
-		if(role == Role.REPORTED) {
+		if (role == Role.REPORTED) {
 			throw new NapzakException(StoreErrorCode.REPORTED_USER_ACCESS_DENIED);
 		}
 
@@ -95,6 +95,22 @@ public class AuthenticationService {
 			storeId, role.getRoleName(), authorities);
 
 		return AccessTokenGenerateResponse.from(jwtTokenProvider.issueAccessToken(authenticationToken));
+	}
+
+	@Transactional
+	public String generateRefreshTokenFromOldRefreshToken(String oldRefreshToken, Role role) {
+		validateRefreshToken(oldRefreshToken);
+
+		Long storeId = jwtTokenProvider.getStoreIdFromJwt(oldRefreshToken);
+		verifyStoreIdWithStoredToken(oldRefreshToken, storeId);
+
+		Collection<GrantedAuthority> authorities = List.of(role.toGrantedAuthority());
+
+		UsernamePasswordAuthenticationToken authenticationToken = createAuthenticationToken(storeId, role, authorities);
+		log.info("Generated new refresh token for storeId: {}, role: {}, authorities: {}",
+			storeId, role.getRoleName(), authorities);
+
+		return jwtTokenProvider.issueRefreshToken(authenticationToken);
 	}
 
 	/**
