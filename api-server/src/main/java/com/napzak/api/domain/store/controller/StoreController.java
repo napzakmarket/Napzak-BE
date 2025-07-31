@@ -43,6 +43,7 @@ import com.napzak.api.domain.store.dto.response.StoreWithdrawResponse;
 import com.napzak.api.domain.store.dto.response.TermsDto;
 import com.napzak.api.domain.store.dto.response.TokensReissueResponse;
 import com.napzak.common.auth.annotation.AuthorizedRole;
+import com.napzak.common.auth.jwt.exception.TokenErrorCode;
 import com.napzak.domain.chat.entity.enums.SystemMessageType;
 import com.napzak.domain.chat.vo.ChatMessage;
 import com.napzak.domain.external.entity.enums.LinkType;
@@ -401,6 +402,9 @@ public class StoreController implements StoreApi {
 		@CurrentMember Long currentStoreId
 	) {
 		String authHeader = request.getHeader("Authorization");
+		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+			throw new NapzakException(TokenErrorCode.INVALID_AUTHORIZATION_HEADER);
+		}
 		String oldRefreshToken = authHeader.substring(7);
 
 		Role storeRole = storeService.findRoleByStoreId(currentStoreId);
