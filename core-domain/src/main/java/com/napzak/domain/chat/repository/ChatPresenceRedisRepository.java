@@ -8,6 +8,9 @@ import java.util.Set;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Repository
 public class ChatPresenceRedisRepository {
 
@@ -57,13 +60,20 @@ public class ChatPresenceRedisRepository {
 		return USER_KEY_PREFIX + userId;
 	}
 
-	@SuppressWarnings("")
 	private Set<Long> castSet(Set<?> raw) {
 		Set<Long> result = new HashSet<>();
 		for (Object item : raw) {
 			if (item instanceof Integer i) result.add(i.longValue());
 			else if (item instanceof Long l) result.add(l);
-			else if (item instanceof String s) result.add(Long.parseLong(s));
+			else if (item instanceof String s) {
+				try {
+					result.add(Long.parseLong(s));
+				} catch (NumberFormatException e) {
+					log.warn("Failed to parse Redis set member as Long: {}", s, e);
+				}
+			} else {
+				log.warn("Unexpected type in Redis set: {} ({})", item, item.getClass().getSimpleName());
+			}
 		}
 		return result;
 	}
