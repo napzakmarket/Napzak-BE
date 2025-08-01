@@ -11,9 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.chat.domain.chat.amqp.ChatMessageSender;
+import com.napzak.chat.domain.chat.amqp.DateMessageSender;
+import com.napzak.chat.domain.chat.amqp.PresenceMessageSender;
 import com.napzak.chat.domain.chat.amqp.RoomCreatedSender;
 import com.napzak.domain.chat.crud.chatmessage.ChatMessageSaver;
 import com.napzak.domain.chat.crud.chatparticipant.ChatParticipantUpdater;
+import com.napzak.domain.chat.crud.chatpresence.ChatPresenceRedisUpdater;
 import com.napzak.domain.chat.entity.enums.MessageType;
 import com.napzak.domain.chat.entity.enums.SystemMessageType;
 import com.napzak.domain.chat.vo.ChatMessage;
@@ -29,10 +32,12 @@ import lombok.extern.slf4j.Slf4j;
 public class ChatWebSocketService {
 	private final ChatMessageSaver chatMessageSaver;
 	private final ChatParticipantUpdater chatParticipantUpdater;
+	private final ChatPresenceRedisUpdater chatPresenceRedisUpdater;
 	private final ChatMessageSender chatMessageSender;
 	private final RoomCreatedSender roomCreatedSender;
 	private final FcmPushSender fcmPushSender;
 	private final DateMessageSender dateMessageSender;
+	private final PresenceMessageSender presenceMessageSender;
 
 	private final ConcurrentMap<RoomDateKey, AtomicBoolean> dateMessageSentMap = new ConcurrentHashMap<>();
 	private volatile LocalDate lastCleanupDate = LocalDate.now();
@@ -100,6 +105,16 @@ public class ChatWebSocketService {
 		for (Long storeId : participantStoreIds) {
 			roomCreatedSender.send(roomId, storeId);
 		}
+	}
+
+	public void sendJoinBroadcast(Long roomId, Long userId) {
+		chatPresenceRedisUpdater.joinRoom(roomId, userId);
+		presenceMessageSender.sendPresenceMessage(roomId, userId, MessageType.JOIN);
+	}
+
+	public void sendLeaveBroadcast(Long roomId, Long userId) {
+		chatPresenceRedisUpdater.leaveRoom(roomId, userId);
+		presenceMessageSender.sendPresenceMessage(roomId, userId, MessageType.LEAVE);
 	}
 
 	private void sendChatPush(List<String> deviceTokens, String nickname, MessageType type, Long roomId, String content, Long opponentId) {
