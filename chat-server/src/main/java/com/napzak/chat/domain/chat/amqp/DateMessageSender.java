@@ -1,4 +1,4 @@
-package com.napzak.chat.domain.chat.api.service;
+package com.napzak.chat.domain.chat.amqp;
 
 import java.time.LocalDate;
 
@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.napzak.chat.domain.chat.amqp.ChatMessageSender;
 import com.napzak.domain.chat.crud.chatmessage.ChatMessageRetriever;
 import com.napzak.domain.chat.crud.chatmessage.ChatMessageSaver;
 import com.napzak.domain.chat.vo.ChatMessage;

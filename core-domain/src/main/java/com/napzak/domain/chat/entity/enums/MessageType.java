@@ -10,5 +10,7 @@ public enum MessageType {
 	IMAGE,
 	PRODUCT,
 	SYSTEM,
-	DATE
+	DATE,
+	JOIN,
+	LEAVE
 }

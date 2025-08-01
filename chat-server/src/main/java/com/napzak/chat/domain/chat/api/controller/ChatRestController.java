@@ -3,6 +3,7 @@ package com.napzak.chat.domain.chat.api.controller;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
@@ -156,9 +157,14 @@ public class ChatRestController {
 		@PathVariable Long roomId,
 		@CurrentMember Long storeId
 	){
-		chatRestService.enterChatRoom(roomId, storeId);
+		Set<Long> otherUsers = chatRestService.enterChatRoom(roomId, storeId);
+		try {
+			chatWebSocketService.sendJoinBroadcast(roomId, storeId);
+		} catch (Exception e) {
+			log.error("sendJoinBroadcast 실패 - roomId={}, userId={}", roomId, storeId, e);
+		}
 		Long productId = chatRestService.findProductIdByRoomId(roomId);
-		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_ENTER_SUCCESS, ChatRoomEnterResponse.of(productId)));
+		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_ENTER_SUCCESS, ChatRoomEnterResponse.of(productId, otherUsers)));
 	}
 
 	@AuthorizedRole({Role.ADMIN, Role.STORE})
@@ -168,6 +174,11 @@ public class ChatRestController {
 		@CurrentMember Long storeId
 	) {
 		chatRestService.leaveChatRoom(roomId, storeId);
+		try {
+			chatWebSocketService.sendLeaveBroadcast(roomId, storeId);
+		} catch (Exception e) {
+			log.error("sendLeaveBroadcast 실패 - roomId={}, userId={}", roomId, storeId, e);
+		}
 		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_LEAVE_SUCCESS));
 	}
 
