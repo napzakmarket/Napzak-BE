@@ -158,7 +158,11 @@ public class ChatRestController {
 		@CurrentMember Long storeId
 	){
 		Set<Long> otherUsers = chatRestService.enterChatRoom(roomId, storeId);
-		chatWebSocketService.sendJoinBroadcast(roomId, storeId);
+		try {
+			chatWebSocketService.sendJoinBroadcast(roomId, storeId);
+		} catch (Exception e) {
+			log.error("sendJoinBroadcast 실패 - roomId={}, userId={}", roomId, storeId, e);
+		}
 		Long productId = chatRestService.findProductIdByRoomId(roomId);
 		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_ENTER_SUCCESS, ChatRoomEnterResponse.of(productId, otherUsers)));
 	}
@@ -170,7 +174,11 @@ public class ChatRestController {
 		@CurrentMember Long storeId
 	) {
 		chatRestService.leaveChatRoom(roomId, storeId);
-		chatWebSocketService.sendLeaveBroadcast(roomId, storeId);
+		try {
+			chatWebSocketService.sendLeaveBroadcast(roomId, storeId);
+		} catch (Exception e) {
+			log.error("sendLeaveBroadcast 실패 - roomId={}, userId={}", roomId, storeId, e);
+		}
 		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_LEAVE_SUCCESS));
 	}
 
