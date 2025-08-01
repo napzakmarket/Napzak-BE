@@ -31,20 +31,15 @@ public class ChatParticipantEntity {
 	@Column(name = ChatParticipantTableConstants.COLUMN_LAST_READ_MESSAGE_ID, nullable = true)
 	private Long lastReadMessageId;
 
-	// 채팅방 진입 여부
-	@Column(name = ChatParticipantTableConstants.COLUMN_IS_LEAVED, nullable = false)
-	private Boolean isLeaved = true;
-
 	// 채팅방 구독 여부
 	@Column(name = ChatParticipantTableConstants.COLUMN_IS_EXITED, nullable = false)
 	private Boolean isExited = false;
 
 	@Builder
-	private ChatParticipantEntity(Long roomId, Long storeId, Long lastReadMessageId, Boolean isLeaved, Boolean isExited) {
+	private ChatParticipantEntity(Long roomId, Long storeId, Long lastReadMessageId, Boolean isExited) {
 		this.roomId = roomId;
 		this.storeId = storeId;
 		this.lastReadMessageId = lastReadMessageId;
-		this.isLeaved = isLeaved;
 		this.isExited = isExited;
 	}
 
@@ -52,7 +47,6 @@ public class ChatParticipantEntity {
 		return ChatParticipantEntity.builder()
 			.roomId(roomId)
 			.storeId(storeId)
-			.isLeaved(true)
 			.isExited(false)
 			.build();
 	}
@@ -67,11 +61,9 @@ public class ChatParticipantEntity {
 
 	public void enter(Long messageId){
 		this.lastReadMessageId = messageId;
-		this.isLeaved = false;
 	}
 
 	public void leave(Long messageId){
 		this.lastReadMessageId = messageId;
-		this.isLeaved = true;
 	}
 }
