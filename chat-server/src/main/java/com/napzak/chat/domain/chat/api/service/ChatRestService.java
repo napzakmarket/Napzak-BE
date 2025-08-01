@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import com.napzak.domain.chat.crud.chatmessage.ChatMessageRetriever;
 import com.napzak.domain.chat.crud.chatparticipant.ChatParticipantRetriever;
 import com.napzak.domain.chat.crud.chatparticipant.ChatParticipantSaver;
 import com.napzak.domain.chat.crud.chatparticipant.ChatParticipantUpdater;
+import com.napzak.domain.chat.crud.chatpresence.ChatPresenceRedisRetriever;
 import com.napzak.domain.chat.crud.chatroom.ChatRoomRetriever;
 import com.napzak.domain.chat.crud.chatroom.ChatRoomSaver;
 import com.napzak.domain.chat.crud.chatroom.ChatRoomUpdater;
@@ -36,6 +38,7 @@ public class ChatRestService {
 	private final ChatParticipantRetriever chatParticipantRetriever;
 	private final ChatParticipantUpdater chatParticipantUpdater;
 	private final ChatParticipantSaver chatParticipantSaver;
+	private final ChatPresenceRedisRetriever chatPresenceRedisRetriever;
 
 	@Transactional
 	public Long createChatRoom(Long senderId, Long receiverId, Long productId){
@@ -110,13 +113,20 @@ public class ChatRestService {
 	}
 
 	@Transactional
-	public void enterChatRoom(Long roomId, Long storeId){
+	public Set<Long> enterChatRoom(Long roomId, Long storeId){
 		boolean isParticipant = chatParticipantRetriever.existsActiveParticipant(roomId, storeId);
 		if (!isParticipant) {
 			throw new NapzakException(ChatErrorCode.NO_CHATROOM_ACCESS);
 		}
+
 		Long messageId = chatMessageRetriever.findLastMessageIdByRoomId(roomId);
 		chatParticipantUpdater.updateEnter(roomId, storeId, messageId);
+
+		Set<Long> otherUsers = chatPresenceRedisRetriever.getUsersInRoom(roomId).stream()
+			.filter(id -> !id.equals(storeId))
+			.collect(Collectors.toSet());
+
+		return otherUsers;
 	}
 
 	@Transactional
