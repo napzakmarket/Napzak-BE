@@ -60,8 +60,15 @@ public class SlangRetriever {
 		redisTemplate.delete(JAMO_SET);
 		redisTemplate.delete(MIXED_SET);
 
-		redisTemplate.opsForSet().add(RAW_SET, rawWords.toArray(new String[0]));
-		redisTemplate.opsForSet().add(JAMO_SET, jamoWords.toArray(new String[0]));
-		redisTemplate.opsForSet().add(MIXED_SET, mixedWords.toArray(new String[0]));
+		if (!rawWords.isEmpty()) {
+			redisTemplate.opsForSet().add(RAW_SET, rawWords.toArray(new String[0]));
+		}
+		if (!jamoWords.isEmpty()) {
+			redisTemplate.opsForSet().add(JAMO_SET, jamoWords.toArray(new String[0]));
+		}
+		if (!mixedWords.isEmpty()) {
+			redisTemplate.opsForSet().add(MIXED_SET, mixedWords.toArray(new String[0]));
+		}
+
 	}
 }
