@@ -10,9 +10,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication(scanBasePackages = {
-	"com.napzak"
-})
+@SpringBootApplication(
+	scanBasePackages = {"com.napzak"},
+	exclude = {
+		org.springframework.boot.actuate.autoconfigure.metrics.SystemMetricsAutoConfiguration.class
+	}
+)
 @EnableFeignClients(basePackages = "com.napzak.common.auth.client")
 @EnableScheduling
 @EntityScan(basePackages = "com.napzak.domain")
