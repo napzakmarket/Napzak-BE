@@ -26,9 +26,10 @@ public record ChatMessageListResponse(
 		List<ChatMessage> rawMessages = pagination.getMessages(); // 최신순 정렬
 		Deque<ChatMessageDto> resultDeque = new ArrayDeque<>(); // addFirst로 최신순 유지
 
-		boolean stopUnread = false;
 		Long prevSenderId = null;
 		boolean datePassed = false;  // DATE 메시지 이후 첫 메시지 플래그
+		boolean productPassed = false; // PRODUCT 메시지 이후 첫 메시지 플래그
+		boolean isReadAllowed = true; // 처음엔 true, 조건 만족하면 false
 
 		// 시간순으로 순회 (역방향)
 		for (int i = rawMessages.size() - 1; i >= 0; i--) {
@@ -42,8 +43,8 @@ public record ChatMessageListResponse(
 				default -> {
 					if (!isOwner) yield true;
 					if (opponentLastReadId == null) yield false;
-					if (message.getId() <= opponentLastReadId) stopUnread = true;
-					yield stopUnread;
+					if (message.getId() > opponentLastReadId) isReadAllowed = false;
+					yield isReadAllowed;
 				}
 			};
 
@@ -60,6 +61,9 @@ public record ChatMessageListResponse(
 					isProfileNeeded = true;     //  DATE 뒤 첫 메시지는 무조건 true
 				} else if (senderId != null && !senderId.equals(prevSenderId)) {
 					isProfileNeeded = true;     //  sender 바뀐 경우도 true
+				} else if (productPassed) {
+					isProfileNeeded = true;     //  PRODUCT 뒤 첫 메시지는 무조건 true
+					productPassed = false;
 				}
 
 				if (senderId != null) {
@@ -67,6 +71,11 @@ public record ChatMessageListResponse(
 				}
 
 				datePassed = false;             //  DATE 이후 첫 메시지 처리 완료
+			}
+
+			// PRODUCT 만나면 플래그 설정
+			if (message.getType() == MessageType.PRODUCT) {
+				productPassed = true;
 			}
 
 			// addFirst로 최신순 정렬 유지
