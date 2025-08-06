@@ -16,7 +16,6 @@ import com.napzak.common.auth.client.enums.SocialType;
 import com.napzak.domain.store.vo.Store;
 import com.napzak.common.exception.NapzakException;
 
-import io.micrometer.core.instrument.binder.system.FileDescriptorMetrics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +30,6 @@ public class LoginService {
 	private final StoreService storeService;
 	private final GoogleSocialService googleSocialService;
 	private final AppleSocialService appleSocialService;
-	private final FileDescriptorMetrics fileDescriptorMetrics;
 
 	@Transactional
 	public LoginSuccessResponse login(
