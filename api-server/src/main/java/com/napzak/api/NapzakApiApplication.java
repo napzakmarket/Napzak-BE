@@ -13,7 +13,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication(
 	scanBasePackages = {"com.napzak"},
 	exclude = {
-		org.springframework.boot.actuate.autoconfigure.metrics.SystemMetricsAutoConfiguration.class
+		org.springframework.boot.actuate.autoconfigure.metrics.SystemMetricsAutoConfiguration.class,
+		org.springframework.boot.actuate.autoconfigure.metrics.web.tomcat.TomcatMetricsAutoConfiguration.class
 	}
 )
 @EnableFeignClients(basePackages = "com.napzak.common.auth.client")
