@@ -32,9 +32,9 @@ dependencies {
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
     // AWS
-    implementation 'software.amazon.awssdk:s3:2.27.3'
-    implementation 'software.amazon.awssdk:s3control:2.27.3'
-    implementation 'software.amazon.awssdk:s3outposts:2.27.3'
+    implementation 'software.amazon.awssdk:s3:2.32.15'
+    implementation 'software.amazon.awssdk:s3control:2.32.15'
+    implementation 'software.amazon.awssdk:s3outposts:2.32.15'
 
     // lombok 명시적으로 추가 (IDE 인식 보장)
     compileOnly 'org.projectlombok:lombok'
