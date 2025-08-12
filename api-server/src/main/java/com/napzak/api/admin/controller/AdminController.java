@@ -13,6 +13,7 @@ import com.napzak.api.admin.AdminChatFacade;
 import com.napzak.api.admin.code.AdminSuccessCode;
 import com.napzak.api.admin.service.AdminService;
 import com.napzak.api.domain.store.StoreChatFacade;
+import com.napzak.api.domain.store.StoreProductFacade;
 import com.napzak.common.auth.annotation.CurrentMember;
 import com.napzak.common.exception.dto.SuccessResponse;
 import com.napzak.domain.chat.entity.enums.SystemMessageType;
@@ -27,6 +28,7 @@ public class AdminController {
 
 	private final AdminService adminService;
 	private final StoreChatFacade storeChatFacade;
+	private final StoreProductFacade storeProductFacade;
 
 	@PatchMapping("/report-approval/{storeId}")
 	public ResponseEntity<SuccessResponse<Void>> reportApproval(
@@ -34,6 +36,7 @@ public class AdminController {
 		@PathVariable("storeId") Long reportedStoreId
 	){
 		List<ChatMessage> messages = storeChatFacade.broadcastSystemMessage(reportedStoreId, SystemMessageType.REPORTED);
+		storeProductFacade.updateProductIsVisibleByStoreId(reportedStoreId);
 		adminService.approveReport(reportedStoreId, messages);
 		return ResponseEntity.ok(SuccessResponse.of(AdminSuccessCode.STORE_REPORT_APPROVE_SUCCESS));
 	}
