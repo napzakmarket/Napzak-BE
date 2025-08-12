@@ -60,6 +60,9 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, P
 	@Query("SELECT p FROM ProductEntity p where p.id = :productId AND p.isVisible = true")
 	Optional<ProductEntity> findById(@Param("productId") Long productId);
 
+	@Query("SELECT p FROM ProductEntity p where p.id = :productId")
+	Optional<ProductEntity> findByIdIncludingInvisible(@Param("productId") Long productId);
+
 	int countByStoreIdAndTradeTypeAndIsVisibleTrue(Long storeId, TradeType tradeType);
 }
 

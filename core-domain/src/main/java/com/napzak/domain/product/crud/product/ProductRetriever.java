@@ -36,6 +36,13 @@ public class ProductRetriever {
 	}
 
 	@Transactional(readOnly = true)
+	public Product findByIdIncludingInvisible(Long id) {
+		ProductEntity productEntity = productRepository.findByIdIncludingInvisible(id)
+			.orElseThrow(() -> new NapzakException(ProductErrorCode.PRODUCT_NOT_FOUND));
+		return Product.fromEntity(productEntity);
+	}
+
+	@Transactional(readOnly = true)
 	public int countProductsByStoreIdAndTradeType(Long storeId, TradeType tradeType) {
 		return productRepository.countByStoreIdAndTradeTypeAndIsVisibleTrue(storeId, tradeType);
 	}
