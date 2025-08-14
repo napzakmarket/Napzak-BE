@@ -260,7 +260,7 @@ public class ProductService {
 
 	@Transactional(readOnly = true)
 	public ProductWithFirstPhoto getProductChatInfo(Long productId) {
-		Product product = productRetriever.findById(productId);
+		Product product = productRetriever.findByIdIncludingInvisible(productId);
 		String firstPhoto = productPhotoRetriever.getFirstProductPhoto(productId);
 
 		return ProductWithFirstPhoto.from(product, firstPhoto);
