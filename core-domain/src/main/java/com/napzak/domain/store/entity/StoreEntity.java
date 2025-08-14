@@ -97,6 +97,11 @@ public class StoreEntity {
 		this.role = role;
 	}
 
+	public void withdraw() {
+		this.role = Role.WITHDRAWN;
+		this.description = null;
+	}
+
 	public void setCover(String cover) {
 		this.cover = cover;
 	}

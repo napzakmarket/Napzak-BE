@@ -113,7 +113,7 @@ public class StoreService {
 	@Transactional
 	public void withdraw(Long storeId, String title, String description, List<ChatMessage> messages) {
 		withdrawSaver.save(storeId, title, description, LocalDateTime.now());
-		storeUpdater.updateRole(storeId, Role.WITHDRAWN);
+		storeUpdater.updateWithdraw(storeId);
 		genrePreferenceRemover.removeGenrePreference(storeId);
 		chatSystemMessageSender.sendSystemMessages(messages);
 	}

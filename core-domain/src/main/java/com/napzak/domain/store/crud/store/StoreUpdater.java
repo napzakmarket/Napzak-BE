@@ -47,4 +47,12 @@ public class StoreUpdater {
 		storeEntity.setRole(role);
 		storeRepository.save(storeEntity);
 	}
+
+	@Transactional
+	public void updateWithdraw(final Long storeId) {
+		StoreEntity storeEntity = storeRepository.findById(storeId)
+			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
+		storeEntity.withdraw();
+		storeRepository.save(storeEntity);
+	}
 }
