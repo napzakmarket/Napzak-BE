@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -83,4 +84,12 @@ public interface ChatParticipantRepository extends JpaRepository<ChatParticipant
 		@Param("roomId") Long roomId,
 		@Param("storeId") Long storeId
 	);
+
+	@Modifying(clearAutomatically = true, flushAutomatically = true)
+	@Query("""
+        UPDATE ChatParticipantEntity cp
+        SET cp.isExited = true
+        WHERE cp.storeId = :storeId AND cp.isExited = false
+    """)
+	int markAllExitedByStoreId(@Param("storeId") Long storeId);
 }
