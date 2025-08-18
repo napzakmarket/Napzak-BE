@@ -9,7 +9,9 @@ import com.napzak.domain.chat.repository.ChatParticipantRepository;
 import com.napzak.common.exception.NapzakException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ChatParticipantUpdater {
@@ -46,5 +48,11 @@ public class ChatParticipantUpdater {
 			.orElseThrow(() -> new NapzakException(ChatErrorCode.PARTICIPANT_NOT_FOUND));
 		chatParticipant.exit();
 		chatParticipantRepository.save(chatParticipant);
+	}
+
+	@Transactional
+	public void exitAllRoomsByStoreId(Long storeId) {
+		int exitedRoomsCount = chatParticipantRepository.markAllExitedByStoreId(storeId);
+		log.debug("storeId = {}, exitedRoomsCount = {}", storeId, exitedRoomsCount);
 	}
 }

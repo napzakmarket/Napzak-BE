@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.domain.chat.crud.chatmessage.ChatMessageSaver;
 import com.napzak.domain.chat.crud.chatparticipant.ChatParticipantRetriever;
+import com.napzak.domain.chat.crud.chatparticipant.ChatParticipantUpdater;
 import com.napzak.domain.chat.entity.enums.SystemMessageType;
 import com.napzak.domain.chat.vo.ChatMessage;
 
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class StoreChatFacade {
 
 	private final ChatParticipantRetriever chatParticipantRetriever;
+	private final ChatParticipantUpdater chatParticipantUpdater;
 	private final ChatMessageSaver chatMessageSaver;
 
 	@Transactional(readOnly = true)
@@ -28,5 +30,10 @@ public class StoreChatFacade {
 	public List<ChatMessage> broadcastSystemMessage(Long storeId, SystemMessageType systemMessageType) {
 		List<Long> roomIds = getChatRoomIds(storeId);
 		return chatMessageSaver.broadcastSystemMessage(roomIds, systemMessageType);
+	}
+
+	@Transactional
+	public void exitAllRoomsByStoreId(Long storeId) {
+		chatParticipantUpdater.exitAllRoomsByStoreId(storeId);
 	}
 }
