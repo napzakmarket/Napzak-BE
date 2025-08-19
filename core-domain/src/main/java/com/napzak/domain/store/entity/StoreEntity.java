@@ -100,6 +100,7 @@ public class StoreEntity {
 	public void withdraw() {
 		this.role = Role.WITHDRAWN;
 		this.description = null;
+		this.socialId = null;
 	}
 
 	public void setCover(String cover) {
