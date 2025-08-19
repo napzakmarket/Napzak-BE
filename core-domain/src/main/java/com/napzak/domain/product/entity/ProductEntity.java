@@ -167,4 +167,8 @@ public class ProductEntity {
 		this.genreId = genreId;
 		this.updatedAt = LocalDateTime.now();
 	}
+
+	public void incrementChatCount() {
+		this.chatCount += 1;
+	}
 }
