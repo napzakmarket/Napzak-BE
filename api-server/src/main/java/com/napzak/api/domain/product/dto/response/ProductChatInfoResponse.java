@@ -20,7 +20,6 @@ public record ProductChatInfoResponse(
 		boolean isWithdrawn = store.getRole().equals(Role.WITHDRAWN);
 		boolean isReported = store.getRole().equals(Role.REPORTED);
 		String nickname = isWithdrawn ? "(탈퇴한 사용자) " + store.getNickname() : store.getNickname();
-		boolean isProductDeleted = !product.getIsVisible();
 		return new ProductChatInfoResponse(
 			new ProductInfo(
 				product.getId(),
@@ -31,8 +30,7 @@ public record ProductChatInfoResponse(
 				product.getIsPriceNegotiable(),
 				genreName,
 				product.getStoreId(),
-				isMyProduct,
-				isProductDeleted
+				isMyProduct
 			),
 			new StoreInfo(
 				store.getId(),
@@ -47,7 +45,7 @@ public record ProductChatInfoResponse(
 
 	public record ProductInfo(
 		Long productId, String photo, TradeType tradeType, String title, int price,
-		Boolean isPriceNegotiable, String genreName, Long productOwnerId, boolean isMyProduct, boolean isProductDeleted) {}
+		Boolean isPriceNegotiable, String genreName, Long productOwnerId, boolean isMyProduct) {}
 
 	public record StoreInfo(Long storeId, String nickname, String storePhoto, boolean isWithdrawn, boolean isReported) {}
 }
