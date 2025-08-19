@@ -21,7 +21,6 @@ import com.napzak.domain.chat.entity.enums.MessageType;
 import com.napzak.domain.chat.entity.enums.SystemMessageType;
 import com.napzak.domain.chat.vo.ChatMessage;
 import com.napzak.domain.chat.vo.RoomDateKey;
-import com.napzak.domain.push.util.FcmPushSender;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +34,6 @@ public class ChatWebSocketService {
 	private final ChatPresenceRedisUpdater chatPresenceRedisUpdater;
 	private final ChatMessageSender chatMessageSender;
 	private final RoomCreatedSender roomCreatedSender;
-	private final FcmPushSender fcmPushSender;
 	private final DateMessageSender dateMessageSender;
 	private final PresenceMessageSender presenceMessageSender;
 
@@ -58,10 +56,7 @@ public class ChatWebSocketService {
 		Long senderId,
 		MessageType type,
 		String content,
-		Map<String, Object> metadata,
-		List<String> deviceTokens,
-		String opponentNickname,
-		Long opponentId
+		Map<String, Object> metadata
 	){
 		log.info("🧵 sendStoreMessage called: roomId={}, senderId={}, type={}, content={}", roomId, senderId, type, content);
 		try {
@@ -81,11 +76,6 @@ public class ChatWebSocketService {
 
 			chatMessageSender.sendStoreMessage(storeMessage);
 			log.info("📤 Message sent to MQ");
-
-			if (opponentNickname != null && !deviceTokens.isEmpty()) {
-				log.info("📱 Sending push to opponent: {}", opponentId);
-				sendChatPush(deviceTokens, opponentNickname, type, roomId, content, opponentId);
-			}
 		} catch (Exception e) {
 			log.error("💥 Exception in sendStoreMessage: {}", e.getMessage(), e);
 		}
@@ -115,25 +105,5 @@ public class ChatWebSocketService {
 	public void sendLeaveBroadcast(Long roomId, Long userId) {
 		chatPresenceRedisUpdater.leaveRoom(roomId, userId);
 		presenceMessageSender.sendPresenceMessage(roomId, userId, MessageType.LEAVE);
-	}
-
-	private void sendChatPush(List<String> deviceTokens, String nickname, MessageType type, Long roomId, String content, Long opponentId) {
-		String body = switch (type) {
-			case TEXT -> content;
-			case IMAGE -> "(사진)";
-			default -> null;
-		};
-
-		if (body == null) return;
-
-		deviceTokens.forEach(token ->
-			fcmPushSender.sendMessage(
-				opponentId,
-				token,
-				nickname,
-				body,
-				Map.of("type", "chat", "roomId", String.valueOf(roomId))
-			)
-		);
 	}
 }
