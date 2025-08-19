@@ -34,6 +34,13 @@ public class ProductUpdater {
 	}
 
 	@Transactional
+	public void incrementChatCount(Long productId) {
+		ProductEntity productEntity = productRepository.findById(productId)
+			.orElseThrow(() -> new NapzakException(ProductErrorCode.PRODUCT_NOT_FOUND));
+		productEntity.incrementChatCount();
+	}
+
+	@Transactional
 	public void updateProductStatus(Long productId, TradeStatus tradeStatus) {
 		ProductEntity productEntity = productRepository.lockById(productId)
 			.orElseThrow(() -> new NapzakException(ProductErrorCode.PRODUCT_NOT_FOUND));
