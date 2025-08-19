@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.napzak.api.domain.product.ProductChatFacade;
 import com.napzak.domain.product.crud.productphoto.ProductPhotoRemover;
 import com.napzak.domain.product.crud.productphoto.ProductPhotoRetriever;
 import com.napzak.domain.product.crud.productphoto.ProductPhotoSaver;
@@ -45,11 +46,11 @@ public class ProductService {
 	private final ProductPhotoSaver productPhotoSaver;
 	private final ProductPhotoRemover productPhotoRemover;
 	private final ProductUpdater productUpdater;
-	private final ProductRemover productRemover;
 	private final ProductPhotoUpdater productPhotoUpdater;
 	private final SearchWordRetriever searchWordRetriever;
 	private final ProductReportSaver productReportSaver;
 	private final ProductInterestFacade productInterestFacade;
+	private final ProductChatFacade productChatFacade;
 
 	public ProductPagination getSellProducts(
 		ProductSortOption productSortOption, Long cursorProductId, Integer cursorOptionalValue, int size,
@@ -225,7 +226,8 @@ public class ProductService {
 	@Transactional
 	public void deleteProduct(Long productId) {
 		productInterestFacade.deleteAllByProductId(productId);
-		productRemover.deleteById(productId);
+		productUpdater.updateProductIsVisibleByProductId(productId, false);
+		productChatFacade.updateChatMessageProductMetadataIsProductDeleted(productId, true);
 	}
 
 	@Transactional

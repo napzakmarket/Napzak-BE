@@ -47,4 +47,19 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessageEntity, 
 		@Param("roomId") Long roomId,
 		@Param("type") String type
 	);
+
+	@Modifying
+	@Query(
+		value = """
+			UPDATE chat_message
+			SET metadata = JSON_SET(metadata, '$.isProductDeleted', CAST(:isProductDeleted AS JSON))
+			WHERE JSON_EXTRACT(metadata, '$.productId') = CAST(:productId AS JSON)
+				AND type = 'PRODUCT'
+		""",
+		nativeQuery = true
+	)
+	void updateProductMetadataIsProductDeleted(
+		@Param("productId") Long productId,
+		@Param("isProductDeleted") boolean isProductDeleted
+	);
 }

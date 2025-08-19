@@ -64,4 +64,7 @@ public class ProductUpdater {
 	public void updateProductIsVisibleByStoreId(Long storeId) {
 		productRepository.updateIsVisible(storeId);
 	}
+
+	@Transactional
+	public void updateProductIsVisibleByProductId(Long productId, boolean isVisible) { productRepository.updateIsVisibleByProductId(productId, isVisible);}
 }
