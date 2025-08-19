@@ -11,12 +11,10 @@ import org.springframework.stereotype.Controller;
 import com.napzak.chat.domain.chat.api.ChatPushFacade;
 import com.napzak.chat.domain.chat.api.ChatStoreFacade;
 import com.napzak.chat.domain.chat.api.dto.request.ChatMessageRequest;
+import com.napzak.chat.domain.chat.api.service.ChatPushService;
 import com.napzak.chat.domain.chat.api.service.ChatRestService;
 import com.napzak.chat.domain.chat.api.service.ChatWebSocketService;
-import com.napzak.common.auth.annotation.AuthorizedRole;
 import com.napzak.common.auth.context.StoreSession;
-import com.napzak.common.auth.context.StoreSessionContextHolder;
-import com.napzak.common.auth.role.enums.Role;
 
 import com.napzak.domain.chat.entity.enums.MessageType;
 
@@ -31,6 +29,7 @@ public class ChatWebSocketController {
 	private final ChatWebSocketService chatWebSocketService;
 	private final ChatRestService chatRestService;
 	private final ChatStoreFacade chatStoreFacade;
+	private final ChatPushService chatPushService;
 	private final ChatPushFacade chatPushFacade;
 	private final SimpMessagingTemplate messagingTemplate;
 
@@ -47,6 +46,11 @@ public class ChatWebSocketController {
 
 		Long senderId = session.getId();
 
+		chatWebSocketService.sendStoreMessage(
+			request.roomId(), senderId, request.type(), request.content(),
+			request.metadata()
+		);
+
 		List<String> deviceTokens = Collections.emptyList();
 		String opponentNickname = null;
 		Long opponentId = null;
@@ -61,9 +65,10 @@ public class ChatWebSocketController {
 			}
 		}
 
-		chatWebSocketService.sendStoreMessage(
-			request.roomId(), senderId, request.type(), request.content(),
-			request.metadata(), deviceTokens, opponentNickname, opponentId);
+		chatPushService.sendPushIfEligible(
+			request.roomId(), request.type(), request.content(),
+			deviceTokens, opponentNickname, opponentId
+		);
 	}
 
 	@MessageMapping("/ping")
