@@ -225,7 +225,7 @@ public class ProductService {
 	@Transactional
 	public void deleteProduct(Long productId) {
 		productInterestFacade.deleteAllByProductId(productId);
-		productRemover.deleteById(productId);
+		productUpdater.updateProductIsVisibleByProductId(productId, false);
 	}
 
 	@Transactional
