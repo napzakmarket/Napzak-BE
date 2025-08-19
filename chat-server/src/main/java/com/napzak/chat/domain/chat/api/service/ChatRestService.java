@@ -113,7 +113,7 @@ public class ChatRestService {
 	}
 
 	@Transactional
-	public Set<Long> enterChatRoom(Long roomId, Long storeId){
+	public void enterChatRoom(Long roomId, Long storeId){
 		boolean isParticipant = chatParticipantRetriever.existsActiveParticipant(roomId, storeId);
 		if (!isParticipant) {
 			throw new NapzakException(ChatErrorCode.NO_CHATROOM_ACCESS);
@@ -121,12 +121,14 @@ public class ChatRestService {
 
 		Long messageId = chatMessageRetriever.findLastMessageIdByRoomId(roomId);
 		chatParticipantUpdater.updateEnter(roomId, storeId, messageId);
+	}
 
-		Set<Long> otherUsers = chatPresenceRedisRetriever.getUsersInRoom(roomId).stream()
+	@Transactional
+	public Set<Long> findStoresInRoom(Long roomId, Long storeId) {
+
+		return chatPresenceRedisRetriever.getUsersInRoom(roomId).stream()
 			.filter(id -> !id.equals(storeId))
 			.collect(Collectors.toSet());
-
-		return otherUsers;
 	}
 
 	@Transactional
