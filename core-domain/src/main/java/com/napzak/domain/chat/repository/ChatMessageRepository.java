@@ -51,9 +51,10 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessageEntity, 
 	@Modifying
 	@Query(
 		value = """
-		UPDATE chat_message
-		SET metadata = JSON_SET(metadata, '$.isProductDeleted', :isProductDeleted)
-		WHERE JSON_EXTRACT(metadata, '$.productId') = :productId
+			UPDATE chat_message
+			SET metadata = JSON_SET(metadata, '$.isProductDeleted', CAST(:isProductDeleted AS JSON))
+			WHERE JSON_EXTRACT(metadata, '$.productId') = CAST(:productId AS JSON)
+				AND type = 'PRODUCT'
 		""",
 		nativeQuery = true
 	)
