@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.napzak.chat.domain.chat.api.ChatProductFacade;
 import com.napzak.chat.domain.chat.api.ChatPushFacade;
 import com.napzak.chat.domain.chat.api.ChatStoreFacade;
 import com.napzak.chat.domain.chat.api.dto.request.ChatRoomCreateRequest;
@@ -57,6 +58,7 @@ public class ChatRestController {
 	private final ChatWebSocketService chatWebSocketService;
 	private final ChatStoreFacade chatStoreFacade;
 	private final ChatPushFacade chatPushFacade;
+	private final ChatProductFacade chatProductFacade;
 
 	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@PostMapping
@@ -66,6 +68,7 @@ public class ChatRestController {
 	){
 		Long roomId = chatRestService.createChatRoom(senderId, request.receiverId(), request.productId());
 		chatWebSocketService.notifyRoomCreated(roomId, List.of(senderId, request.receiverId()));
+		chatProductFacade.incrementChatCount(request.productId());
 		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_CREATE_SUCCESS, ChatRoomCreateResponse.of(roomId)));
 	}
 
@@ -147,6 +150,7 @@ public class ChatRestController {
 		@RequestBody ChatRoomProductIdUpdateRequest request
 	){
 		Long updatedProductId = chatRestService.updateProductId(roomId, request.newProductId());
+		chatProductFacade.incrementChatCount(request.newProductId());
 		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_PRODUCT_UPDATE_SUCCESS,
 				ChatRoomProductIdUpdateResponse.of(updatedProductId)));
 	}
@@ -157,14 +161,16 @@ public class ChatRestController {
 		@PathVariable Long roomId,
 		@CurrentMember Long storeId
 	){
-		Set<Long> otherUsers = chatRestService.enterChatRoom(roomId, storeId);
+		chatRestService.enterChatRoom(roomId, storeId);
+		Set<Long> inRoomStoreIds = chatRestService.findStoresInRoom(roomId, storeId);
 		try {
 			chatWebSocketService.sendJoinBroadcast(roomId, storeId);
 		} catch (Exception e) {
 			log.error("sendJoinBroadcast 실패 - roomId={}, userId={}", roomId, storeId, e);
 		}
 		Long productId = chatRestService.findProductIdByRoomId(roomId);
-		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_ENTER_SUCCESS, ChatRoomEnterResponse.of(productId, otherUsers)));
+		return ResponseEntity.ok(SuccessResponse.of(ChatSuccessCode.CHATROOM_ENTER_SUCCESS, ChatRoomEnterResponse.of(productId,
+			inRoomStoreIds)));
 	}
 
 	@AuthorizedRole({Role.ADMIN, Role.STORE})
