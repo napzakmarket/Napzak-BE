@@ -38,6 +38,10 @@ public class AdminController {
 	){
 		List<ChatMessage> messages = storeChatFacade.broadcastSystemMessage(reportedStoreId, SystemMessageType.REPORTED);
 		storeProductFacade.updateProductIsVisibleByStoreId(reportedStoreId);
+
+		List<Long> productIds = storeProductFacade.getProductIdsByStoreId(reportedStoreId);
+		storeChatFacade.updateChatMessageProductMetadataIsProductDeletedByProductId(productIds, true);
+
 		adminService.approveReport(reportedStoreId, messages);
 		return ResponseEntity.ok(SuccessResponse.of(AdminSuccessCode.STORE_REPORT_APPROVE_SUCCESS));
 	}
