@@ -1,5 +1,7 @@
 package com.napzak.api.domain.store;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,10 @@ public class StoreProductFacade {
 
 	public int getProductCount(Long storeId, TradeType tradeType) {
 		return productRetriever.countProductsByStoreIdAndTradeType(storeId, tradeType);
+	}
+
+	public List<Long> getProductIdsByStoreId(Long storeId) {
+		return productRetriever.findProductIdsByStoreId(storeId);
 	}
 
 	@Transactional

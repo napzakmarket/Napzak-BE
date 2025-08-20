@@ -75,5 +75,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, P
 	Optional<ProductEntity> findByIdIncludingInvisible(@Param("productId") Long productId);
 
 	int countByStoreIdAndTradeTypeAndIsVisibleTrue(Long storeId, TradeType tradeType);
+
+	@Query("SELECT p.id FROM ProductEntity p where p.storeId = :storeId")
+	List<Long> findProductIdsByStoreId(@Param("storeId") Long storeId);
 }
 
