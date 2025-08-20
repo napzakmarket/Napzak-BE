@@ -56,7 +56,7 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessageEntity, 
 			SET metadata = JSON_SET(
 				COALESCE(metadata, JSON_OBJECT()),
 				'$.isProductDeleted', 
-				CAST(:isProductDeleted AS JSON)
+				IF(:isProductDeleted, CAST('true' AS JSON), CAST('false' AS JSON))
 		   )
 			WHERE type = 'PRODUCT'
 				AND CAST(
