@@ -227,7 +227,7 @@ public class ProductService {
 	public void deleteProduct(Long productId) {
 		productInterestFacade.deleteAllByProductId(productId);
 		productUpdater.updateProductIsVisibleByProductId(productId, false);
-		productChatFacade.updateChatMessageProductMetadataIsProductDeleted(productId, true);
+		productChatFacade.updateChatMessageProductMetadataIsProductDeletedByProductId(productId, true);
 	}
 
 	@Transactional

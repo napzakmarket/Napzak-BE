@@ -1,5 +1,6 @@
 package com.napzak.api.domain.product;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -24,7 +25,13 @@ public class ProductChatFacade {
 		return chatParticipantRetriever.findOpponentStoreId(roomId, myStoreId);
 	}
 
-	public void updateChatMessageProductMetadataIsProductDeleted(Long productId, boolean isProductDeleted) {
-		chatMessageUpdater.updateProductMetadataIsProductDeleted(productId, isProductDeleted);
+	public void updateChatMessageProductMetadataIsProductDeletedByProductId(List<Long> productIds, boolean isProductDeleted) {
+		if(productIds != null) {
+			chatMessageUpdater.updateProductMetadataIsProductDeletedByProductId(productIds, isProductDeleted);
+		}
+	}
+
+	public void updateChatMessageProductMetadataIsProductDeletedByProductId(Long productId, boolean isProductDeleted) {
+		updateChatMessageProductMetadataIsProductDeletedByProductId(java.util.List.of(productId), isProductDeleted);
 	}
 }

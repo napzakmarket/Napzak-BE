@@ -353,6 +353,9 @@ public class StoreController implements StoreApi {
 		storeService.withdraw(storeId, request.withdrawTitle(), request.withdrawDescription(), messages);
 		storeInterestFacade.deleteInterestByStoreId(storeId);
 		storeProductFacade.updateProductIsVisibleByStoreId(storeId);
+
+		List<Long> productIds = storeProductFacade.getProductIdsByStoreId(storeId);
+		storeChatFacade.updateChatMessageProductMetadataIsProductDeletedByProductId(productIds, true);
 		storeChatFacade.exitAllRoomsByStoreId(storeId);
 
 		StoreWithdrawResponse response = StoreWithdrawResponse.of(

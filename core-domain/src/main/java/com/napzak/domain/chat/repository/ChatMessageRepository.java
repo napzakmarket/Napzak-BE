@@ -1,5 +1,6 @@
 package com.napzak.domain.chat.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -52,14 +53,21 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessageEntity, 
 	@Query(
 		value = """
 			UPDATE chat_message
-			SET metadata = JSON_SET(metadata, '$.isProductDeleted', CAST(:isProductDeleted AS JSON))
-			WHERE JSON_EXTRACT(metadata, '$.productId') = CAST(:productId AS JSON)
-				AND type = 'PRODUCT'
+			SET metadata = JSON_SET(
+				COALESCE(metadata, JSON_OBJECT()),
+				'$.isProductDeleted', 
+				IF(:isProductDeleted, CAST('true' AS JSON), CAST('false' AS JSON))
+		   )
+			WHERE type = 'PRODUCT'
+				AND CAST(
+						JSON_UNQUOTE(JSON_EXTRACT(metadata, '$.productId')) 
+						AS UNSIGNED
+						) IN (:productIds)
 		""",
 		nativeQuery = true
 	)
-	void updateProductMetadataIsProductDeleted(
-		@Param("productId") Long productId,
+	void updateProductMetadataIsProductDeletedByProductId(
+		@Param("productIds") List<Long> productIds,
 		@Param("isProductDeleted") boolean isProductDeleted
 	);
 }
