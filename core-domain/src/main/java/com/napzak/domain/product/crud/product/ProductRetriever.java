@@ -120,6 +120,13 @@ public class ProductRetriever {
 		return productRepository.countProductsByFilters(isOnSale, isUnopened, genreIds, tradeType);
 	}
 
+	public List<Long> findProductIdsByStoreId(Long storeId) {
+		List<Long> productIds = productRepository.findProductIdsByStoreId(storeId);
+		List<Long> defaultList = List.of(0L);
+		if (productIds.isEmpty()) { return defaultList; }
+		return productIds;
+	}
+
 	@Transactional(readOnly = true)
 	public List<Product> retrieveRecommendedProducts(Long storeId, List<Long> preferredGenres) {
 		// 추천 상품 조회 흐름:
