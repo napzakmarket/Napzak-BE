@@ -39,7 +39,7 @@ jobs:
   deploy:
     needs: build-push
     runs-on: ubuntu-22.04
-    environment: prod-chat
+    environment: prod
 
     steps:
       - name: SSH deploy
