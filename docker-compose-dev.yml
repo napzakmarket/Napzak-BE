@@ -1,16 +1,24 @@
+# docker-compose-dev.yml
 version: "3.8"
 
 services:
-  napzak-dev:
-    container_name: napzak-dev
-    image: "sailin1367/napzak-dev:latest"
-    ports:
-      - "8080:8080"
+  api-server:
+    image: sailin1367/napzak-api-dev:latest
+    container_name: napzak-api-dev
+    ports: ["8080:8080"]
     depends_on:
-      redis:
-        condition: service_healthy
-    networks:
-      - napzak-dev-net
+      redis: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+    networks: [napzak-dev-net]
+
+  chat-server:
+    image: sailin1367/napzak-chat-dev:latest
+    container_name: napzak-chat-dev
+    ports: ["8081:8080"]
+    depends_on:
+      redis: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+    networks: [napzak-dev-net]
 
   redis:
     container_name: napzak-dev-redis
@@ -18,6 +26,8 @@ services:
     command: ["redis-server", "--requirepass", "napzakdev"]
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "napzakdev", "ping"]
       interval: 10s
@@ -25,7 +35,30 @@ services:
       retries: 3
     networks:
       - napzak-dev-net
+    restart: always
+
+  rabbitmq:
+    container_name: napzak-dev-rabbitmq
+    image: rabbitmq:3.12-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "61613:61613"
+    environment:
+      RABBITMQ_DEFAULT_USER: napzak_user
+      RABBITMQ_DEFAULT_PASS: napzak_pw
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    networks:
+      - napzak-dev-net
+    restart: always
 
 networks:
   napzak-dev-net:
     driver: bridge
+
+volumes:
+  redis_data:

@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  api-server:
+    image: sailin1367/napzak-api-prod:latest
+    container_name: napzak-api-prod
+    ports: ["8080:8080"]
+    depends_on:
+      redis: { condition: service_healthy }
+    networks : [napzak-prod-net]
+
+  redis:
+    container_name: napzak-prod-redis
+    image: redis:7.0-alpine
+    command: ["redis-server", "--requirepass", "napzakprod"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "napzakprod", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - napzak-prod-net
+    restart: always
+
+networks:
+  napzak-prod-net:
+    driver: bridge
+
+volumes:
+  redis_data:

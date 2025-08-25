@@ -1,1 +1,5 @@
 rootProject.name = 'napzak'
+include 'api-server'
+include 'chat-server'
+include 'common-module'
+include 'core-domain'

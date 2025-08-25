@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>Napzak Chat WebSocket Tester</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        #log, #roomCreatedWindow, #chatWindow, #debugWindow {
+            height: 200px;
+            overflow-y: auto;
+            background: #111;
+            color: #0f0;
+            padding: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-top: 10px;
+        }
+        label { display:block; margin-top: 10px; }
+        input[type=text] { width: 100%; }
+        button { margin-right: 5px; margin-top: 10px; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<h2>Napzak Chat WebSocket Tester</h2>
+
+<label>WebSocket URL ("ws://localhost:8080/ws/v1")
+    <input id="url" type="text" value="ws://localhost:8080/ws/v1" />
+</label>
+<label>JWT (Bearer 제외)
+    <input id="token" type="text" placeholder="eyJhbGciOi..." />
+</label>
+<label>Room ID
+    <input id="roomId" type="text" value="1" />
+</label>
+<label>메시지 내용
+    <input id="outMsg" type="text" />
+</label>
+
+<div>
+    <button onclick="connect()">Connect</button>
+    <button onclick="disconnect()">Disconnect</button>
+    <button onclick="subscribeRoom()">Subscribe</button>
+    <button onclick="sendMessage()">Send</button>
+    <button onclick="subscribePong()">Subscribe Pong</button>
+    <button onclick="sendPing()">Ping</button>
+    <button onclick="subscribeRoomCreated()">Subscribe RoomCreated</button>
+</div>
+
+<h3>🟢 Chat Messages</h3>
+<pre id="chatWindow"></pre>
+
+<h3>🆕 Room Created 알림</h3>
+<pre id="roomCreatedWindow"></pre>
+
+<h3>🛠️ Debug Log</h3>
+<pre id="log"></pre>
+
+<h3>🔍 STOMP Debug (Wire log)</h3>
+<pre id="debugWindow"></pre>
+
+<script>
+    let client = null;
+    let connected = false;
+
+    function log(message) {
+        const el = document.getElementById('log');
+        el.textContent += message + "\n";
+        el.scrollTop = el.scrollHeight;
+    }
+
+    function debug(message) {
+        const el = document.getElementById('debugWindow');
+        el.textContent += message + "\n";
+        el.scrollTop = el.scrollHeight;
+    }
+
+    function printChat(message) {
+        const el = document.getElementById('chatWindow');
+        el.textContent += message + "\n";
+        el.scrollTop = el.scrollHeight;
+    }
+
+    function connect() {
+        if (connected) { log("이미 연결되어 있습니다"); return; }
+        const baseUrl = document.getElementById('url').value;
+        const token = document.getElementById('token').value.trim();
+
+        const wsUrl = `${baseUrl}?token=${encodeURIComponent(token)}`;
+        const ws = new WebSocket(wsUrl);
+
+        client = Stomp.over(ws);
+        client.debug = debug;
+
+        client.heartbeat.outgoing = 10000;
+        client.heartbeat.incoming = 10000;
+
+        client.connect({ host: "/" }, frame => {
+            connected = true;
+            log("✅ CONNECTED\n" + (frame.headers['server'] || ''));
+            subscribeRoom();
+        }, err => {
+            log("❌ CONNECT ERROR: " + JSON.stringify(err));
+        });
+    }
+
+    function disconnect() {
+        if (client && connected) {
+            client.disconnect(() => {
+                log("🚪 DISCONNECTED");
+                connected = false;
+            });
+        }
+    }
+
+    function subscribeRoom() {
+        if (!connected) { log("먼저 연결하세요"); return; }
+        const roomId = document.getElementById('roomId').value;
+        client.subscribe(`/topic/chat.room.${roomId}`, msg => {
+            printChat(`📩 ${msg.body}`);
+        });
+        log(`🔔 SUBSCRIBED /topic/chat.room.${roomId}`);
+    }
+
+    function sendMessage() {
+        if (!connected) { log("먼저 연결하세요"); return; }
+        const roomId = document.getElementById('roomId').value;
+        const content = document.getElementById('outMsg').value;
+        const payload = {
+            roomId: parseInt(roomId),
+            type: "TEXT",
+            content,
+            metadata: null
+        };
+        client.send('/pub/chat/send',
+            { 'content-type': 'application/json' },
+            JSON.stringify(payload));
+        log(`➡️ SENT: ${JSON.stringify(payload)}`);
+    }
+
+    function subscribePong() {
+        if (!connected) { log("먼저 연결하세요"); return; }
+        client.subscribe("/topic/pong", msg => {
+            printChat(`🔥 PONG received: ${msg.body}`);
+        });
+        log("🔔 SUBSCRIBED /topic/pong");
+    }
+
+    function sendPing() {
+        if (!connected) { log("먼저 연결하세요"); return; }
+        client.send('/pub/ping', {}, {});
+        log('🏓 PING');
+    }
+
+    function subscribeRoomCreated() {
+        if (!connected) { log("먼저 연결하세요"); return; }
+
+        const storeId = prompt("🔑 내 storeId는?");
+        client.subscribe(`/queue/chat.room-created.${storeId}`, msg => {
+            const roomId = msg.body;
+            const el = document.getElementById('roomCreatedWindow');
+            el.textContent += `🆕 새 채팅방 생성됨! roomId = ${roomId}\n`;
+            el.scrollTop = el.scrollHeight;
+        });
+
+        log(`🔔 SUBSCRIBED /queue/chat.room-created.${storeId}`);
+    }
+</script>
+</body>
+</html>

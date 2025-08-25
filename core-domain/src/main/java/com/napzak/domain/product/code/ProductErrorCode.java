@@ -1,0 +1,33 @@
+package com.napzak.domain.product.code;
+
+import org.springframework.http.HttpStatus;
+
+import com.napzak.common.exception.base.BaseErrorCode;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
+public enum ProductErrorCode implements BaseErrorCode {
+	/*
+	400 Bad Request
+	*/
+	INVALID_CURSOR_FORMAT(HttpStatus.BAD_REQUEST, "유효하지 않은 커서입니다."),
+	PRODUCT_PHOTO_SEQUENCE_DUPLICATED(HttpStatus.BAD_REQUEST, "사진 순서는 중복될 수 없습니다."),
+	PRODUCT_CHAT_SELF_ROOM_ID_REQUIRED(HttpStatus.BAD_REQUEST, "자신의 상품에 채팅 정보 조회를 요청 시 roomId를 포함해야합니다."),
+
+	/*
+	403 Forbidden
+	 */
+	ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 상품에 접근 권한이 없습니다."),
+
+	/*
+	404 Not Found
+	 */
+	PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
+	PRODUCT_PHOTO_NOT_FOUND(HttpStatus.NOT_FOUND, "상품 사진을 찾을 수 없습니다.");
+
+	private final HttpStatus httpStatus;
+	private final String message;
+}
