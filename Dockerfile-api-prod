@@ -19,7 +19,7 @@ ENV JAVA_TOOL_OPTIONS="-Duser.timezone=Asia/Seoul"
 WORKDIR /app
 
 # ✅ CI에서 주입된 파일 COPY (빌더에서 복사하지 않음!)
-COPY api-server/src/main/resources/application-prod.yml /app/
+COPY api-server/src/main/resources/application-api-prod.yml /app/
 COPY api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json /app/firebase/
 
 # ✅ JAR 파일은 builder에서 복사
