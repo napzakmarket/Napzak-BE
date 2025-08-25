@@ -7,7 +7,7 @@ on:
 jobs:
   build-push:
     runs-on: ubuntu-22.04
-    environment: prod-chat
+    environment: prod
 
     steps:
       - uses: actions/checkout@v3
