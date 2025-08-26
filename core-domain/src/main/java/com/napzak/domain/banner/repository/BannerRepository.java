@@ -13,4 +13,5 @@ public interface BannerRepository extends JpaRepository<BannerEntity, Long> {
 
 	List<BannerEntity> findAllByBannerType(BannerType bannerType);
 
+	List<Long> findAllIdsByBannerType(BannerType bannerType);
 }

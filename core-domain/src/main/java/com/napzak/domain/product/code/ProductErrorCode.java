@@ -26,7 +26,7 @@ public enum ProductErrorCode implements BaseErrorCode {
 	404 Not Found
 	 */
 	PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
-	PRODUCT_PHOTO_NOT_FOUND(HttpStatus.NOT_FOUND, "상품 사진을 찾을 수 없습니다.");
+	PRODUCT_PHOTO_NOT_FOUND(HttpStatus.NOT_FOUND, "상품사진을 찾을 수 없습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;
