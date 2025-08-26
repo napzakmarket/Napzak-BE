@@ -19,9 +19,10 @@ jobs:
 
       - name: Inject API secrets
         run: |
-          echo "${{ secrets.API_APPLICATION_PROD }}" > api-server/src/main/resources/application-api-prod.yml
+          printf '%s' "${{ secrets.API_APPLICATION_PROD }}" > api-server/src/main/resources/application-api-prod.yml
           mkdir -p api-server/src/main/resources/firebase
-          echo "${{ secrets.API_FIREBASE_JSON }}" > api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
+          printf '%s' "${{ secrets.API_FIREBASE_JSON_B64 }}" | base64 -d \
+            > api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
 
       - uses: docker/login-action@v2
         with:
