@@ -9,6 +9,5 @@ public enum SocialType {
 	KAKAO("KAKAO"),
 	APPLE("APPLE");
 
-
 	private final String type;
 }
