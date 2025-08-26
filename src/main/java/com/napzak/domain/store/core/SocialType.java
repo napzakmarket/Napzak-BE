@@ -7,8 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum SocialType {
 	KAKAO("KAKAO"),
-	APPLE("APPLE"),
-	;
+	APPLE("APPLE");
 
 
 	private final String type;
