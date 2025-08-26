@@ -25,9 +25,10 @@ jobs:
       # Secret 파일 주입 (CHAT)
       - name: Inject CHAT secrets
         run: |
-          echo "${{ secrets.CHAT_APPLICATION_PROD }}" > chat-server/src/main/resources/application-chat-prod.yml
+          printf '%s' "${{ secrets.CHAT_APPLICATION_PROD }}" > chat-server/src/main/resources/application-chat-prod.yml
           mkdir -p chat-server/src/main/resources/firebase
-          echo "${{ secrets.CHAT_FIREBASE_JSON }}" > chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
+          printf '%s' "${{ secrets.CHAT_FIREBASE_JSON_B64 }}" | base64 -d \
+            > chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
 
       - name: Build (Gradle)
         run: |
