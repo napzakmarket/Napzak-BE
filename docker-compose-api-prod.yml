@@ -31,7 +31,7 @@ services:
 
 networks:
   napzak-prod-net:
-    driver: external
+    external: true
 
 volumes:
   redis_data:
