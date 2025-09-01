@@ -56,7 +56,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.PROD_API_SERVER_HOST }}
-          username: ${{ secrets.PROD_API_USERNAME }}
+          username: ${{ secrets.PROD_SERVER_USERNAME }}
           key: ${{ secrets.PROD_API_SERVER_KEY }}
           script: |
             sudo /home/ubuntu/scripts/switch_chat_upstream.sh
