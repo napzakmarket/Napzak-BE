@@ -23,12 +23,15 @@ services:
       timeout: 5s
       retries: 3
     networks:
-      - napzak-prod-net
+      napzak-prod-net:
+        aliases:
+          - redis
+          - napzak-prod-redis
     restart: always
 
 networks:
   napzak-prod-net:
-    driver: bridge
+    driver: external
 
 volumes:
   redis_data:
