@@ -43,11 +43,30 @@ jobs:
     environment: prod
 
     steps:
-      - name: SSH deploy
+      - name: Chat deploy (auto blue-green)
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.PROD_CHAT_SERVER_HOST }}
           username: ${{ secrets.PROD_SERVER_USERNAME }}
           key: ${{ secrets.PROD_CHAT_SERVER_KEY }}
           script: |
-            bash /home/ubuntu/Napzak-BE/deploy.sh
+            bash /home/ubuntu/Napzak-BE/deploy-blue-green.sh
+
+      - name: Switch nginx upstream
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PROD_API_SERVER_HOST }}
+          username: ${{ secrets.PROD_API_USERNAME }}
+          key: ${{ secrets.PROD_API_SERVER_KEY }}
+          script: |
+            sudo /home/ubuntu/scripts/switch_chat_upstream.sh
+
+      - name: Clean-up old chat container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PROD_CHAT_SERVER_HOST }}
+          username: ${{ secrets.PROD_SERVER_USERNAME }}
+          key: ${{ secrets.PROD_CHAT_SERVER_KEY }}
+          script: |
+            bash /home/ubuntu/Napzak-BE/cleanup-chat-old.sh
+        
