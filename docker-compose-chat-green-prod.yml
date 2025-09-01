@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  chat-server-green:
+    image: sailin1367/napzak-chat-prod:latest
+    container_name: napzak-chat-green-prod
+    ports: ["8081:8080"]
+    networks: ["napzak-prod-net"]
+    restart: always
+
+networks:
+  napzak-prod-net:
+    external: true
