@@ -50,4 +50,4 @@ jobs:
           username: ${{ secrets.PROD_SERVER_USERNAME }}
           key: ${{ secrets.PROD_API_SERVER_KEY }}
           script: |
-            bash /home/ubuntu/Napzak-BE/deploy.sh
+            bash /home/ubuntu/Napzak-BE/deploy-blue-green.sh

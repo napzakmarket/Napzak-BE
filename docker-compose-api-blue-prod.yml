@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  api-server-blue:
+    image: sailin1367/napzak-api-prod:latest
+    container_name: napzak-api-blue-prod
+    ports: ["8080:8080"]
+    networks: ["napzak-prod-net"]
+    restart: always
+
+networks:
+  napzak-prod-net:
+    external: true
