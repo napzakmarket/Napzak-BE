@@ -8,6 +8,7 @@ on:
       - "api-server/**"
       - "common-module/**"
       - "core-domain/**"
+      - ".github/workflows/prod-api-*.yml"
 
 jobs:
   build:

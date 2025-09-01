@@ -8,6 +8,8 @@ on:
       - "chat-server/**"
       - "common-module/**"
       - "core-domain/**"
+      - ".github/workflows/prod-chat-*.yml"
+
 
 jobs:
   build:
