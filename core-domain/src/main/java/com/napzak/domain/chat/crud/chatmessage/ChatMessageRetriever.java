@@ -48,12 +48,19 @@ public class ChatMessageRetriever {
 
 	@Transactional(readOnly = true)
 	public Map<Long, ChatMessage> findLastMessagesByRoomIds(List<Long> roomIds) {
-		return chatMessageRepositoryCustom.findLastMessagesByRoomIds(roomIds)
+		Map<Long, ChatMessage> lastMessages = chatMessageRepositoryCustom.findLastMessagesByRoomIds(roomIds)
 			.entrySet().stream()
 			.collect(Collectors.toMap(
 				Map.Entry::getKey,
 				e -> ChatMessage.fromEntity(e.getValue())
 			));
+
+		for (Long roomId : roomIds) {
+			lastMessages.putIfAbsent(roomId, ChatMessage.empty(roomId));
+		}
+
+		return lastMessages;
+
 	}
 
 	@Transactional(readOnly = true)
