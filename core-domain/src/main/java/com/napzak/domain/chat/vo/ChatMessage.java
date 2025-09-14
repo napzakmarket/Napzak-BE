@@ -63,10 +63,10 @@ public class ChatMessage {
 			null,
 			roomId,
 			null,
-			null,
+			MessageType.TEXT,
 			"",
 			null,
-			null
+			LocalDateTime.now()
 		);
 	}
 }
