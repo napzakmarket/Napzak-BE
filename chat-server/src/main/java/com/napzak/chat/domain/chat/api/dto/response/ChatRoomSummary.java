@@ -52,7 +52,7 @@ public record ChatRoomSummary(
 			}
 		}
 
-		LocalDateTime createdAt = lastMessage != null ? lastMessage.getCreatedAt() : null;
+		LocalDateTime createdAt = lastMessage != null ? lastMessage.getCreatedAt() : LocalDateTime.now();
 
 		return new ChatRoomSummary(
 			myRoom.getRoomId(),
