@@ -55,9 +55,9 @@ public class ChatMessageRetriever {
 				e -> ChatMessage.fromEntity(e.getValue())
 			));
 
-		for (Long roomId : roomIds) {
-			lastMessages.putIfAbsent(roomId, ChatMessage.empty(roomId));
-		}
+		// for (Long roomId : roomIds) {
+		// 	lastMessages.putIfAbsent(roomId, ChatMessage.empty(roomId));
+		// }
 
 		return lastMessages;
 
