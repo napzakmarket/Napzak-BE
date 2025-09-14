@@ -57,4 +57,16 @@ public class ChatMessage {
 			entity.getCreatedAt()
 		);
 	}
+
+	// public static ChatMessage empty(Long roomId) {
+	// 	return new ChatMessage(
+	// 		null,
+	// 		roomId,
+	// 		null,
+	// 		MessageType.TEXT,
+	// 		"",
+	// 		null,
+	// 		LocalDateTime.now()
+	// 	);
+	// }
 }
