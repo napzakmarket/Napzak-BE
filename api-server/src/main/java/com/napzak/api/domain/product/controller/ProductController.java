@@ -66,6 +66,7 @@ import com.napzak.api.domain.product.dto.response.RecommendGenreDto;
 import com.napzak.api.domain.product.dto.response.RecommendResponse;
 import com.napzak.domain.product.code.ProductErrorCode;
 import com.napzak.domain.product.entity.enums.ProductSortOption;
+import com.napzak.domain.store.vo.BlockStatus;
 import com.napzak.domain.store.vo.Store;
 import com.napzak.domain.store.vo.StoreStatus;
 import com.napzak.common.auth.annotation.AuthorizedRole;
@@ -748,8 +749,11 @@ public class ProductController implements ProductApi {
 			product.getStoreId() : productChatFacade.findChatOpponentStoreId(roomId, currentStoreId);
 		Store store = productStoreFacade.getStoreById(chatOpponentStoreId);
 
+		BlockStatus blockStatus = productStoreFacade.getBlockStatus(currentStoreId, chatOpponentStoreId);
+		
 		ProductChatInfoResponse productChatInfoResponse = ProductChatInfoResponse
-			.from(product, store, genreName, roomId, isMyProduct);
+			.from(product, store, genreName, roomId, isMyProduct, blockStatus.isOpponentStoreBlocked(),
+				blockStatus.isChatBlocked());
 
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(ProductSuccessCode.PRODUCT_CHAT_INFO_GET_SUCCESS, productChatInfoResponse));

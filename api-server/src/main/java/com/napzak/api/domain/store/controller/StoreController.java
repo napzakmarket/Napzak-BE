@@ -291,11 +291,13 @@ public class StoreController implements StoreApi {
 		Store store = storeService.getStore(ownerId);
 
 		boolean isStoreOwner = ownerId.equals(currentStoreId);
+		boolean isStoreBlocked = !isStoreOwner &&
+			storeService.isOpponentStoreBlocked(currentStoreId, ownerId);
 
 		List<GenreNameDto> genrePreferenceDto = genrePreferenceResponseGenerator(genreList);
 
 		StoreInfoResponse storeInfoResponse = StoreInfoResponse.of(store.getId(), store.getNickname(),
-			store.getDescription(), store.getPhoto(), store.getCover(), isStoreOwner, genrePreferenceDto);
+			store.getDescription(), store.getPhoto(), store.getCover(), isStoreOwner, isStoreBlocked, genrePreferenceDto);
 
 		return ResponseEntity.ok().body(SuccessResponse.of(StoreSuccessCode.GET_STORE_INFO_SUCCESS, storeInfoResponse));
 	}
@@ -341,6 +343,30 @@ public class StoreController implements StoreApi {
 
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(StoreSuccessCode.STORE_REPORT_SUCCESS, response));
+	}
+
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
+	@PostMapping("/block/{storeId}")
+	public ResponseEntity<SuccessResponse<Void>> blockStore(
+		@PathVariable("storeId") final Long opponentStoreId,
+		@CurrentMember final Long myStoreId
+	) {
+		storeService.blockStore(myStoreId, opponentStoreId);
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(StoreSuccessCode.STORE_BLOCK_SUCCESS));
+	}
+
+	@AuthorizedRole({Role.ADMIN, Role.STORE})
+	@PostMapping("/unblock/{storeId}")
+	public ResponseEntity<SuccessResponse<Void>> unblockStore(
+		@PathVariable("storeId") final Long opponentStoreId,
+		@CurrentMember final Long myStoreId
+	) {
+		storeService.unblockStore(myStoreId, opponentStoreId);
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(StoreSuccessCode.STORE_UNBLOCK_SUCCESS));
 	}
 
 	@AuthorizedRole({Role.ADMIN, Role.STORE})
