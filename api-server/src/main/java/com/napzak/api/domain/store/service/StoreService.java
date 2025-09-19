@@ -3,6 +3,7 @@ package com.napzak.api.domain.store.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,9 @@ import com.napzak.domain.chat.vo.ChatMessage;
 import com.napzak.domain.store.code.StoreErrorCode;
 import com.napzak.domain.store.crud.genrepreference.GenrePreferenceRemover;
 import com.napzak.domain.store.crud.genrepreference.GenrePreferenceRetriever;
+import com.napzak.domain.store.crud.storeblock.StoreBlockRemover;
+import com.napzak.domain.store.crud.storeblock.StoreBlockRetriever;
+import com.napzak.domain.store.crud.storeblock.StoreBlockSaver;
 import com.napzak.domain.store.crud.storephoto.StorePhotoRetriever;
 import com.napzak.domain.store.crud.storereport.StoreReportSaver;
 import com.napzak.domain.store.crud.store.StoreRetriever;
@@ -43,6 +47,9 @@ public class StoreService {
 	private final StorePhotoRetriever storePhotoRetriever;
 	private final TermsAgreementSaver termsAgreementSaver;
 	private final GenrePreferenceRemover genrePreferenceRemover;
+	private final StoreBlockRetriever storeBlockRetriever;
+	private final StoreBlockSaver storeBlockSaver;
+	private final StoreBlockRemover storeBlockRemover;
 	private final ChatSystemMessageSender chatSystemMessageSender;
 
 	@Transactional(readOnly = true)
@@ -108,6 +115,30 @@ public class StoreService {
 			description,
 			contact
 		);
+	}
+
+	@Transactional
+	public void blockStore(Long blockerStoreId, Long blockedStoreId) {
+		if (blockerStoreId.equals(blockedStoreId)) {
+			throw new NapzakException(StoreErrorCode.SELF_BLOCK_NOT_ALLOWED);
+		}
+		if (!storeBlockRetriever.isOpponentStoreBlocked(blockerStoreId, blockedStoreId)) {
+			try {
+				storeBlockSaver.save(blockerStoreId, blockedStoreId);
+			} catch (DataIntegrityViolationException ignore) {
+				// 유니크 제약(중복 차단) 충돌 시 멱등 처리
+			}
+		}
+	}
+
+	@Transactional
+	public void unblockStore(Long blockerStoreId, Long blockedStoreId) {
+		storeBlockRemover.removeStoreBlock(blockerStoreId, blockedStoreId);
+	}
+
+	@Transactional(readOnly = true)
+	public boolean isOpponentStoreBlocked(Long myStoreId, Long opponentStoreId) {
+		return storeBlockRetriever.isOpponentStoreBlocked(myStoreId, opponentStoreId);
 	}
 
 	@Transactional
