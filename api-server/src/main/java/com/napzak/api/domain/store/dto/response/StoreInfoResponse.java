@@ -11,6 +11,7 @@ public record StoreInfoResponse(
 	String storePhoto,
 	String storeCover,
 	boolean isStoreOwner,
+	boolean isStoreBlocked,
 	List<GenreNameDto> genrePreferences
 ) {
 	public static StoreInfoResponse of(
@@ -20,9 +21,10 @@ public record StoreInfoResponse(
 		final String storePhoto,
 		final String storeCover,
 		final boolean isStoreOwner,
+		final boolean isStoreBlocked,
 		final List<GenreNameDto> GenreNameDto
 	) {
 		return new StoreInfoResponse(storeId, storeNickName, storeDescription, storePhoto, storeCover,
-			isStoreOwner, GenreNameDto);
+			isStoreOwner, isStoreBlocked, GenreNameDto);
 	}
 }

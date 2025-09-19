@@ -15,7 +15,9 @@ public record ProductChatInfoResponse(
 		Store store,
 		String genreName,
 		Long roomId,
-		boolean isMyProduct
+		boolean isMyProduct,
+		boolean isOpponentStoreBlocked,
+		boolean isChatBlocked
 	) {
 		boolean isWithdrawn = store.getRole().equals(Role.WITHDRAWN);
 		boolean isReported = store.getRole().equals(Role.REPORTED);
@@ -39,7 +41,9 @@ public record ProductChatInfoResponse(
 				nickname,
 				store.getPhoto(),
 				isWithdrawn,
-				isReported
+				isReported,
+				isOpponentStoreBlocked,
+				isChatBlocked
 			),
 			roomId
 		);
@@ -49,5 +53,7 @@ public record ProductChatInfoResponse(
 		Long productId, String photo, TradeType tradeType, String title, int price,
 		Boolean isPriceNegotiable, String genreName, Long productOwnerId, boolean isMyProduct, boolean isProductDeleted) {}
 
-	public record StoreInfo(Long storeId, String nickname, String storePhoto, boolean isWithdrawn, boolean isReported) {}
+	public record StoreInfo(
+		Long storeId, String nickname, String storePhoto, boolean isWithdrawn,
+		boolean isReported, boolean isOpponentStoreBlocked, boolean isChatBlocked) {}
 }
