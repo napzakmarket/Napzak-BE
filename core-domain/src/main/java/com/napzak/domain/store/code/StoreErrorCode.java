@@ -17,6 +17,7 @@ public enum StoreErrorCode implements BaseErrorCode {
 	DUPLICATE_GENRE_PREFERENCES(HttpStatus.BAD_REQUEST, "선호 장르 리스트에 중복된 값이 있습니다."),
 	NICKNAME_CONTAINS_SLANG(HttpStatus.BAD_REQUEST, "욕설이나 비속어를 사용할 수 없어요."),
 	SOCIAL_TYPE_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "지원하지 않는 소셜 로그인 타입입니다."),
+	SELF_BLOCK_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "자기 자신은 차단할 수 없습니다."),
 
 	/*
 	403 Forbidden
