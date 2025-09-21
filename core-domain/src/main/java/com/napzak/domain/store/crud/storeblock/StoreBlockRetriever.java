@@ -28,7 +28,8 @@ public class StoreBlockRetriever {
 		}
 		boolean isOpponentStoreBlocked  =
 			storeBlockRepository.existsByBlockerStoreIdAndBlockedStoreId(myStoreId, opponentStoreId);
-		boolean isChatBlocked = storeBlockRepository.existsByBlockerStoreIdAndBlockedStoreId(opponentStoreId, myStoreId);
+		boolean isChatBlocked = isOpponentStoreBlocked
+			|| storeBlockRepository.existsByBlockerStoreIdAndBlockedStoreId(opponentStoreId, myStoreId);
 
 		return new BlockStatus(isOpponentStoreBlocked, isChatBlocked);
 	}
