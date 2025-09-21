@@ -2,6 +2,7 @@ package com.napzak.api.domain.store.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,10 @@ public class StoreService {
 	private final StoreBlockRemover storeBlockRemover;
 	private final ChatSystemMessageSender chatSystemMessageSender;
 
+	private static final Set<String> BANNED_NICKNAMES = Set.of(
+		"napzakmarket", "napzak", "납작마켓"
+	);
+
 	@Transactional(readOnly = true)
 	public boolean checkStoreExistsBySocialIdAndSocialType(final String socialId, final SocialType socialType) {
 		return storeRetriever.checkStoreExistsBySocialIdAndSocialType(socialId, socialType);
@@ -84,6 +89,13 @@ public class StoreService {
 
 	@Transactional(readOnly = true)
 	public void validateNickname(String nickname) {
+		String normalized = nickname.toLowerCase();
+		for (String banned : BANNED_NICKNAMES) {
+			if (normalized.equals(banned.toLowerCase())) {
+				throw new NapzakException(StoreErrorCode.DUPLICATE_NICKNAME);
+			}
+		}
+
 		if (storeRetriever.existsByNickname(nickname)) {
 			throw new NapzakException(StoreErrorCode.DUPLICATE_NICKNAME);
 		}
