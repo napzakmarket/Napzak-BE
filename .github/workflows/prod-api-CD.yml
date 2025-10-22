@@ -7,7 +7,6 @@ on:
 env:
     ECR_HOST: ${{ secrets.API_ECR_HOST }}
     ECR_APP_NAME: ${{ secrets.API_ECR_APP_NAME }}
-    APP_ECR_REPO: ${{ env.ECR_HOST }}/${{ env.ECR_APP_NAME }}
     IMAGE_TAG: ${{ github.sha }}
 
 jobs:
@@ -53,8 +52,8 @@ jobs:
           file: ./Dockerfile-api-prod
           push: true
           tags: |
-            ${{ env.APP_ECR_REPO }}:${{ env.IMAGE_TAG }}
-            ${{ env.APP_ECR_REPO }}:latest
+            ${{ env.ECR_HOST }}/${{ env.ECR_APP_NAME }}:${{ env.IMAGE_TAG }}
+            ${{ env.ECR_HOST }}/${{ env.ECR_APP_NAME }}:latest
 
   deploy:
     needs: build-push
