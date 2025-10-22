@@ -46,11 +46,11 @@ jobs:
           aws ecr describe-repositories --repository-names "${{ env.ECR_APP_NAME }}" >/dev/null 2>&1 || \
           aws ecr create-repository --repository-name "${{ env.ECR_APP_NAME }}" >/dev/null
 
-      - name: Build & push API image
+      - name: Build & push CHAT image
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./Dockerfile-api-prod
+          file: ./Dockerfile-chat-prod
           push: true
           tags: |
             ${{ env.ECR_HOST }}/${{ env.ECR_APP_NAME }}:${{ env.IMAGE_TAG }}
