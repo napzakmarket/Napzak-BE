@@ -9,6 +9,10 @@ env:
     ECR_APP_NAME: ${{ secrets.API_ECR_APP_NAME }}
     IMAGE_TAG: ${{ github.sha }}
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build-push:
     runs-on: ubuntu-22.04
