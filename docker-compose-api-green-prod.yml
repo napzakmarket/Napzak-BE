@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   api-server-green:
-    image: sailin1367/napzak-api-prod:latest
+    image: 203918864903.dkr.ecr.ap-northeast-2.amazonaws.com/napzak-api-prod:latest
     container_name: napzak-api-green-prod
     ports: ["8081:8080"]
     networks: ["napzak-prod-net"]
