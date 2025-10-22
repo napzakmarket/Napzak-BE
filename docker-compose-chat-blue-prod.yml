@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   chat-server-blue:
-    image: sailin1367/napzak-chat-prod:latest
+    image: 589744711112.dkr.ecr.ap-northeast-2.amazonaws.com/napzak-chat-prod:latest
     container_name: napzak-chat-blue-prod
     ports: ["8080:8080"]
     networks: ["napzak-prod-net"]
