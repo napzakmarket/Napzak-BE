@@ -100,7 +100,7 @@ public class ProductController implements ProductApi {
 		@RequestParam(defaultValue = "false") Boolean isUnopened,
 		@RequestParam(required = false) List<Long> genreId,
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "100") int size,
+		@RequestParam(defaultValue = "1000") int size,
 		@CurrentMember Long storeId
 	) {
 		// 1. 요청 파라미터 파싱
@@ -145,7 +145,7 @@ public class ProductController implements ProductApi {
 		@RequestParam(defaultValue = "false") Boolean isOnSale,
 		@RequestParam(required = false) List<Long> genreId,
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "100") int size,
+		@RequestParam(defaultValue = "1000") int size,
 		@CurrentMember Long storeId
 	) {
 		ProductSortOption parsedProductSortOption = parseSortOption(sortOption);
@@ -188,7 +188,7 @@ public class ProductController implements ProductApi {
 		@RequestParam(defaultValue = "false") Boolean isUnopened,
 		@RequestParam(required = false) List<Long> genreId,
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "100") int size,
+		@RequestParam(defaultValue = "1000") int size,
 		@CurrentMember Long storeId
 	) {
 		ProductSortOption parsedProductSortOption = parseSortOption(sortOption);
@@ -232,7 +232,7 @@ public class ProductController implements ProductApi {
 		@RequestParam(defaultValue = "false") Boolean isOnSale,
 		@RequestParam(required = false) List<Long> genreId,
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "100") int size,
+		@RequestParam(defaultValue = "1000") int size,
 		@CurrentMember Long storeId
 	) {
 		ProductSortOption parsedProductSortOption = parseSortOption(sortOption);
@@ -275,7 +275,7 @@ public class ProductController implements ProductApi {
 		@RequestParam(defaultValue = "false") Boolean isUnopened,
 		@RequestParam(required = false) List<Long> genreId,
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "100") int size,
+		@RequestParam(defaultValue = "1000") int size,
 		@PathVariable Long storeOwnerId,
 		@CurrentMember Long currentStoreId
 	) {
@@ -319,7 +319,7 @@ public class ProductController implements ProductApi {
 		@RequestParam(defaultValue = "false") Boolean isOnSale,
 		@RequestParam(required = false) List<Long> genreId,
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "100") int size,
+		@RequestParam(defaultValue = "1000") int size,
 		@PathVariable Long storeOwnerId,
 		@CurrentMember Long currentStoreId
 	) {
@@ -817,7 +817,7 @@ public class ProductController implements ProductApi {
 	@GetMapping("/interest/sell")
 	public ResponseEntity<SuccessResponse<InterestedSellProductResponse>> getInterestedSellProducts(
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "100") int size,
+		@RequestParam(defaultValue = "1000") int size,
 		@CurrentMember Long currentStoreId
 	) {
 		CursorValues cursorValues = parseCursorValues(cursor, ProductSortOption.INTEREST);
@@ -870,7 +870,7 @@ public class ProductController implements ProductApi {
 	@GetMapping("/interest/buy")
 	public ResponseEntity<SuccessResponse<InterestedBuyProductResponse>> getInterestedBuyProducts(
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "100") int size,
+		@RequestParam(defaultValue = "1000") int size,
 		@CurrentMember Long currentStoreId
 	) {
 		CursorValues cursorValues = parseCursorValues(cursor, ProductSortOption.INTEREST);
