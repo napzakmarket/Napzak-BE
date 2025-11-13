@@ -9,7 +9,9 @@ RUN chmod +x ./gradlew && ./gradlew :api-server:bootJar -x test
 FROM eclipse-temurin:17-jdk
 
 # ✅ tzdata 설치 (JVM + OS에 Asia/Seoul 반영 위해 필요)
-RUN apk add --no-cache tzdata
+RUN apt-get update && \
+    apt-get install -y tzdata && \
+    rm -rf /var/lib/apt/lists/*
 
 # ✅ JVM과 OS 모두 KST로 강제 설정
 ENV TZ=Asia/Seoul
