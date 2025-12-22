@@ -12,13 +12,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.napzak.common.auth.resolver.CurrentMemberArgumentResolver;
 import com.napzak.common.converter.StringToEnumCustomConverterFactory;
-import com.napzak.common.util.discord.DiscordWebhookProperties;
+import com.napzak.common.util.slack.SlackWebhookProperties;
 
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
-@EnableConfigurationProperties(DiscordWebhookProperties.class)
+@EnableConfigurationProperties(SlackWebhookProperties.class)
 public class WebConfig implements WebMvcConfigurer {
 
 	private final CurrentMemberArgumentResolver currentMemberArgumentResolver;
