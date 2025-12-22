@@ -8,7 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -20,15 +22,29 @@ public class SlackWebhookSender {
 	private final RestTemplate restTemplate;
 
 	public void send(String webhookUrl, String text) {
+		if (webhookUrl == null || webhookUrl.isBlank()) {
+			log.error("Slack webhook url is empty. Skip sending message.");
+			return;
+		}
+
+		Map<String, Object> body = Map.of("text", text);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
 		try {
-			Map<String, Object> body = Map.of("text", text);
+			ResponseEntity<String> response = restTemplate.postForEntity(
+				webhookUrl,
+				new HttpEntity<>(body, headers),
+				String.class
+			);
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
-
-			restTemplate.postForEntity(webhookUrl, new HttpEntity<>(body, headers), String.class);
-		} catch (Exception e) {
-			log.warn("Failed to send slack webhook", e);
+			if (!response.getStatusCode().is2xxSuccessful()) {
+				log.error("Failed to send slack webhook. status={}, body={}",
+					response.getStatusCode(), response.getBody());
+			}
+		} catch (RestClientException exception) {
+			log.error("Failed to send slack webhook. message={}", exception.getMessage(), exception);
 		}
 	}
 
