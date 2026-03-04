@@ -1,5 +1,6 @@
 package com.napzak.api.domain.store.controller;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -450,6 +451,18 @@ public class StoreController implements StoreApi {
 
 		return ResponseEntity.ok(
 			SuccessResponse.of(StoreSuccessCode.TOKENS_REISSUE_SUCCESS, tokensReissueResponse));
+	}
+
+	@PostMapping("/reissue/custom")
+	public ResponseEntity<SuccessResponse<AccessTokenGenerateResponse>> reissueAccessTokenCustom(
+		@RequestParam("expireAt") LocalDateTime expireAt,
+		@CookieValue("refreshToken") String refreshToken,
+		@CurrentMember Long currentStoreId
+	) {
+		AccessTokenGenerateResponse response = authenticationService.generateAccessTokenWithCustomExpireAtFromRefreshToken(refreshToken, expireAt);
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(StoreSuccessCode.TOKENS_REISSUE_SUCCESS, response));
 	}
 
 	private List<GenreNameDto> genrePreferenceResponseGenerator(List<GenrePreference> genreList) {
