@@ -1,6 +1,8 @@
 package com.napzak.common.auth.jwt.provider;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Date;
 
@@ -44,6 +46,11 @@ public class JwtTokenProvider {
 	@PostConstruct
 	protected void init() {
 		jwtSecret = Base64.getEncoder().encodeToString(jwtSecret.getBytes(StandardCharsets.UTF_8));
+	}
+
+	public String issueAccessTokenWithCustomExpireAt(final Authentication authentication, final LocalDateTime expireAt) {
+		long expireTime = Duration.between(LocalDateTime.now(), expireAt).toMillis();
+		return issueToken(authentication, expireTime);
 	}
 
 	public String issueAccessToken(final Authentication authentication) {
