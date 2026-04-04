@@ -36,8 +36,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_API_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_API_SECRET_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_PROD_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_PROD_SECRET_KEY }}
           aws-region: ap-northeast-2
 
       - name: Login to Amazon ECR
@@ -81,7 +81,7 @@ jobs:
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
         with:
           host: ${{ secrets.PROD_API_SERVER_HOST }}
-          username: ${{ secrets.PROD_SERVER_USERNAME }}
+          username: ${{ secrets.PROD_API_SERVER_USERNAME }}
           key: ${{ secrets.PROD_API_SERVER_KEY }}
           envs: ECR_HOST, ECR_APP_NAME, IMAGE_TAG
           script: |

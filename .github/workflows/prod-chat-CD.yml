@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 env:
-  ECR_HOST: ${{ secrets.CHAT_ECR_HOST }}
+  ECR_HOST: ${{ secrets.PROD_ECR_HOST }}
   ECR_APP_NAME: ${{ secrets.CHAT_ECR_APP_NAME }}
   IMAGE_TAG: ${{ github.sha }}
 
@@ -32,8 +32,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_CHAT_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_CHAT_SECRET_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_PROD_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_PROD_SECRET_KEY }}
           aws-region: ap-northeast-2
 
       - name: Login to Amazon ECR
@@ -58,7 +58,7 @@ jobs:
           context: .
           file: ./Dockerfile-chat-prod
           push: true
-          platforms: linux/amd64, linux/arm64
+          platforms: linux/arm64
           tags: |
             ${{ env.ECR_HOST }}/${{ env.ECR_APP_NAME }}:${{ env.IMAGE_TAG }}
             ${{ env.ECR_HOST }}/${{ env.ECR_APP_NAME }}:latest
@@ -77,17 +77,17 @@ jobs:
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
         with:
           host: ${{ secrets.PROD_CHAT_SERVER_HOST }}
-          username: ${{ secrets.PROD_SERVER_USERNAME }}
+          username: ${{ secrets.PROD_CHAT_SERVER_USERNAME }}
           key: ${{ secrets.PROD_CHAT_SERVER_KEY }}
           envs: ECR_HOST, ECR_APP_NAME, IMAGE_TAG
           script: |
-            bash /home/ubuntu/Napzak-BE/deploy-blue-green.sh
+            bash /home/ec2-user/Napzak-BE/deploy-blue-green.sh
 
       - name: Switch nginx upstream
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.PROD_API_SERVER_HOST }}
-          username: ${{ secrets.PROD_SERVER_USERNAME }}
+          username: ${{ secrets.PROD_API_SERVER_USERNAME }}
           key: ${{ secrets.PROD_API_SERVER_KEY }}
           script: |
             sudo /home/ubuntu/scripts/switch_chat_upstream.sh
@@ -96,8 +96,8 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.PROD_CHAT_SERVER_HOST }}
-          username: ${{ secrets.PROD_SERVER_USERNAME }}
+          username: ${{ secrets.PROD_CHAT_SERVER_USERNAME }}
           key: ${{ secrets.PROD_CHAT_SERVER_KEY }}
           script: |
-            bash /home/ubuntu/Napzak-BE/cleanup-chat-old.sh
+            bash /home/ec2-user/Napzak-BE/cleanup-chat-old.sh
         
