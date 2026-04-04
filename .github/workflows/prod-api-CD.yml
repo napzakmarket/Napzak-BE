@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 env:
-    ECR_HOST: ${{ secrets.API_ECR_HOST }}
+    ECR_HOST: ${{ secrets.PROD_ECR_HOST }}
     ECR_APP_NAME: ${{ secrets.API_ECR_APP_NAME }}
     IMAGE_TAG: ${{ github.sha }}
 
@@ -62,7 +62,7 @@ jobs:
           context: .
           file: ./Dockerfile-api-prod
           push: true
-          platforms: linux/amd64, linux/arm64
+          platforms: linux/amd64
           tags: |
             ${{ env.ECR_HOST }}/${{ env.ECR_APP_NAME }}:${{ env.IMAGE_TAG }}
             ${{ env.ECR_HOST }}/${{ env.ECR_APP_NAME }}:latest
