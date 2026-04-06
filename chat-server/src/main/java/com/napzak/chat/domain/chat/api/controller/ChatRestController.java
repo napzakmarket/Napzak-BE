@@ -121,6 +121,29 @@ public class ChatRestController {
 		);
 	}
 
+	@AuthorizedRole({Role.ADMIN})
+	@GetMapping("/{roomId}/messages/admin")
+	public ResponseEntity<SuccessResponse<ChatMessageListResponse>> getMessagesAdmin(
+		@PathVariable Long roomId,
+		@RequestParam(required = false) String cursor,
+		@RequestParam(defaultValue = "100") int size,
+		@RequestParam Long viewerStoreId,
+		@RequestParam String reason
+	) {
+		ChatMessageSortOption sortOption = ChatMessageSortOption.OLDEST;
+		ChatMessagePagination pagination = chatRestService.findChatRoomMessages(
+			roomId, parseCursorValues(cursor, sortOption), size);
+		Long opponentLastReadId = chatRestService.findOpponentLastReadMessageId(roomId, viewerStoreId);
+
+		ChatMessageListResponse response = ChatMessageListResponse.from(
+			pagination, sortOption, viewerStoreId, opponentLastReadId
+		);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(ChatSuccessCode.MESSAGE_LIST_RETRIEVE_SUCCESS, response)
+		);
+	}
+
 	@AuthorizedRole({Role.ADMIN, Role.STORE})
 	@GetMapping("/{roomId}/messages")
 	public ResponseEntity<SuccessResponse<ChatMessageListResponse>> getMessages(
