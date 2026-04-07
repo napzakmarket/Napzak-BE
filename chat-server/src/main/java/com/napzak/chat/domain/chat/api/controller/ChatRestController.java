@@ -149,7 +149,7 @@ public class ChatRestController {
 	public ResponseEntity<SuccessResponse<ChatMessageListResponse>> getMessages(
 		@PathVariable Long roomId,
 		@RequestParam(required = false) String cursor,
-		@RequestParam(defaultValue = "100") int size,
+		@RequestParam(defaultValue = "600") int size,
 		@CurrentMember Long storeId
 	) {
 		ChatMessageSortOption sortOption = ChatMessageSortOption.OLDEST;
