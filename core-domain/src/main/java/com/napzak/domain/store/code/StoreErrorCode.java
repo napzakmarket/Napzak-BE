@@ -18,6 +18,7 @@ public enum StoreErrorCode implements BaseErrorCode {
 	NICKNAME_CONTAINS_SLANG(HttpStatus.BAD_REQUEST, "욕설이나 비속어를 사용할 수 없어요."),
 	SOCIAL_TYPE_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "지원하지 않는 소셜 로그인 타입입니다."),
 	SELF_BLOCK_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "자기 자신은 차단할 수 없습니다."),
+	INVALID_STORE_REPORT_APPROVAL_REQUEST(HttpStatus.BAD_REQUEST, "요청한 신고 승인 스토어와 신고 게시물 대상 스토어가 일치하지 않습니다."),
 
 	/*
 	403 Forbidden
@@ -29,11 +30,13 @@ public enum StoreErrorCode implements BaseErrorCode {
 	404 Not Found
 	 */
 	STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 사용자가 없습니다."),
+	STORE_REPORT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당하는 신고가 없습니다."),
 
 	/*
 	409 Conflict
 	 */
 	DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "이미 사용중인 이름이에요."),
+	STORE_REPORT_ALREADY_PROCESSED(HttpStatus.CONFLICT, "이미 승인된 신고 게시물입니다."),
 	;
 
 	private final HttpStatus httpStatus;
