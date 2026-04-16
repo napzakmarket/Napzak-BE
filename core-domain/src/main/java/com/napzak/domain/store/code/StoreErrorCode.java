@@ -36,7 +36,7 @@ public enum StoreErrorCode implements BaseErrorCode {
 	409 Conflict
 	 */
 	DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "이미 사용중인 이름이에요."),
-	STORE_REPORT_ALREADY_PROCESSED(HttpStatus.CONFLICT, "이미 승인된 신고 게시물입니다."),
+	STORE_REPORT_ALREADY_PROCESSED(HttpStatus.CONFLICT, "이미 처리된 신고 게시물입니다."),
 	;
 
 	private final HttpStatus httpStatus;
