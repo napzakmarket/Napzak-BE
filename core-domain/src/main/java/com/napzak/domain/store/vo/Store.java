@@ -2,9 +2,9 @@ package com.napzak.domain.store.vo;
 
 import java.time.LocalDateTime;
 
-import com.napzak.domain.store.entity.StoreEntity;
-import com.napzak.common.auth.role.enums.Role;
 import com.napzak.common.auth.client.enums.SocialType;
+import com.napzak.common.auth.role.enums.Role;
+import com.napzak.domain.store.entity.StoreEntity;
 
 import lombok.Getter;
 
@@ -13,6 +13,9 @@ public class Store {
 	private final Long id;
 	private final String nickname;
 	private final String phoneNumber;
+	private final boolean phoneVerified;
+	private final LocalDateTime verifiedAt;
+	private final String email;
 	private final String photo;
 	private final String cover;
 	private final Role role;
@@ -26,6 +29,9 @@ public class Store {
 		Long id,
 		String nickname,
 		String phoneNumber,
+		boolean phoneVerified,
+		LocalDateTime verifiedAt,
+		String email,
 		String photo,
 		String cover,
 		Role role,
@@ -38,6 +44,9 @@ public class Store {
 		this.id = id;
 		this.nickname = nickname;
 		this.phoneNumber = phoneNumber;
+		this.phoneVerified = phoneVerified;
+		this.verifiedAt = verifiedAt;
+		this.email = email;
 		this.photo = photo;
 		this.cover = cover;
 		this.role = role;
@@ -53,6 +62,9 @@ public class Store {
 			storeEntity.getId(),
 			storeEntity.getNickname(),
 			storeEntity.getPhoneNumber(),
+			storeEntity.isPhoneVerified(),
+			storeEntity.getVerifiedAt(),
+			storeEntity.getEmail(),
 			storeEntity.getPhoto(),
 			storeEntity.getCover(),
 			storeEntity.getRole(),

@@ -20,6 +20,7 @@ public class StoreSaver {
 	public Store save(
 		final String nickname,
 		final String phoneNumber,
+		final String email,
 		final Role role,
 		final String description,
 		final String socialId,
@@ -27,7 +28,7 @@ public class StoreSaver {
 		final String photo,
 		final String cover
 	) {
-		final StoreEntity storeEntity = StoreEntity.create(nickname, phoneNumber, role, description, socialId,
+		final StoreEntity storeEntity = StoreEntity.create(nickname, phoneNumber, email, role, description, socialId,
 			socialType, photo, cover);
 
 		storeRepository.save(storeEntity);

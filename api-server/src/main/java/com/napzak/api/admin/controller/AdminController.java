@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.napzak.api.admin.code.AdminSuccessCode;
@@ -33,16 +34,18 @@ public class AdminController {
 	@AuthorizedRole({Role.ADMIN})
 	@PatchMapping("/report-approval/{storeId}")
 	public ResponseEntity<SuccessResponse<Void>> reportApproval(
-		@CurrentMember final Long currentStoreId,
-		@PathVariable("storeId") Long reportedStoreId
+		@PathVariable("storeId") Long reportedStoreId,
+		@RequestParam Long reportId
 	){
-		List<ChatMessage> messages = storeChatFacade.broadcastSystemMessage(reportedStoreId, SystemMessageType.REPORTED);
-		storeProductFacade.updateProductIsVisibleByStoreId(reportedStoreId);
+		adminService.approveReport(reportedStoreId, reportId);
 
+		storeProductFacade.updateProductIsVisibleByStoreId(reportedStoreId);
 		List<Long> productIds = storeProductFacade.getProductIdsByStoreId(reportedStoreId);
 		storeChatFacade.updateChatMessageProductMetadataIsProductDeletedByProductId(productIds, true);
 
-		adminService.approveReport(reportedStoreId, messages);
+		List<ChatMessage> messages = storeChatFacade.broadcastSystemMessage(reportedStoreId, SystemMessageType.REPORTED);
+		adminService.sendReportSystemMessage(messages);
+
 		return ResponseEntity.ok(SuccessResponse.of(AdminSuccessCode.STORE_REPORT_APPROVE_SUCCESS));
 	}
 

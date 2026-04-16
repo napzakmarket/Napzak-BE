@@ -1,6 +1,7 @@
 package com.napzak.domain.store.vo;
 
 import com.napzak.domain.store.entity.StoreReportEntity;
+import com.napzak.domain.store.entity.enums.StoreReportApprovalStatus;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +19,7 @@ public class StoreReport {
 	private final String reportTitle;
 	private final String reportDescription;
 	private final String reportContact;
+	private final StoreReportApprovalStatus reportApprovalStatus;
 	private final LocalDateTime createdAt;
 
 	public StoreReport(
@@ -31,6 +33,7 @@ public class StoreReport {
 		String reportTitle,
 		String reportDescription,
 		String reportContact,
+		StoreReportApprovalStatus reportApprovalStatus,
 		LocalDateTime createdAt
 	) {
 		this.id = id;
@@ -43,6 +46,7 @@ public class StoreReport {
 		this.reportTitle = reportTitle;
 		this.reportDescription = reportDescription;
 		this.reportContact = reportContact;
+		this.reportApprovalStatus = reportApprovalStatus;
 		this.createdAt = createdAt;
 	}
 
@@ -58,6 +62,7 @@ public class StoreReport {
 			storeReportEntity.getReportTitle(),
 			storeReportEntity.getReportDescription(),
 			storeReportEntity.getReportContact(),
+			storeReportEntity.getReportApprovalStatus(),
 			storeReportEntity.getCreatedAt()
 		);
 	}

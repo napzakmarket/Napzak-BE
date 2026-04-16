@@ -1,7 +1,5 @@
 package com.napzak.domain.store.crud.storereport;
 
-import java.time.LocalDateTime;
-
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,8 +28,7 @@ public class StoreReportSaver {
 			store.getDescription(),
 			title,
 			description,
-			contact,
-			LocalDateTime.now()
+			contact
 		);
 		storeReportRepository.save(entity);
 

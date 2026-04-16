@@ -4,12 +4,16 @@ import static com.napzak.domain.store.entity.StoreReportTableConstants.*;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
+
+import com.napzak.domain.store.entity.enums.StoreReportApprovalStatus;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -54,6 +58,10 @@ public class StoreReportEntity {
 	@Column(name = COLUMN_REPORT_CONTACT, nullable = false)
 	private String reportContact;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = COLUMN_REPORT_APPROVAL_STATUS, nullable = false, columnDefinition = "varchar(20) default 'PENDING'")
+	private StoreReportApprovalStatus reportApprovalStatus;
+
 	@Column(name = COLUMN_CREATED_AT, nullable = false)
 	private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -68,7 +76,7 @@ public class StoreReportEntity {
 		String reportTitle,
 		String reportDescription,
 		String reportContact,
-		LocalDateTime createdAt
+		StoreReportApprovalStatus reportApprovalStatus
 	) {
 		this.reporterId = reporterId;
 		this.reportedStoreId = reportedStoreId;
@@ -79,7 +87,7 @@ public class StoreReportEntity {
 		this.reportTitle = reportTitle;
 		this.reportDescription = reportDescription;
 		this.reportContact = reportContact;
-		this.createdAt = createdAt;
+		this.reportApprovalStatus = reportApprovalStatus;
 	}
 
 	public static StoreReportEntity create(
@@ -91,8 +99,7 @@ public class StoreReportEntity {
 		String reportedStoreDescription,
 		String reportTitle,
 		String reportDescription,
-		String reportContact,
-		LocalDateTime createdAt
+		String reportContact
 	) {
 		return StoreReportEntity.builder()
 			.reporterId(reporterId)
@@ -104,7 +111,15 @@ public class StoreReportEntity {
 			.reportTitle(reportTitle)
 			.reportDescription(reportDescription)
 			.reportContact(reportContact)
-			.createdAt(createdAt)
+			.reportApprovalStatus(StoreReportApprovalStatus.PENDING)
 			.build();
+	}
+
+	public void approve() {
+		this.reportApprovalStatus = StoreReportApprovalStatus.APPROVED;
+	}
+
+	public void reject() {
+		this.reportApprovalStatus = StoreReportApprovalStatus.REJECTED;
 	}
 }

@@ -13,4 +13,5 @@ public class StoreReportTableConstants {
 	public static final String COLUMN_REPORT_DESCRIPTION = "report_description";
 	public static final String COLUMN_REPORT_CONTACT = "report_contact";
 	public static final String COLUMN_CREATED_AT = "created_at";
+	public static final String COLUMN_REPORT_APPROVAL_STATUS = "report_approval_status";
 }
