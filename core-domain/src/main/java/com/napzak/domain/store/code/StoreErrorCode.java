@@ -37,6 +37,8 @@ public enum StoreErrorCode implements BaseErrorCode {
 	 */
 	DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "이미 사용중인 이름이에요."),
 	STORE_REPORT_ALREADY_PROCESSED(HttpStatus.CONFLICT, "이미 처리된 신고 게시물입니다."),
+	ALREADY_VERIFIED(HttpStatus.CONFLICT, "이미 번호 인증이 완료된 회원입니다."),
+	PHONE_NUMBER_ALREADY_IN_USE(HttpStatus.CONFLICT, "이미 가입된 번호입니다."),
 	;
 
 	private final HttpStatus httpStatus;

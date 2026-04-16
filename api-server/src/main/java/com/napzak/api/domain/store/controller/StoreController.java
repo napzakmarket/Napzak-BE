@@ -25,8 +25,10 @@ import com.napzak.api.domain.store.StoreInterestFacade;
 import com.napzak.api.domain.store.StoreLinkFacade;
 import com.napzak.api.domain.store.StoreProductFacade;
 import com.napzak.api.domain.store.StoreTermsBundleFacade;
+import com.napzak.api.domain.store.code.SmsSuccessCode;
 import com.napzak.api.domain.store.dto.request.GenrePreferenceRequest;
 import com.napzak.api.domain.store.dto.request.NicknameRequest;
+import com.napzak.api.domain.store.dto.request.PhoneNumberVerifyRequest;
 import com.napzak.api.domain.store.dto.request.RoleDto;
 import com.napzak.api.domain.store.dto.request.StoreProfileModifyRequest;
 import com.napzak.api.domain.store.dto.request.StoreReportRequest;
@@ -35,6 +37,7 @@ import com.napzak.api.domain.store.dto.response.AccessTokenGenerateResponse;
 import com.napzak.api.domain.store.dto.response.LoginSuccessResponse;
 import com.napzak.api.domain.store.dto.response.MyPageResponse;
 import com.napzak.api.domain.store.dto.response.OnboardingTermsListResponse;
+import com.napzak.api.domain.store.dto.response.PhoneNumberVerifyResponse;
 import com.napzak.api.domain.store.dto.response.SettingLinkResponse;
 import com.napzak.api.domain.store.dto.response.StoreIdResponse;
 import com.napzak.api.domain.store.dto.response.StoreInfoResponse;
@@ -43,6 +46,7 @@ import com.napzak.api.domain.store.dto.response.StoreReportResponse;
 import com.napzak.api.domain.store.dto.response.StoreWithdrawResponse;
 import com.napzak.api.domain.store.dto.response.TermsDto;
 import com.napzak.api.domain.store.dto.response.TokensReissueResponse;
+import com.napzak.api.domain.store.service.SmsService;
 import com.napzak.common.auth.annotation.AuthorizedRole;
 import com.napzak.common.auth.jwt.exception.TokenErrorCode;
 import com.napzak.domain.chat.entity.enums.SystemMessageType;
@@ -90,6 +94,7 @@ public class StoreController implements StoreApi {
 	private final StoreService storeService;
 	private final StoreRegistrationService storeRegistrationService;
 	private final AuthenticationService authenticationService;
+	private final SmsService smsService;
 	private final StorePhotoS3ImageCleaner storePhotoS3ImageCleaner;
 	private final StoreGenreFacade storeGenreFacade;
 	private final StoreProductFacade storeProductFacade;
@@ -451,6 +456,18 @@ public class StoreController implements StoreApi {
 
 		return ResponseEntity.ok(
 			SuccessResponse.of(StoreSuccessCode.TOKENS_REISSUE_SUCCESS, tokensReissueResponse));
+	}
+
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.WITHDRAWN})
+	@PostMapping("/phone-verifications/send")
+	public ResponseEntity<SuccessResponse<PhoneNumberVerifyResponse>> sendVerificationCode(
+		@Valid @RequestBody PhoneNumberVerifyRequest request,
+		@CurrentMember Long currentStoreId
+	) {
+		PhoneNumberVerifyResponse response = smsService.sendVerificationCode(request, currentStoreId);
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(SmsSuccessCode.VERIFICATION_CODE_SEND_SUCCESS, response));
 	}
 
 	@PostMapping("/reissue/custom")
