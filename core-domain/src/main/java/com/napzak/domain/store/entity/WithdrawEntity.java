@@ -38,25 +38,25 @@ public class WithdrawEntity {
 	@Column(name = COLUMN_CREATED_AT, nullable = false)
 	private LocalDateTime createdAt;
 
-	@Column(name = COLUMN_PHONE_NUMBER, nullable = true)
-	private String phoneNumber;
+	@Column(name = COLUMN_PHONE_NUMBER_ENC, nullable = true)
+	private String phoneNumberEnc;
 
 	@Builder
-	public WithdrawEntity(Long withdrawerId, String title, String description, LocalDateTime createdAt, String phoneNumber) {
+	public WithdrawEntity(Long withdrawerId, String title, String description, LocalDateTime createdAt, String phoneNumberEnc) {
 		this.withdrawerId = withdrawerId;
 		this.title = title;
 		this.description = description;
 		this.createdAt = createdAt;
-		this.phoneNumber = phoneNumber;
+		this.phoneNumberEnc = phoneNumberEnc;
 	}
 
-	public static WithdrawEntity create(Long withdrawerId, String title, String description, LocalDateTime createdAt, String phoneNumber) {
+	public static WithdrawEntity create(Long withdrawerId, String title, String description, LocalDateTime createdAt, String phoneNumberEnc) {
 		return WithdrawEntity.builder()
 			.withdrawerId(withdrawerId)
 			.title(title)
 			.description(description)
 			.createdAt(createdAt)
-			.phoneNumber(phoneNumber)
+			.phoneNumberEnc(phoneNumberEnc)
 			.build();
 	}
 }

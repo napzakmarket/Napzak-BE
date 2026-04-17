@@ -14,7 +14,7 @@ public class Withdraw {
 	private final String title;
 	private final String description;
 	private final LocalDateTime createdAt;
-	private final String phoneNumber;
+	private final String phoneNumberEnc;
 
 	public static Withdraw fromEntity(WithdrawEntity withdrawEntity) {
 		return new Withdraw(
@@ -22,7 +22,7 @@ public class Withdraw {
 			withdrawEntity.getTitle(),
 			withdrawEntity.getDescription(),
 			withdrawEntity.getCreatedAt(),
-			withdrawEntity.getPhoneNumber()
+			withdrawEntity.getPhoneNumberEnc()
 		);
 	}
 }
