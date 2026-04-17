@@ -87,7 +87,7 @@ public class SmsService {
 		Optional<SmsVerificationData> verificationData = smsVerificationRedisRepository.findVerificationData(phoneNumber);
 
 		if (verificationData.isEmpty()) {
-			throw new NapzakException(SmsErrorCode.VERIFICATION_CODE_INVALID);
+			throw new NapzakException(SmsErrorCode.VERIFICATION_SESSION_NOT_FOUND);
 		}
 
 		if (verificationData.get().failCount() >= smsProperties.getPolicy().getFailMaxCount()) {

@@ -12,14 +12,9 @@ import lombok.RequiredArgsConstructor;
 public enum SmsErrorCode implements BaseErrorCode {
 
 	/*
-	400 BAD REQUEST
-	 */
-	VERIFICATION_CODE_INVALID(HttpStatus.BAD_REQUEST, "인증번호가 만료되었거나 존재하지 않습니다. 다시 요청해주세요."),
-
-	/*
 	404 NOT FOUND
 	 */
-	VERIFICATION_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "진행 중인 번호 인증 요청을 찾을 수 없습니다."),
+	VERIFICATION_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "인증번호가 만료되었거나 존재하지 않습니다. 다시 요청해주세요."),
 
 	/*
 	429 TOO MANY REQUESTS
