@@ -31,5 +31,5 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
 	@Query("SELECT s.photo FROM StoreEntity s")
 	List<String> findAllPhoto();
 
-	Optional<StoreEntity> findByPhoneNumber(String phoneNumber);
+	Optional<StoreEntity> findByPhoneNumberHash(String phoneNumberHash);
 }
