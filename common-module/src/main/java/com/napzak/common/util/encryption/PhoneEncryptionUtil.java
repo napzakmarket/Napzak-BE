@@ -17,6 +17,9 @@ import org.springframework.stereotype.Component;
 import com.napzak.common.exception.NapzakException;
 import com.napzak.common.exception.code.ErrorCode;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class PhoneEncryptionUtil {
 
@@ -50,6 +53,7 @@ public class PhoneEncryptionUtil {
 
 			return Base64.getEncoder().encodeToString(combined);
 		} catch (Exception e) {
+			log.error("[SMS] 전화번호 encryption에 실패하였습니다. error: ", e);
 			throw new NapzakException(ErrorCode.ENCRYPTION_FAILED);
 		}
 	}
@@ -65,6 +69,7 @@ public class PhoneEncryptionUtil {
 
 			return new String(cipher.doFinal(encrypted), StandardCharsets.UTF_8);
 		} catch (Exception e) {
+			log.error("[SMS] 전화번호 decryption에 실패하였습니다. error: ", e);
 			throw new NapzakException(ErrorCode.DECRYPTION_FAILED);
 		}
 	}
@@ -76,6 +81,7 @@ public class PhoneEncryptionUtil {
 			byte[] hashBytes = mac.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
 			return HexFormat.of().formatHex(hashBytes);
 		} catch (Exception e) {
+			log.error("[SMS] 전화번호 hasing에 실패하였습니다. error: ", e);
 			throw new NapzakException(ErrorCode.HASHING_FAILED);
 		}
 	}

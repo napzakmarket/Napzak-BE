@@ -1,9 +1,8 @@
 package com.napzak.domain.store.repository;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -45,7 +44,7 @@ public class SmsVerificationRedisRepository {
 
 	public void updateVerificationData(String phoneNumber, SmsVerificationData data) {
 		String key = VERIFY_KEY_PREFIX + phoneNumber;
-		long remainTtl = stringRedisTemplate.getExpire(key);
+		Long remainTtl = stringRedisTemplate.getExpire(key);
 		stringRedisTemplate.opsForValue().set(key, serialize(data), Duration.ofSeconds(remainTtl));
 	}
 
@@ -55,12 +54,9 @@ public class SmsVerificationRedisRepository {
 
 	public void incrementDailyCount(String phoneNumber) {
 		String key = DAILY_KEY_PREFIX + phoneNumber;
-
-		// 키가 존재하지 않을 때 자동적으로 값 0으로 초기화되어 저장되고 +1
-		Long count = stringRedisTemplate.opsForValue().increment(key);
-		if (count != null && count == 1) {
-			stringRedisTemplate.expire(key, remainingSecondsUntilMidnight());
-		}
+		Duration ttl = remainingSecondsUntilMidnight();
+		stringRedisTemplate.opsForValue().setIfAbsent(key, "0", ttl);
+		stringRedisTemplate.opsForValue().increment(key);
 	}
 
 	public int getDailyCount(String phoneNumber) {
@@ -69,8 +65,9 @@ public class SmsVerificationRedisRepository {
 	}
 
 	private Duration remainingSecondsUntilMidnight() {
-		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime midnight = LocalDateTime.of(LocalDate.now().plusDays(1), LocalTime.MIDNIGHT);
+		ZoneId kst = ZoneId.of("Asia/Seoul");
+		ZonedDateTime now = ZonedDateTime.now(kst);
+		ZonedDateTime midnight = now.toLocalDate().plusDays(1).atStartOfDay(kst);
 		return Duration.between(now, midnight);
 	}
 

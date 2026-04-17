@@ -24,7 +24,6 @@ import com.napzak.domain.store.repository.SmsVerificationRedisRepository;
 import com.napzak.domain.store.repository.StoreRepository;
 import com.napzak.domain.store.vo.SmsVerificationData;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,6 +60,10 @@ public class SmsService {
 		message.setTo(phoneNumber);
 		message.setText(smsUtil.formatMessageText(authCode));
 
+		// 레디스에 세션 저장 & 업데이트
+		smsVerificationRedisRepository.saveVerificationCode(phoneNumber, authCode);
+		smsVerificationRedisRepository.incrementDailyCount(phoneNumber);
+
 		try {
 			messageService.sendOne(new SingleMessageSendingRequest(message));
 			log.info("[SMS] 인증번호가 발송되었습니다. 발송 대상 번호: {}", masked);
@@ -69,17 +72,11 @@ public class SmsService {
 			throw new NapzakException(SmsErrorCode.MESSAGE_SEND_FAILED);
 		}
 
-		// 레디스에 세션 저장 & 업데이트
-		smsVerificationRedisRepository.saveVerificationCode(phoneNumber, authCode);
-		smsVerificationRedisRepository.incrementDailyCount(phoneNumber);
-
 		return new SmsSendResponse(remainingCount - 1);
 	}
 
-	public SmsConfirmResponse confirmVerificationCode(@Valid SmsConfirmRequest request, Long storeId) {
+	public SmsConfirmResponse confirmVerificationCode(SmsConfirmRequest request, Long storeId) {
 		String phoneNumber = request.phoneNumber();
-
-		int remainingCount = validateDailyLimit(phoneNumber);
 
 		// 인증번호 요청과 검증 사이에 같은 번호가 가입되었는지 검증
 		validatePhoneNumberUsage(phoneNumber, storeId);
@@ -108,9 +105,13 @@ public class SmsService {
 			}
 
 			boolean isPhoneVerified = storeService.getStore(storeId).isPhoneVerified();
+			int remainingCount = smsProperties.getPolicy().getSendMaxCount() - smsVerificationRedisRepository.getDailyCount(phoneNumber);
 
 			return new SmsConfirmResponse(isPhoneVerified, remainingCount);
+		} catch (NapzakException e) {
+			throw e;
 		} catch (Exception e) {
+			log.error("[SMS] 인증번호 검증 처리 중 오류", e);
 			throw new NapzakException(SmsErrorCode.MESSAGE_CONFIRM_FAILED);
 		}
 	}

@@ -1,6 +1,5 @@
 package com.napzak.api.domain.store.controller;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -20,17 +19,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.napzak.api.domain.genre.dto.response.GenreNameDto;
+import com.napzak.api.domain.genre.dto.response.GenreNameListResponse;
 import com.napzak.api.domain.store.StoreChatFacade;
+import com.napzak.api.domain.store.StoreGenreFacade;
 import com.napzak.api.domain.store.StoreInterestFacade;
 import com.napzak.api.domain.store.StoreLinkFacade;
 import com.napzak.api.domain.store.StoreProductFacade;
 import com.napzak.api.domain.store.StoreTermsBundleFacade;
+import com.napzak.api.domain.store.StoreUseTermsFacade;
 import com.napzak.api.domain.store.code.SmsSuccessCode;
+import com.napzak.api.domain.store.code.StoreSuccessCode;
 import com.napzak.api.domain.store.dto.request.GenrePreferenceRequest;
 import com.napzak.api.domain.store.dto.request.NicknameRequest;
+import com.napzak.api.domain.store.dto.request.RoleDto;
 import com.napzak.api.domain.store.dto.request.SmsConfirmRequest;
 import com.napzak.api.domain.store.dto.request.SmsSendRequest;
-import com.napzak.api.domain.store.dto.request.RoleDto;
 import com.napzak.api.domain.store.dto.request.StoreProfileModifyRequest;
 import com.napzak.api.domain.store.dto.request.StoreReportRequest;
 import com.napzak.api.domain.store.dto.request.StoreWithdrawRequest;
@@ -38,9 +42,9 @@ import com.napzak.api.domain.store.dto.response.AccessTokenGenerateResponse;
 import com.napzak.api.domain.store.dto.response.LoginSuccessResponse;
 import com.napzak.api.domain.store.dto.response.MyPageResponse;
 import com.napzak.api.domain.store.dto.response.OnboardingTermsListResponse;
+import com.napzak.api.domain.store.dto.response.SettingLinkResponse;
 import com.napzak.api.domain.store.dto.response.SmsConfirmResponse;
 import com.napzak.api.domain.store.dto.response.SmsSendResponse;
-import com.napzak.api.domain.store.dto.response.SettingLinkResponse;
 import com.napzak.api.domain.store.dto.response.StoreIdResponse;
 import com.napzak.api.domain.store.dto.response.StoreInfoResponse;
 import com.napzak.api.domain.store.dto.response.StoreProfileModifyResponse;
@@ -48,36 +52,31 @@ import com.napzak.api.domain.store.dto.response.StoreReportResponse;
 import com.napzak.api.domain.store.dto.response.StoreWithdrawResponse;
 import com.napzak.api.domain.store.dto.response.TermsDto;
 import com.napzak.api.domain.store.dto.response.TokensReissueResponse;
+import com.napzak.api.domain.store.service.AuthenticationService;
+import com.napzak.api.domain.store.service.LoginService;
 import com.napzak.api.domain.store.service.SmsService;
+import com.napzak.api.domain.store.service.StorePhotoS3ImageCleaner;
+import com.napzak.api.domain.store.service.StoreRegistrationService;
+import com.napzak.api.domain.store.service.StoreService;
+import com.napzak.api.domain.store.service.TokenService;
 import com.napzak.common.auth.annotation.AuthorizedRole;
+import com.napzak.common.auth.annotation.CurrentMember;
+import com.napzak.common.auth.client.dto.StoreSocialLoginRequest;
 import com.napzak.common.auth.jwt.exception.TokenErrorCode;
+import com.napzak.common.auth.role.enums.Role;
+import com.napzak.common.exception.NapzakException;
+import com.napzak.common.exception.dto.SuccessResponse;
 import com.napzak.domain.chat.entity.enums.SystemMessageType;
 import com.napzak.domain.chat.vo.ChatMessage;
 import com.napzak.domain.external.entity.enums.LinkType;
 import com.napzak.domain.external.entity.enums.TermsType;
 import com.napzak.domain.external.vo.UseTerms;
-import com.napzak.api.domain.genre.dto.response.GenreNameDto;
-import com.napzak.api.domain.genre.dto.response.GenreNameListResponse;
 import com.napzak.domain.genre.code.GenreErrorCode;
 import com.napzak.domain.genre.vo.Genre;
 import com.napzak.domain.product.entity.enums.TradeType;
-import com.napzak.api.domain.store.StoreGenreFacade;
-import com.napzak.api.domain.store.StoreUseTermsFacade;
 import com.napzak.domain.store.code.StoreErrorCode;
-import com.napzak.api.domain.store.code.StoreSuccessCode;
-import com.napzak.api.domain.store.service.AuthenticationService;
-import com.napzak.api.domain.store.service.LoginService;
-import com.napzak.api.domain.store.service.StorePhotoS3ImageCleaner;
-import com.napzak.api.domain.store.service.StoreRegistrationService;
-import com.napzak.api.domain.store.service.StoreService;
-import com.napzak.common.auth.annotation.CurrentMember;
-import com.napzak.common.auth.client.dto.StoreSocialLoginRequest;
-import com.napzak.common.auth.role.enums.Role;
 import com.napzak.domain.store.vo.GenrePreference;
 import com.napzak.domain.store.vo.Store;
-import com.napzak.api.domain.store.service.TokenService;
-import com.napzak.common.exception.NapzakException;
-import com.napzak.common.exception.dto.SuccessResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -486,7 +485,6 @@ public class StoreController implements StoreApi {
 
 	}
 
-	@PostMapping
 	private List<GenreNameDto> genrePreferenceResponseGenerator(List<GenrePreference> genreList) {
 
 		List<Long> genreIds = genreList.stream().map(GenrePreference::getGenreId).toList();
