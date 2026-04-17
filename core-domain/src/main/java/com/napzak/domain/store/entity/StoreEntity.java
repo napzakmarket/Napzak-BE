@@ -164,4 +164,10 @@ public class StoreEntity {
 		this.phoneVerified = true;
 		this.verifiedAt = LocalDateTime.now();
 	}
+
+	public void clearPhoneVerification() {
+		this.phoneNumber = null;
+		this.phoneVerified = false;
+		this.verifiedAt = null;
+	}
 }

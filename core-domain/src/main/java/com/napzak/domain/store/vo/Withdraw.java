@@ -14,13 +14,15 @@ public class Withdraw {
 	private final String title;
 	private final String description;
 	private final LocalDateTime createdAt;
+	private final String phoneNumber;
 
 	public static Withdraw fromEntity(WithdrawEntity withdrawEntity) {
 		return new Withdraw(
 			withdrawEntity.getId(),
 			withdrawEntity.getTitle(),
 			withdrawEntity.getDescription(),
-			withdrawEntity.getCreatedAt()
+			withdrawEntity.getCreatedAt(),
+			withdrawEntity.getPhoneNumber()
 		);
 	}
 }

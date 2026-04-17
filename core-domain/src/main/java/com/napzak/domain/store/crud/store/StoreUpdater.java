@@ -53,6 +53,7 @@ public class StoreUpdater {
 		StoreEntity storeEntity = storeRepository.findById(storeId)
 			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
 		storeEntity.withdraw();
+		storeEntity.clearPhoneVerification();
 		storeRepository.save(storeEntity);
 	}
 }

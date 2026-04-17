@@ -19,8 +19,8 @@ public class WithdrawSaver {
 	private final SlackWebhookSender slackWebhookSender;
 
 	@Transactional
-	public void save(Long storeId, String title, String description, LocalDateTime createdAt) {
-		WithdrawEntity entity = WithdrawEntity.create(storeId, title, description, createdAt);
+	public void save(Long storeId, String title, String description, LocalDateTime createdAt, String phoneNumber) {
+		WithdrawEntity entity = WithdrawEntity.create(storeId, title, description, createdAt, phoneNumber);
 		withdrawRepository.save(entity);
 
 		slackWebhookSender.sendWithdraw("""
