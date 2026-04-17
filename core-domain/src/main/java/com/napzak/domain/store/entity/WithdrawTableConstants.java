@@ -7,4 +7,5 @@ public class WithdrawTableConstants {
 	public static final String COLUMN_TITLE = "title";
 	public static final String COLUMN_DESCRIPTION = "description";
 	public static final String COLUMN_CREATED_AT = "created_at";
+	public static final String COLUMN_PHONE_NUMBER_ENC = "phone_number_enc";
 }

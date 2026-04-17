@@ -1,6 +1,5 @@
 package com.napzak.api.domain.store.service;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -112,21 +111,6 @@ public class AuthenticationService {
 			storeId, role.getRoleName(), authorities);
 
 		return jwtTokenProvider.issueRefreshToken(authenticationToken);
-	}
-
-	@Transactional
-	public AccessTokenGenerateResponse generateAccessTokenWithCustomExpireAtFromRefreshToken(final String refreshToken, LocalDateTime expireAt) {
-
-		validateRefreshToken(refreshToken);
-
-		Long storeId = jwtTokenProvider.getStoreIdFromJwt(refreshToken);
-		verifyStoreIdWithStoredToken(refreshToken, storeId);
-
-		Role role = jwtTokenProvider.getRoleFromJwt(refreshToken);
-		Collection<GrantedAuthority> authorities = List.of(role.toGrantedAuthority());
-
-		UsernamePasswordAuthenticationToken authenticationToken = createAuthenticationToken(storeId, role, authorities);
-		return AccessTokenGenerateResponse.from(jwtTokenProvider.issueAccessTokenWithCustomExpireAt(authenticationToken, expireAt));
 	}
 
 	/**

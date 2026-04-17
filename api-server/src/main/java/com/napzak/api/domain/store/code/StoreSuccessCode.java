@@ -29,6 +29,7 @@ public enum StoreSuccessCode implements BaseSuccessCode {
 	CHANGE_STORE_ROLE_SUCCESS(HttpStatus.OK, "유저 role 변경이 완료되었습니다."),
 	STORE_PHOTO_DELETE_SUCCESS(HttpStatus.OK, "사용하지 않는 S3 유저 이미지가 삭제되었습니다."),
 	STORE_UNBLOCK_SUCCESS(HttpStatus.OK, "유저 차단이 해제되었습니다."),
+	STORE_PHONE_VERIFIED_GET_SUCCESS(HttpStatus.OK, "번호 인증 상태 조회에 성공했습니다."),
 	/*
 	201 Created
 	 */

@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Table(
 	name = StoreTableConstants.TABLE_STORE,
 	indexes = {
-		@Index(name = "uk_store_phone_number", columnList = StoreTableConstants.COLUMN_PHONE_NUMBER, unique = true)
+		@Index(name = "uk_store_phone_number_hash", columnList = StoreTableConstants.COLUMN_PHONE_NUMBER_HASH, unique = true)
 	}
 )
 @Entity
@@ -41,8 +41,11 @@ public class StoreEntity {
 	@Column(name = StoreTableConstants.COLUMN_NICKNAME, nullable = true)
 	private String nickname;
 
-	@Column(name = StoreTableConstants.COLUMN_PHONE_NUMBER, nullable = true)
-	private String phoneNumber;
+	@Column(name = StoreTableConstants.COLUMN_PHONE_NUMBER_ENC, nullable = true)
+	private String phoneNumberEnc;
+
+	@Column(name = StoreTableConstants.COLUMN_PHONE_NUMBER_HASH, nullable = true)
+	private String phoneNumberHash;
 
 	@Column(name = StoreTableConstants.COLUMN_PHONE_VERIFIED, nullable = false)
 	private boolean phoneVerified;
@@ -79,7 +82,6 @@ public class StoreEntity {
 	@Builder
 	private StoreEntity(
 		String nickname,
-		String phoneNumber,
 		boolean phoneVerified,
 		LocalDateTime verifiedAt,
 		String email,
@@ -91,7 +93,6 @@ public class StoreEntity {
 		String cover
 	) {
 		this.nickname = nickname;
-		this.phoneNumber = phoneNumber;
 		this.phoneVerified = phoneVerified;
 		this.verifiedAt = verifiedAt;
 		this.email = email;
@@ -105,7 +106,6 @@ public class StoreEntity {
 
 	public static StoreEntity create(
 		final String nickname,
-		final String phoneNumber,
 		final String email,
 		final Role role,
 		final String description,
@@ -116,7 +116,6 @@ public class StoreEntity {
 	) {
 		return StoreEntity.builder()
 			.nickname(nickname)
-			.phoneNumber(phoneNumber)
 			.phoneVerified(false)
 			.verifiedAt(null)
 			.email(email)
@@ -159,9 +158,17 @@ public class StoreEntity {
 		this.email = email;
 	}
 
-	public void verifyAndUpdatePhone(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
+	public void verifyAndUpdatePhone(String phoneNumberEnc, String phoneNumberHash) {
+		this.phoneNumberEnc = phoneNumberEnc;
+		this.phoneNumberHash = phoneNumberHash;
 		this.phoneVerified = true;
 		this.verifiedAt = LocalDateTime.now();
+	}
+
+	public void clearPhoneVerification() {
+		this.phoneNumberEnc = null;
+		this.phoneNumberHash = null;
+		this.phoneVerified = false;
+		this.verifiedAt = null;
 	}
 }

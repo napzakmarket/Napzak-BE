@@ -34,7 +34,7 @@ public class StoreRegistrationService {
 		SocialType socialType = storeSocialInfoResponse.socialType();
 
 		// TODO: email 수집 반영
-		Store store = storeSaver.save(null, null, null, Role.ONBOARDING, null, socialId, socialType, null, null);
+		Store store = storeSaver.save(null, null, Role.ONBOARDING, null, socialId, socialType, null, null);
 
 		log.info("Store registered with storeId: {}, role: {}", store.getId(), store.getRole());
 

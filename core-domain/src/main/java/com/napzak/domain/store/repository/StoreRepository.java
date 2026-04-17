@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.napzak.domain.store.vo.StoreStatus;
 import com.napzak.domain.store.entity.StoreEntity;
 import com.napzak.common.auth.role.enums.Role;
 import com.napzak.common.auth.client.enums.SocialType;
@@ -31,4 +30,6 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
 
 	@Query("SELECT s.photo FROM StoreEntity s")
 	List<String> findAllPhoto();
+
+	Optional<StoreEntity> findByPhoneNumberHash(String phoneNumberHash);
 }

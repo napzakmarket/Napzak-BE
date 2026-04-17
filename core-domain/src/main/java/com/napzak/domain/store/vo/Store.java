@@ -12,7 +12,7 @@ import lombok.Getter;
 public class Store {
 	private final Long id;
 	private final String nickname;
-	private final String phoneNumber;
+	private final String phoneNumberEnc;
 	private final boolean phoneVerified;
 	private final LocalDateTime verifiedAt;
 	private final String email;
@@ -28,7 +28,7 @@ public class Store {
 	public Store(
 		Long id,
 		String nickname,
-		String phoneNumber,
+		String phoneNumberEnc,
 		boolean phoneVerified,
 		LocalDateTime verifiedAt,
 		String email,
@@ -43,7 +43,7 @@ public class Store {
 	) {
 		this.id = id;
 		this.nickname = nickname;
-		this.phoneNumber = phoneNumber;
+		this.phoneNumberEnc = phoneNumberEnc;
 		this.phoneVerified = phoneVerified;
 		this.verifiedAt = verifiedAt;
 		this.email = email;
@@ -61,7 +61,7 @@ public class Store {
 		return new Store(
 			storeEntity.getId(),
 			storeEntity.getNickname(),
-			storeEntity.getPhoneNumber(),
+			storeEntity.getPhoneNumberEnc(),
 			storeEntity.isPhoneVerified(),
 			storeEntity.getVerifiedAt(),
 			storeEntity.getEmail(),

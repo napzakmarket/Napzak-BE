@@ -4,7 +4,8 @@ public class StoreTableConstants {
 	public static final String TABLE_STORE = "store";
 	public static final String COLUMN_ID = "id";
 	public static final String COLUMN_NICKNAME = "nickname";
-	public static final String COLUMN_PHONE_NUMBER = "phone_number";
+	public static final String COLUMN_PHONE_NUMBER_ENC = "phone_number_enc";
+	public static final String COLUMN_PHONE_NUMBER_HASH = "phone_number_hash";
 	public static final String COLUMN_DESCRIPTION = "description";
 	public static final String COLUMN_PHOTO = "photo";
 	public static final String COLUMN_COVER = "cover";

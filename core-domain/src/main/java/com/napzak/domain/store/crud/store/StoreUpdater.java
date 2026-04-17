@@ -3,6 +3,7 @@ package com.napzak.domain.store.crud.store;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.napzak.common.util.encryption.PhoneEncryptionUtil;
 import com.napzak.domain.store.code.StoreErrorCode;
 import com.napzak.domain.store.entity.StoreEntity;
 import com.napzak.domain.store.repository.StoreRepository;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class StoreUpdater {
 
 	private final StoreRepository storeRepository;
+	private final PhoneEncryptionUtil phoneEncryptionUtil;
 
 	@Transactional
 	public void registerNicknameAndSetRoleAndPhoto(final Long storeId, final String nickname,
@@ -53,6 +55,17 @@ public class StoreUpdater {
 		StoreEntity storeEntity = storeRepository.findById(storeId)
 			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
 		storeEntity.withdraw();
+		storeEntity.clearPhoneVerification();
+		storeRepository.save(storeEntity);
+	}
+
+	@Transactional
+	public void updatePhone(final Long storeId, final String phoneNumber) {
+		StoreEntity storeEntity = storeRepository.findById(storeId)
+			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
+		String phoneNumberEnc = phoneEncryptionUtil.encrypt(phoneNumber);
+		String phoneNumberHash = phoneEncryptionUtil.hash(phoneNumber);
+		storeEntity.verifyAndUpdatePhone(phoneNumberEnc, phoneNumberHash);
 		storeRepository.save(storeEntity);
 	}
 }
