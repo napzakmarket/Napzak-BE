@@ -458,7 +458,7 @@ public class StoreController implements StoreApi {
 			SuccessResponse.of(StoreSuccessCode.TOKENS_REISSUE_SUCCESS, tokensReissueResponse));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.WITHDRAWN})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
 	@PostMapping("/phone-verifications/send")
 	public ResponseEntity<SuccessResponse<PhoneNumberVerifyResponse>> sendVerificationCode(
 		@Valid @RequestBody PhoneNumberVerifyRequest request,
@@ -481,6 +481,8 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(StoreSuccessCode.TOKENS_REISSUE_SUCCESS, response));
 	}
+
+	@PostMapping
 
 	private List<GenreNameDto> genrePreferenceResponseGenerator(List<GenrePreference> genreList) {
 
