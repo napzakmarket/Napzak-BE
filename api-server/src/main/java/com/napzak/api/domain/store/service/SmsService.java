@@ -83,12 +83,15 @@ public class SmsService {
 
 		// 인증번호 요청과 검증 사이에 같은 번호가 가입되었는지 검증
 		validatePhoneNumberUsage(phoneNumber, storeId);
-		validateFailCount(phoneNumber);
 
 		Optional<SmsVerificationData> verificationData = smsVerificationRedisRepository.findVerificationData(phoneNumber);
 
 		if (verificationData.isEmpty()) {
 			throw new NapzakException(SmsErrorCode.VERIFICATION_CODE_INVALID);
+		}
+
+		if (verificationData.get().failCount() >= smsProperties.getPolicy().getFailMaxCount()) {
+			throw new NapzakException(SmsErrorCode.VERIFICATION_FAIL_COUNT_EXCEEDED);
 		}
 
 		boolean isCodeMatching = request.code().equals(verificationData.get().code());
@@ -130,11 +133,5 @@ public class SmsService {
 			throw new NapzakException(StoreErrorCode.ALREADY_VERIFIED);
 		}
 		throw new NapzakException(StoreErrorCode.PHONE_NUMBER_ALREADY_IN_USE);
-	}
-
-	private void validateFailCount(String phoneNumber) {
-		smsVerificationRedisRepository.findVerificationData(phoneNumber)
-			.filter(data -> data.failCount() >= smsProperties.getPolicy().getFailMaxCount())
-			.ifPresent(data -> { throw new NapzakException(SmsErrorCode.VERIFICATION_FAIL_COUNT_EXCEEDED); });
 	}
 }
