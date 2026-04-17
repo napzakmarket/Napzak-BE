@@ -81,7 +81,7 @@ public class PhoneEncryptionUtil {
 			byte[] hashBytes = mac.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
 			return HexFormat.of().formatHex(hashBytes);
 		} catch (Exception e) {
-			log.error("[SMS] 전화번호 hasing에 실패하였습니다. error: ", e);
+			log.error("[SMS] 전화번호 hashing에 실패하였습니다. error: ", e);
 			throw new NapzakException(ErrorCode.HASHING_FAILED);
 		}
 	}

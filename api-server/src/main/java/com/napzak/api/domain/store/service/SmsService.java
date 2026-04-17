@@ -62,13 +62,16 @@ public class SmsService {
 
 		// 레디스에 세션 저장 & 업데이트
 		smsVerificationRedisRepository.saveVerificationCode(phoneNumber, authCode);
-		smsVerificationRedisRepository.incrementDailyCount(phoneNumber);
 
 		try {
 			messageService.sendOne(new SingleMessageSendingRequest(message));
+			smsVerificationRedisRepository.incrementDailyCount(phoneNumber);
+
 			log.info("[SMS] 인증번호가 발송되었습니다. 발송 대상 번호: {}", masked);
 		} catch (Exception e) {
 			log.error("[SMS] 인증번호 발송이 실패하였습니다. 발송 대상 번호: {}, error: {}", masked, e.getMessage());
+
+			smsVerificationRedisRepository.deleteVerificationData(phoneNumber);
 			throw new NapzakException(SmsErrorCode.MESSAGE_SEND_FAILED);
 		}
 
