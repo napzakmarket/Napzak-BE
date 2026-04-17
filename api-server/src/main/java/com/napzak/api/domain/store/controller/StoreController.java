@@ -28,7 +28,7 @@ import com.napzak.api.domain.store.StoreTermsBundleFacade;
 import com.napzak.api.domain.store.code.SmsSuccessCode;
 import com.napzak.api.domain.store.dto.request.GenrePreferenceRequest;
 import com.napzak.api.domain.store.dto.request.NicknameRequest;
-import com.napzak.api.domain.store.dto.request.PhoneNumberVerifyRequest;
+import com.napzak.api.domain.store.dto.request.SmsSendRequest;
 import com.napzak.api.domain.store.dto.request.RoleDto;
 import com.napzak.api.domain.store.dto.request.StoreProfileModifyRequest;
 import com.napzak.api.domain.store.dto.request.StoreReportRequest;
@@ -37,7 +37,7 @@ import com.napzak.api.domain.store.dto.response.AccessTokenGenerateResponse;
 import com.napzak.api.domain.store.dto.response.LoginSuccessResponse;
 import com.napzak.api.domain.store.dto.response.MyPageResponse;
 import com.napzak.api.domain.store.dto.response.OnboardingTermsListResponse;
-import com.napzak.api.domain.store.dto.response.PhoneNumberVerifyResponse;
+import com.napzak.api.domain.store.dto.response.SmsSendResponse;
 import com.napzak.api.domain.store.dto.response.SettingLinkResponse;
 import com.napzak.api.domain.store.dto.response.StoreIdResponse;
 import com.napzak.api.domain.store.dto.response.StoreInfoResponse;
@@ -460,11 +460,11 @@ public class StoreController implements StoreApi {
 
 	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
 	@PostMapping("/phone-verifications/send")
-	public ResponseEntity<SuccessResponse<PhoneNumberVerifyResponse>> sendVerificationCode(
-		@Valid @RequestBody PhoneNumberVerifyRequest request,
+	public ResponseEntity<SuccessResponse<SmsSendResponse>> sendVerificationCode(
+		@Valid @RequestBody SmsSendRequest request,
 		@CurrentMember Long currentStoreId
 	) {
-		PhoneNumberVerifyResponse response = smsService.sendVerificationCode(request, currentStoreId);
+		SmsSendResponse response = smsService.sendVerificationCode(request, currentStoreId);
 
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(SmsSuccessCode.VERIFICATION_CODE_SEND_SUCCESS, response));

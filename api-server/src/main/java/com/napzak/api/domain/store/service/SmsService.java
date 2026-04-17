@@ -8,8 +8,8 @@ import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.service.DefaultMessageService;
 
-import com.napzak.api.domain.store.dto.request.PhoneNumberVerifyRequest;
-import com.napzak.api.domain.store.dto.response.PhoneNumberVerifyResponse;
+import com.napzak.api.domain.store.dto.request.SmsSendRequest;
+import com.napzak.api.domain.store.dto.response.SmsSendResponse;
 import com.napzak.common.exception.NapzakException;
 import com.napzak.common.util.sms.SmsProperties;
 import com.napzak.common.util.sms.SmsUtil;
@@ -35,7 +35,7 @@ public class SmsService {
 
 	private final DefaultMessageService messageService;
 
-	public PhoneNumberVerifyResponse sendVerificationCode(PhoneNumberVerifyRequest request, Long storeId) {
+	public SmsSendResponse sendVerificationCode(SmsSendRequest request, Long storeId) {
 		String phoneNumber = request.phoneNumber();
 
 		// 유효성 검사
@@ -65,7 +65,7 @@ public class SmsService {
 		smsVerificationRedisRepository.saveVerificationCode(phoneNumber, authCode);
 		smsVerificationRedisRepository.incrementDailyCount(phoneNumber);
 
-		return new PhoneNumberVerifyResponse(remainingCount - 1);
+		return new SmsSendResponse(remainingCount - 1);
 	}
 
 	private int validateDailyLimit(String phoneNumber) {
