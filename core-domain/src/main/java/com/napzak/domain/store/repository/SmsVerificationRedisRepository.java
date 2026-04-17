@@ -10,8 +10,10 @@ import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.napzak.common.exception.NapzakException;
 import com.napzak.common.util.encryption.PhoneEncryptionUtil;
 import com.napzak.common.util.sms.SmsProperties;
+import com.napzak.domain.store.code.SmsErrorCode;
 import com.napzak.domain.store.vo.SmsVerificationData;
 
 import lombok.RequiredArgsConstructor;
@@ -45,7 +47,12 @@ public class SmsVerificationRedisRepository {
 
 	public void updateVerificationData(String phoneNumber, SmsVerificationData data) {
 		String key = VERIFY_KEY_PREFIX + phoneEncryptionUtil.hash(phoneNumber);
-		Long remainTtl = stringRedisTemplate.getExpire(key);
+		long remainTtl = stringRedisTemplate.getExpire(key);
+
+		if (remainTtl <= 0) {
+			throw new NapzakException(SmsErrorCode.VERIFICATION_SESSION_NOT_FOUND);
+		}
+
 		stringRedisTemplate.opsForValue().set(key, serialize(data), Duration.ofSeconds(remainTtl));
 	}
 
