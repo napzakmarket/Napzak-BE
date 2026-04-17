@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.napzak.common.util.encryption.PhoneEncryptionUtil;
 import com.napzak.common.util.sms.SmsProperties;
 import com.napzak.domain.store.vo.SmsVerificationData;
 
@@ -24,17 +25,17 @@ public class SmsVerificationRedisRepository {
 
 	private final StringRedisTemplate stringRedisTemplate;
 	private final ObjectMapper objectMapper;
-
+	private final PhoneEncryptionUtil phoneEncryptionUtil;
 	private final SmsProperties smsProperties;
 
 	public void saveVerificationCode(String phoneNumber, String code) {
-		String key = VERIFY_KEY_PREFIX + phoneNumber;
+		String key = VERIFY_KEY_PREFIX + phoneEncryptionUtil.hash(phoneNumber);
 		String value = serialize(SmsVerificationData.of(code));
 		stringRedisTemplate.opsForValue().set(key, value, Duration.ofSeconds(smsProperties.getPolicy().getVerifyExpireTime()));
 	}
 
 	public Optional<SmsVerificationData> findVerificationData(String phoneNumber) {
-		String key = VERIFY_KEY_PREFIX + phoneNumber;
+		String key = VERIFY_KEY_PREFIX + phoneEncryptionUtil.hash(phoneNumber);
 		String value = stringRedisTemplate.opsForValue().get(key);
 		if (value == null) {
 			return Optional.empty();
@@ -43,24 +44,24 @@ public class SmsVerificationRedisRepository {
 	}
 
 	public void updateVerificationData(String phoneNumber, SmsVerificationData data) {
-		String key = VERIFY_KEY_PREFIX + phoneNumber;
+		String key = VERIFY_KEY_PREFIX + phoneEncryptionUtil.hash(phoneNumber);
 		Long remainTtl = stringRedisTemplate.getExpire(key);
 		stringRedisTemplate.opsForValue().set(key, serialize(data), Duration.ofSeconds(remainTtl));
 	}
 
 	public void deleteVerificationData(String phoneNumber) {
-		stringRedisTemplate.delete(VERIFY_KEY_PREFIX + phoneNumber);
+		stringRedisTemplate.delete(VERIFY_KEY_PREFIX + phoneEncryptionUtil.hash(phoneNumber));
 	}
 
 	public void incrementDailyCount(String phoneNumber) {
-		String key = DAILY_KEY_PREFIX + phoneNumber;
+		String key = DAILY_KEY_PREFIX + phoneEncryptionUtil.hash(phoneNumber);
 		Duration ttl = remainingSecondsUntilMidnight();
 		stringRedisTemplate.opsForValue().setIfAbsent(key, "0", ttl);
 		stringRedisTemplate.opsForValue().increment(key);
 	}
 
 	public int getDailyCount(String phoneNumber) {
-		String value = stringRedisTemplate.opsForValue().get(DAILY_KEY_PREFIX + phoneNumber);
+		String value = stringRedisTemplate.opsForValue().get(DAILY_KEY_PREFIX + phoneEncryptionUtil.hash(phoneNumber));
 		return value == null ? 0 : Integer.parseInt(value);
 	}
 
