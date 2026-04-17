@@ -486,18 +486,6 @@ public class StoreController implements StoreApi {
 
 	}
 
-	@PostMapping("/reissue/custom")
-	public ResponseEntity<SuccessResponse<AccessTokenGenerateResponse>> reissueAccessTokenCustom(
-		@RequestParam("expireAt") LocalDateTime expireAt,
-		@CookieValue("refreshToken") String refreshToken,
-		@CurrentMember Long currentStoreId
-	) {
-		AccessTokenGenerateResponse response = authenticationService.generateAccessTokenWithCustomExpireAtFromRefreshToken(refreshToken, expireAt);
-
-		return ResponseEntity.ok()
-			.body(SuccessResponse.of(StoreSuccessCode.TOKENS_REISSUE_SUCCESS, response));
-	}
-
 	@PostMapping
 	private List<GenreNameDto> genrePreferenceResponseGenerator(List<GenrePreference> genreList) {
 
