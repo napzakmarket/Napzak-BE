@@ -14,7 +14,12 @@ public enum SmsErrorCode implements BaseErrorCode {
 	/*
 	400 BAD REQUEST
 	 */
-	VERIFICATION_CODE_INVALID(HttpStatus.BAD_REQUEST, "인증번호가 올바르지 않습니다. 다시 확인해주세요."),
+	VERIFICATION_CODE_INVALID(HttpStatus.BAD_REQUEST, "인증번호가 만료되었거나 존재하지 않습니다. 다시 요청해주세요."),
+
+	/*
+	404 NOT FOUND
+	 */
+	VERIFICATION_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "진행 중인 번호 인증 요청을 찾을 수 없습니다."),
 
 	/*
 	429 TOO MANY REQUESTS
@@ -26,6 +31,7 @@ public enum SmsErrorCode implements BaseErrorCode {
 	500 INTERNAL SERVER ERROR
 	 */
 	MESSAGE_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "인증번호 발송에 실패했습니다. 다시 시도해주세요."),
+	MESSAGE_CONFIRM_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "인증번호 확인에 실패했습니다. 다시 시도해주세요."),
 	;
 
 	private final HttpStatus httpStatus;

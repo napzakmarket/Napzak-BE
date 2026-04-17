@@ -28,6 +28,7 @@ import com.napzak.api.domain.store.StoreTermsBundleFacade;
 import com.napzak.api.domain.store.code.SmsSuccessCode;
 import com.napzak.api.domain.store.dto.request.GenrePreferenceRequest;
 import com.napzak.api.domain.store.dto.request.NicknameRequest;
+import com.napzak.api.domain.store.dto.request.SmsConfirmRequest;
 import com.napzak.api.domain.store.dto.request.SmsSendRequest;
 import com.napzak.api.domain.store.dto.request.RoleDto;
 import com.napzak.api.domain.store.dto.request.StoreProfileModifyRequest;
@@ -37,6 +38,7 @@ import com.napzak.api.domain.store.dto.response.AccessTokenGenerateResponse;
 import com.napzak.api.domain.store.dto.response.LoginSuccessResponse;
 import com.napzak.api.domain.store.dto.response.MyPageResponse;
 import com.napzak.api.domain.store.dto.response.OnboardingTermsListResponse;
+import com.napzak.api.domain.store.dto.response.SmsConfirmResponse;
 import com.napzak.api.domain.store.dto.response.SmsSendResponse;
 import com.napzak.api.domain.store.dto.response.SettingLinkResponse;
 import com.napzak.api.domain.store.dto.response.StoreIdResponse;
@@ -470,6 +472,20 @@ public class StoreController implements StoreApi {
 			.body(SuccessResponse.of(SmsSuccessCode.VERIFICATION_CODE_SEND_SUCCESS, response));
 	}
 
+
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
+	@PostMapping("/phone-verifications/confirm")
+	public ResponseEntity<SuccessResponse<SmsConfirmResponse>> confirmVerificationCode(
+		@Valid @RequestBody SmsConfirmRequest request,
+		@CurrentMember Long currentStoreId
+	) {
+		SmsConfirmResponse response = smsService.confirmVerificationCode(request, currentStoreId);
+
+		return ResponseEntity.ok()
+			.body(SuccessResponse.of(SmsSuccessCode.VERIFICATION_CODE_CONFIRM_SUCCESS, response));
+
+	}
+
 	@PostMapping("/reissue/custom")
 	public ResponseEntity<SuccessResponse<AccessTokenGenerateResponse>> reissueAccessTokenCustom(
 		@RequestParam("expireAt") LocalDateTime expireAt,
@@ -483,7 +499,6 @@ public class StoreController implements StoreApi {
 	}
 
 	@PostMapping
-
 	private List<GenreNameDto> genrePreferenceResponseGenerator(List<GenrePreference> genreList) {
 
 		List<Long> genreIds = genreList.stream().map(GenrePreference::getGenreId).toList();
