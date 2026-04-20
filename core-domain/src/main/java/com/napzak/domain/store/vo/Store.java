@@ -30,7 +30,7 @@ public class Store {
 		Long id,
 		String nickname,
 		String phoneNumberEnc,
-		String phoneNumberHash
+		String phoneNumberHash,
 		boolean phoneVerified,
 		LocalDateTime verifiedAt,
 		String email,
