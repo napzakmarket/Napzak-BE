@@ -52,6 +52,7 @@ public class ProductReportSaver {
 			• *상품 ID:* %d
 			• *연락처:* %s
 			• *신고 시각:* %s
+			• *환경:* `%s`
 
 			*상품 정보*
 			• *상품 제목:* %s
@@ -70,6 +71,7 @@ public class ProductReportSaver {
 			entity.getReportedProductId(),
 			entity.getReportContact(),
 			entity.getCreatedAt(),
+			slackWebhookSender.getCurrentEnvironment(),
 			entity.getReportedProductTitle(),
 			entity.getReportedProductDescription(),
 			entity.getReportTitle(),

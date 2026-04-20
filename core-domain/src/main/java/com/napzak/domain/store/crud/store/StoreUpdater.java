@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.common.util.encryption.PhoneEncryptionUtil;
+import com.napzak.common.util.slack.SlackWebhookSender;
 import com.napzak.domain.store.code.StoreErrorCode;
 import com.napzak.domain.store.entity.StoreEntity;
 import com.napzak.domain.store.repository.StoreRepository;
@@ -18,6 +19,7 @@ public class StoreUpdater {
 
 	private final StoreRepository storeRepository;
 	private final PhoneEncryptionUtil phoneEncryptionUtil;
+	private final SlackWebhookSender slackWebhookSender;
 
 	@Transactional
 	public void registerNicknameAndSetRoleAndPhoto(final Long storeId, final String nickname,
@@ -29,6 +31,19 @@ public class StoreUpdater {
 		storeEntity.setPhoto(profileUrl);
 		storeEntity.setCover(coverUrl);
 		storeRepository.save(storeEntity);
+
+		long totalStoreCount = storeRepository.count();
+
+		slackWebhookSender.sendSignup("""
+			🎉 *새로운 납자기 `%s` 등장!* 🎉
+			
+			• *누적 가입 회원 수:* %,d명
+			• *환경:* `%s`
+			""".formatted(
+			storeEntity.getNickname(),
+			totalStoreCount,
+			slackWebhookSender.getCurrentEnvironment()
+		));
 	}
 
 	@Transactional
