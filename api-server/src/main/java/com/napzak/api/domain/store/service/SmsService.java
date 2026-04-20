@@ -12,6 +12,7 @@ import com.napzak.api.domain.store.dto.request.SmsConfirmRequest;
 import com.napzak.api.domain.store.dto.request.SmsSendRequest;
 import com.napzak.api.domain.store.dto.response.SmsConfirmResponse;
 import com.napzak.api.domain.store.dto.response.SmsSendResponse;
+import com.napzak.common.auth.role.enums.Role;
 import com.napzak.common.exception.NapzakException;
 import com.napzak.common.util.encryption.PhoneEncryptionUtil;
 import com.napzak.common.util.sms.SmsProperties;
@@ -138,6 +139,9 @@ public class SmsService {
 		if (store.isPresent()) {
 			if (store.get().getId().equals(storeId)) {
 				throw new NapzakException(StoreErrorCode.ALREADY_VERIFIED);
+			}
+			if (store.get().getRole().equals(Role.REPORTED)) {
+				throw new NapzakException(StoreErrorCode.BLACKLISTED_PHONE_NUMBER);
 			}
 			throw new NapzakException(StoreErrorCode.PHONE_NUMBER_ALREADY_IN_USE);
 		}
