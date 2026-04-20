@@ -9,7 +9,6 @@ services:
       redis: { condition: service_healthy }
       rabbitmq: { condition: service_healthy }
     networks: [napzak-dev-net]
-    restart: always
 
   chat-server:
     image: 203918864903.dkr.ecr.ap-northeast-2.amazonaws.com/napzak-chat-dev:latest
@@ -20,7 +19,6 @@ services:
       redis: { condition: service_healthy }
       rabbitmq: { condition: service_healthy }
     networks: [napzak-dev-net]
-    restart: always
 
   redis:
     container_name: napzak-dev-redis
