@@ -42,6 +42,7 @@ import com.napzak.api.domain.store.dto.response.AccessTokenGenerateResponse;
 import com.napzak.api.domain.store.dto.response.LoginSuccessResponse;
 import com.napzak.api.domain.store.dto.response.MyPageResponse;
 import com.napzak.api.domain.store.dto.response.OnboardingTermsListResponse;
+import com.napzak.api.domain.store.dto.response.PhoneVerificationStatusResponse;
 import com.napzak.api.domain.store.dto.response.SettingLinkResponse;
 import com.napzak.api.domain.store.dto.response.SmsConfirmResponse;
 import com.napzak.api.domain.store.dto.response.SmsSendResponse;
@@ -310,7 +311,7 @@ public class StoreController implements StoreApi {
 	}
 
 	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING, Role.WITHDRAWN})
-	@PostMapping("genres/register")
+	@PostMapping("/genres/register")
 	public ResponseEntity<SuccessResponse<GenreNameListResponse>> register(
 		@CurrentMember final Long currentStoreId,
 		@Valid @RequestBody final GenrePreferenceRequest genrePreferenceList
@@ -460,6 +461,18 @@ public class StoreController implements StoreApi {
 	}
 
 	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
+	@GetMapping("/phone-verification-status")
+	public ResponseEntity<SuccessResponse<PhoneVerificationStatusResponse>> getPhoneVerificationStatus(
+		@CurrentMember final Long currentStoreId
+	) {
+		boolean isPhoneVerified = storeService.getPhoneVerificationStatus(currentStoreId);
+		PhoneVerificationStatusResponse response = PhoneVerificationStatusResponse.of(isPhoneVerified);
+
+		return ResponseEntity.ok(
+			SuccessResponse.of(StoreSuccessCode.STORE_PHONE_VERIFIED_GET_SUCCESS, response));
+	}
+
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
 	@PostMapping("/phone-verifications/send")
 	public ResponseEntity<SuccessResponse<SmsSendResponse>> sendVerificationCode(
 		@Valid @RequestBody SmsSendRequest request,
@@ -470,7 +483,6 @@ public class StoreController implements StoreApi {
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(SmsSuccessCode.VERIFICATION_CODE_SEND_SUCCESS, response));
 	}
-
 
 	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
 	@PostMapping("/phone-verifications/confirm")
