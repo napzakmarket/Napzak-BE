@@ -78,6 +78,13 @@ public class StoreService {
 	}
 
 	@Transactional(readOnly = true)
+	public boolean getPhoneVerificationStatus(final Long storeId) {
+		Store store = getStore(storeId);
+
+		return store.isPhoneVerified();
+	}
+
+	@Transactional(readOnly = true)
 	public Role findRoleByStoreId(final Long storeId) {
 		return storeRetriever.findRoleByStoreId(storeId);
 	}
