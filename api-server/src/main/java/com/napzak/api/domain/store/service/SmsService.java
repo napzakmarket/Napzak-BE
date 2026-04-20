@@ -39,6 +39,7 @@ public class SmsService {
 
 	private final SmsVerificationRedisRepository smsVerificationRedisRepository;
 	private final StoreRepository storeRepository;
+	private final BlacklistRepository blacklistRepository;
 
 	private final DefaultMessageService messageService;
 	private final StoreService storeService;
@@ -91,6 +92,7 @@ public class SmsService {
 			throw new NapzakException(SmsErrorCode.VERIFICATION_SESSION_NOT_FOUND);
 		}
 
+		// 이미 failCount가 소진된 상태에서 재시도 하였을 경우
 		if (verificationData.get().failCount() >= smsProperties.getPolicy().getFailMaxCount()) {
 			throw new NapzakException(SmsErrorCode.VERIFICATION_FAIL_COUNT_EXCEEDED);
 		}
@@ -101,11 +103,13 @@ public class SmsService {
 			if (isCodeMatching) {
 				storeUpdater.updatePhone(storeId, phoneNumber);
 				smsVerificationRedisRepository.deleteVerificationData(phoneNumber);
-			}
-			else {
-				// failCount를 증가시켜 세션 업데이트
+			} else {
 				SmsVerificationData updated = verificationData.get().incrementFailCount();
 				smsVerificationRedisRepository.updateVerificationData(phoneNumber, updated);
+				// 인증번호를 오입력하였고, 마지막 횟수까지 소진된 경우
+				if (updated.failCount() >= smsProperties.getPolicy().getFailMaxCount()) {
+					throw new NapzakException(SmsErrorCode.VERIFICATION_FAIL_COUNT_EXCEEDED);
+				}
 			}
 
 			boolean isPhoneVerified = storeService.getStore(storeId).isPhoneVerified();
