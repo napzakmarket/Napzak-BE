@@ -376,7 +376,7 @@ public class StoreController implements StoreApi {
 			.body(SuccessResponse.of(StoreSuccessCode.STORE_UNBLOCK_SUCCESS));
 	}
 
-	@AuthorizedRole({Role.ADMIN, Role.STORE})
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.REPORTED})
 	@PostMapping("/withdraw")
 	public ResponseEntity<SuccessResponse<StoreWithdrawResponse>> withdraw(
 		@CurrentMember final Long storeId,

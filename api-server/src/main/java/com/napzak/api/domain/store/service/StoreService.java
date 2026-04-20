@@ -157,7 +157,9 @@ public class StoreService {
 	public void withdraw(Long storeId, String title, String description, List<ChatMessage> messages) {
 		Store store = getStore(storeId);
 		String phoneNumberEnc = store.isPhoneVerified() ? store.getPhoneNumberEnc() : null;
-		withdrawSaver.save(storeId, title, description, LocalDateTime.now(), phoneNumberEnc);
+		String phoneNumberHash = store.isPhoneVerified() ? store.getPhoneNumberHash() : null;
+		boolean blacklisted = store.getRole() == Role.REPORTED;
+		withdrawSaver.save(storeId, title, description, LocalDateTime.now(), phoneNumberEnc, phoneNumberHash, blacklisted);
 		storeUpdater.updateWithdraw(storeId);
 		genrePreferenceRemover.removeGenrePreference(storeId);
 		chatSystemMessageSender.sendSystemMessages(messages);
