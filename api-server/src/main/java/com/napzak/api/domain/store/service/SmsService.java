@@ -137,11 +137,11 @@ public class SmsService {
 		String phoneNumberHash = phoneEncryptionUtil.hash(phoneNumber);
 		Optional<StoreEntity> store = storeRepository.findByPhoneNumberHash(phoneNumberHash);
 		if (store.isPresent()) {
-			if (store.get().getId().equals(storeId)) {
-				throw new NapzakException(StoreErrorCode.ALREADY_VERIFIED);
-			}
 			if (store.get().getRole().equals(Role.REPORTED)) {
 				throw new NapzakException(StoreErrorCode.BLACKLISTED_PHONE_NUMBER);
+			}
+			if (store.get().getId().equals(storeId)) {
+				throw new NapzakException(StoreErrorCode.ALREADY_VERIFIED);
 			}
 			throw new NapzakException(StoreErrorCode.PHONE_NUMBER_ALREADY_IN_USE);
 		}
