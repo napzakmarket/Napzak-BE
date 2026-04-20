@@ -41,22 +41,34 @@ public class WithdrawEntity {
 	@Column(name = COLUMN_PHONE_NUMBER_ENC, nullable = true)
 	private String phoneNumberEnc;
 
+	@Column(name = COLUMN_PHONE_NUMBER_HASH, nullable = true)
+	private String phoneNumberHash;
+
+	@Column(name = COLUMN_BLACKLISTED, nullable = false)
+	private boolean blacklisted;
+
 	@Builder
-	public WithdrawEntity(Long withdrawerId, String title, String description, LocalDateTime createdAt, String phoneNumberEnc) {
+	public WithdrawEntity(Long withdrawerId, String title, String description, LocalDateTime createdAt,
+		String phoneNumberEnc, String phoneNumberHash, boolean blacklisted) {
 		this.withdrawerId = withdrawerId;
 		this.title = title;
 		this.description = description;
 		this.createdAt = createdAt;
 		this.phoneNumberEnc = phoneNumberEnc;
+		this.phoneNumberHash = phoneNumberHash;
+		this.blacklisted = blacklisted;
 	}
 
-	public static WithdrawEntity create(Long withdrawerId, String title, String description, LocalDateTime createdAt, String phoneNumberEnc) {
+	public static WithdrawEntity create(Long withdrawerId, String title, String description, LocalDateTime createdAt,
+		String phoneNumberEnc, String phoneNumberHash, boolean blacklisted) {
 		return WithdrawEntity.builder()
 			.withdrawerId(withdrawerId)
 			.title(title)
 			.description(description)
 			.createdAt(createdAt)
 			.phoneNumberEnc(phoneNumberEnc)
+			.phoneNumberHash(phoneNumberHash)
+			.blacklisted(blacklisted)
 			.build();
 	}
 }
