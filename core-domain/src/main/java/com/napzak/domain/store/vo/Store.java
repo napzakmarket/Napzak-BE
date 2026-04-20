@@ -13,6 +13,7 @@ public class Store {
 	private final Long id;
 	private final String nickname;
 	private final String phoneNumberEnc;
+	private final String phoneNumberHash;
 	private final boolean phoneVerified;
 	private final LocalDateTime verifiedAt;
 	private final String email;
@@ -29,6 +30,7 @@ public class Store {
 		Long id,
 		String nickname,
 		String phoneNumberEnc,
+		String phoneNumberHash
 		boolean phoneVerified,
 		LocalDateTime verifiedAt,
 		String email,
@@ -44,6 +46,7 @@ public class Store {
 		this.id = id;
 		this.nickname = nickname;
 		this.phoneNumberEnc = phoneNumberEnc;
+		this.phoneNumberHash = phoneNumberHash;
 		this.phoneVerified = phoneVerified;
 		this.verifiedAt = verifiedAt;
 		this.email = email;
@@ -62,6 +65,7 @@ public class Store {
 			storeEntity.getId(),
 			storeEntity.getNickname(),
 			storeEntity.getPhoneNumberEnc(),
+			storeEntity.getPhoneNumberHash(),
 			storeEntity.isPhoneVerified(),
 			storeEntity.getVerifiedAt(),
 			storeEntity.getEmail(),
