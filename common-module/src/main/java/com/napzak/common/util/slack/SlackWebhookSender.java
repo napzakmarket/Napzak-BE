@@ -1,15 +1,20 @@
 package com.napzak.common.util.slack;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,6 +25,7 @@ public class SlackWebhookSender {
 
 	private final SlackWebhookProperties webhookProperties;
 	private final RestTemplate restTemplate;
+	private final Environment environment;
 
 	public void send(String webhookUrl, String text) {
 		if (webhookUrl == null || webhookUrl.isBlank()) {
@@ -27,6 +33,21 @@ public class SlackWebhookSender {
 			return;
 		}
 
+		if (TransactionSynchronizationManager.isSynchronizationActive()
+			&& TransactionSynchronizationManager.isActualTransactionActive()) {
+			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+				@Override
+				public void afterCommit() {
+					sendImmediately(webhookUrl, text);
+				}
+			});
+			return;
+		}
+
+		sendImmediately(webhookUrl, text);
+	}
+
+	private void sendImmediately(String webhookUrl, String text) {
 		Map<String, Object> body = Map.of("text", text);
 
 		HttpHeaders headers = new HttpHeaders();
@@ -48,6 +69,24 @@ public class SlackWebhookSender {
 		}
 	}
 
+	public String getCurrentEnvironment() {
+		List<String> activeProfiles = Arrays.asList(environment.getActiveProfiles());
+
+		if (activeProfiles.contains("prod")) {
+			return "prod";
+		}
+
+		if (activeProfiles.contains("dev")) {
+			return "dev";
+		}
+
+		if (activeProfiles.isEmpty()) {
+			return "local";
+		}
+
+		return String.join(",", activeProfiles);
+	}
+
 	public void sendWithdraw(String message) {
 		send(webhookProperties.withdraw(), message);
 	}
@@ -58,5 +97,9 @@ public class SlackWebhookSender {
 
 	public void sendProductReport(String message) {
 		send(webhookProperties.productReport(), message);
+	}
+
+	public void sendSignup(String message) {
+		send(webhookProperties.signup(), message);
 	}
 }
