@@ -32,6 +32,7 @@ public class WithdrawSaver {
 			• *탈퇴 회원 ID:* %s
 			• *제목:* %s
 			• *탈퇴 시각:* %s
+			• *환경:* `%s`
 
 			*상세 내용*
 			%s
@@ -39,6 +40,7 @@ public class WithdrawSaver {
 			entity.getWithdrawerId(),
 			entity.getTitle(),
 			entity.getCreatedAt(),
+			slackWebhookSender.getCurrentEnvironment(),
 			entity.getDescription()
 		));
 
