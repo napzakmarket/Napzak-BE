@@ -1,7 +1,7 @@
 # docker-compose-dev.yml
 services:
   api-server:
-    image: sailin1367/napzak-api-dev:latest
+    image: 203918864903.dkr.ecr.ap-northeast-2.amazonaws.com/napzak-api-dev:latest
     container_name: napzak-api-dev
     ports: ["8080:8080"]
     pull_policy: always
@@ -9,9 +9,10 @@ services:
       redis: { condition: service_healthy }
       rabbitmq: { condition: service_healthy }
     networks: [napzak-dev-net]
+    restart: always
 
   chat-server:
-    image: sailin1367/napzak-chat-dev:latest
+    image: 203918864903.dkr.ecr.ap-northeast-2.amazonaws.com/napzak-chat-dev:latest
     container_name: napzak-chat-dev
     ports: ["8081:8080"]
     pull_policy: always
@@ -19,6 +20,7 @@ services:
       redis: { condition: service_healthy }
       rabbitmq: { condition: service_healthy }
     networks: [napzak-dev-net]
+    restart: always
 
   redis:
     container_name: napzak-dev-redis
@@ -58,6 +60,7 @@ services:
 
 networks:
   napzak-dev-net:
+    name: napzak-dev-net
     driver: bridge
 
 volumes:
