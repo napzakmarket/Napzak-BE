@@ -13,9 +13,9 @@ RUN apt-get update && \
     apt-get install -y tzdata && \
     rm -rf /var/lib/apt/lists/*
 
-# ✅ JVM과 OS 모두 KST로 강제 설정
+# ✅ JVM과 OS 모두 KST로 강제 설정, heap 설정
 ENV TZ=Asia/Seoul
-ENV JAVA_TOOL_OPTIONS="-Duser.timezone=Asia/Seoul"
+ENV JAVA_TOOL_OPTIONS="-Duser.timezone=Asia/Seoul -Xms128m -Xmx384m"
 
 # ✅ 작업 디렉토리 설정
 WORKDIR /app
