@@ -8,5 +8,5 @@ import com.napzak.domain.store.entity.WithdrawEntity;
 
 public interface WithdrawRepository extends JpaRepository<WithdrawEntity, Long> {
 
-	Optional<WithdrawEntity> findByPhoneNumberHash(String phoneNumberHash);
+	boolean existsByPhoneNumberHashAndBlacklistedTrue(String phoneNumberHash);
 }

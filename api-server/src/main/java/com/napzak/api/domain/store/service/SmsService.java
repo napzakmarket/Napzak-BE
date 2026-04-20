@@ -20,7 +20,6 @@ import com.napzak.domain.store.code.SmsErrorCode;
 import com.napzak.domain.store.code.StoreErrorCode;
 import com.napzak.domain.store.crud.store.StoreUpdater;
 import com.napzak.domain.store.entity.StoreEntity;
-import com.napzak.domain.store.entity.WithdrawEntity;
 import com.napzak.domain.store.repository.SmsVerificationRedisRepository;
 import com.napzak.domain.store.repository.StoreRepository;
 import com.napzak.domain.store.repository.WithdrawRepository;
@@ -143,8 +142,8 @@ public class SmsService {
 			throw new NapzakException(StoreErrorCode.PHONE_NUMBER_ALREADY_IN_USE);
 		}
 
-		withdrawRepository.findByPhoneNumberHash(phoneNumberHash)
-			.filter(WithdrawEntity::isBlacklisted)
-			.ifPresent(w -> { throw new NapzakException(StoreErrorCode.BLACKLISTED_PHONE_NUMBER); });
+		if (withdrawRepository.existsByPhoneNumberHashAndBlacklistedTrue(phoneNumberHash)) {
+			throw new NapzakException(StoreErrorCode.BLACKLISTED_PHONE_NUMBER);
+		}
 	}
 }
