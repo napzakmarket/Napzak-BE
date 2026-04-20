@@ -20,6 +20,7 @@ import com.napzak.domain.store.code.SmsErrorCode;
 import com.napzak.domain.store.code.StoreErrorCode;
 import com.napzak.domain.store.crud.store.StoreUpdater;
 import com.napzak.domain.store.entity.StoreEntity;
+import com.napzak.domain.store.repository.BlacklistRepository;
 import com.napzak.domain.store.repository.SmsVerificationRedisRepository;
 import com.napzak.domain.store.repository.StoreRepository;
 import com.napzak.domain.store.vo.SmsVerificationData;
@@ -130,12 +131,15 @@ public class SmsService {
 	private void validatePhoneNumberUsage(String phoneNumber, Long storeId) {
 		String phoneNumberHash = phoneEncryptionUtil.hash(phoneNumber);
 		Optional<StoreEntity> store = storeRepository.findByPhoneNumberHash(phoneNumberHash);
-		if (store.isEmpty()) {
-			return;
+		if (store.isPresent()) {
+			if (store.get().getId().equals(storeId)) {
+				throw new NapzakException(StoreErrorCode.ALREADY_VERIFIED);
+			}
+			throw new NapzakException(StoreErrorCode.PHONE_NUMBER_ALREADY_IN_USE);
 		}
-		if (store.get().getId().equals(storeId)) {
-			throw new NapzakException(StoreErrorCode.ALREADY_VERIFIED);
+
+		if (blacklistRepository.existsByPhoneNumberHash(phoneNumberHash)) {
+			throw new NapzakException(StoreErrorCode.BLACKLISTED_PHONE_NUMBER);
 		}
-		throw new NapzakException(StoreErrorCode.PHONE_NUMBER_ALREADY_IN_USE);
 	}
 }

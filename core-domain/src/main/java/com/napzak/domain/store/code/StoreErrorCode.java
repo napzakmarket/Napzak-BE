@@ -25,6 +25,7 @@ public enum StoreErrorCode implements BaseErrorCode {
 	 */
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
 	REPORTED_USER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "신고 처리된 계정으로, 로그인이 제한되었습니다."),
+	BLACKLISTED_PHONE_NUMBER(HttpStatus.FORBIDDEN, "가입을 진행할 수 없습니다. 문의사항은 고객센터로 연락해주세요."),
 	/*
 
 	404 Not Found
