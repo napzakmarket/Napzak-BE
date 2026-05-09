@@ -3,6 +3,7 @@ package com.napzak.api.admin.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +48,15 @@ public class AdminController {
 		adminService.sendReportSystemMessage(messages);
 
 		return ResponseEntity.ok(SuccessResponse.of(AdminSuccessCode.STORE_REPORT_APPROVE_SUCCESS));
+	}
+
+	@AuthorizedRole({Role.ADMIN})
+	@GetMapping("/phone-decrypt")
+	public ResponseEntity<SuccessResponse<String>> decryptPhoneNumber(
+		@RequestParam String phoneNumberEnc
+	) {
+		String phoneNumber = adminService.decryptPhoneNumber(phoneNumberEnc);
+		return ResponseEntity.ok(SuccessResponse.of(AdminSuccessCode.PHONE_DECRYPT_SUCCESS, phoneNumber));
 	}
 
 }
