@@ -1,6 +1,7 @@
 package com.napzak.api.domain.store.service;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class SmsService {
 
+	private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^01[016789]\\d{7,8}$");
+	private static final Pattern VERIFICATION_CODE_PATTERN = Pattern.compile("^\\d{6}$");
+
+
 	private final SmsUtil smsUtil;
 	private final SmsProperties smsProperties;
 	private final PhoneEncryptionUtil phoneEncryptionUtil;
@@ -48,6 +53,10 @@ public class SmsService {
 
 	public SmsSendResponse sendVerificationCode(SmsSendRequest request, Long storeId) {
 		String phoneNumber = request.phoneNumber();
+
+		if (!PHONE_NUMBER_PATTERN.matcher(phoneNumber).matches()) {
+			throw new NapzakException(SmsErrorCode.INVALID_PHONE_NUMBER_FORMAT);
+		}
 
 		// 유효성 검사
 		int remainingCount = validateDailyLimit(phoneNumber);
@@ -83,6 +92,13 @@ public class SmsService {
 
 	public SmsConfirmResponse confirmVerificationCode(SmsConfirmRequest request, Long storeId) {
 		String phoneNumber = request.phoneNumber();
+
+		if (!PHONE_NUMBER_PATTERN.matcher(phoneNumber).matches()) {
+			throw new NapzakException(SmsErrorCode.INVALID_PHONE_NUMBER_FORMAT);
+		}
+		if (!VERIFICATION_CODE_PATTERN.matcher(request.code()).matches()) {
+			throw new NapzakException(SmsErrorCode.INVALID_CODE_FORMAT);
+		}
 
 		// 인증번호 요청과 검증 사이에 같은 번호가 가입되었는지 검증
 		validatePhoneNumberUsage(phoneNumber, storeId);
