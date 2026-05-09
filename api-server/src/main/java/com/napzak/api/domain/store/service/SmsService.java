@@ -49,6 +49,10 @@ public class SmsService {
 	public SmsSendResponse sendVerificationCode(SmsSendRequest request, Long storeId) {
 		String phoneNumber = request.phoneNumber();
 
+		if (!phoneNumber.matches("^01[016789]\\d{7,8}$")) {
+			throw new NapzakException(SmsErrorCode.INVALID_PHONE_NUMBER_FORMAT);
+		}
+
 		// 유효성 검사
 		int remainingCount = validateDailyLimit(phoneNumber);
 		validatePhoneNumberUsage(phoneNumber, storeId);
@@ -83,6 +87,13 @@ public class SmsService {
 
 	public SmsConfirmResponse confirmVerificationCode(SmsConfirmRequest request, Long storeId) {
 		String phoneNumber = request.phoneNumber();
+
+		if (!phoneNumber.matches("^01[016789]\\d{7,8}$")) {
+			throw new NapzakException(SmsErrorCode.INVALID_PHONE_NUMBER_FORMAT);
+		}
+		if (!request.code().matches("^\\d{6}$")) {
+			throw new NapzakException(SmsErrorCode.INVALID_CODE_FORMAT);
+		}
 
 		// 인증번호 요청과 검증 사이에 같은 번호가 가입되었는지 검증
 		validatePhoneNumberUsage(phoneNumber, storeId);

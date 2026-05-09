@@ -12,6 +12,12 @@ import lombok.RequiredArgsConstructor;
 public enum SmsErrorCode implements BaseErrorCode {
 
 	/*
+	400 BAD REQUEST
+	 */
+	INVALID_PHONE_NUMBER_FORMAT(HttpStatus.BAD_REQUEST, "올바른 휴대폰 번호 형식이 아닙니다."),
+	INVALID_CODE_FORMAT(HttpStatus.BAD_REQUEST, "올바른 인증 번호 형식이 아닙니다."),
+
+	/*
 	404 NOT FOUND
 	 */
 	VERIFICATION_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "인증번호가 만료되었거나 존재하지 않습니다. 다시 요청해주세요."),
