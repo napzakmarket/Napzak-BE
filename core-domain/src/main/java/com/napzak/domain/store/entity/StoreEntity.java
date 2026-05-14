@@ -12,19 +12,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(
-	name = StoreTableConstants.TABLE_STORE,
-	indexes = {
-		@Index(name = "uk_store_phone_number_hash", columnList = StoreTableConstants.COLUMN_PHONE_NUMBER_HASH, unique = true)
-	}
-)
+@Table(name = StoreTableConstants.TABLE_STORE)
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -164,13 +158,6 @@ public class StoreEntity {
 	}
 
 	public void markPhoneVerified() {
-		this.phoneVerified = true;
-		this.verifiedAt = LocalDateTime.now();
-	}
-
-	public void verifyAndUpdatePhone(String phoneNumberEnc, String phoneNumberHash) {
-		this.phoneNumberEnc = phoneNumberEnc;
-		this.phoneNumberHash = phoneNumberHash;
 		this.phoneVerified = true;
 		this.verifiedAt = LocalDateTime.now();
 	}
