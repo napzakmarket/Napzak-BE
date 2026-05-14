@@ -26,6 +26,7 @@ import com.napzak.domain.store.repository.SmsVerificationRedisRepository;
 import com.napzak.domain.store.repository.StoreRepository;
 import com.napzak.domain.store.repository.WithdrawRepository;
 import com.napzak.domain.store.vo.SmsVerificationData;
+import com.napzak.domain.store.vo.Store;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -118,27 +119,32 @@ public class SmsService {
 
 		try {
 			if (isCodeMatching) {
-				storeUpdater.updatePhone(storeId, phoneNumber);
 				smsVerificationRedisRepository.deleteVerificationData(phoneNumber);
+				storeUpdater.updatePhoneFields(storeId, phoneNumber);
 			} else {
 				SmsVerificationData updated = verificationData.get().incrementFailCount();
 				smsVerificationRedisRepository.updateVerificationData(phoneNumber, updated);
-				// 인증번호를 오입력하였고, 마지막 횟수까지 소진된 경우
 				if (updated.failCount() >= smsProperties.getPolicy().getFailMaxCount()) {
 					throw new NapzakException(SmsErrorCode.VERIFICATION_FAIL_COUNT_EXCEEDED);
 				}
 			}
 
-			boolean isPhoneVerified = storeService.getStore(storeId).isPhoneVerified();
 			int remainingCount = smsProperties.getPolicy().getSendMaxCount() - smsVerificationRedisRepository.getDailyCount(phoneNumber);
-
-			return new SmsConfirmResponse(isPhoneVerified, remainingCount);
+			return new SmsConfirmResponse(isCodeMatching, remainingCount);
 		} catch (NapzakException e) {
 			throw e;
 		} catch (Exception e) {
 			log.error("[SMS] 인증번호 검증 처리 중 오류", e);
 			throw new NapzakException(SmsErrorCode.MESSAGE_CONFIRM_FAILED);
 		}
+	}
+
+	public void registerPhone(Long storeId) {
+		Store store = storeService.getStore(storeId);
+		if (store.getPhoneNumberHash() == null) {
+			throw new NapzakException(SmsErrorCode.PHONE_VERIFICATION_REQUIRED);
+		}
+		storeUpdater.updatePhoneVerified(storeId);
 	}
 
 	private int validateDailyLimit(String phoneNumber) {
@@ -151,7 +157,7 @@ public class SmsService {
 
 	private void validatePhoneNumberUsage(String phoneNumber, Long storeId) {
 		String phoneNumberHash = phoneEncryptionUtil.hash(phoneNumber);
-		Optional<StoreEntity> store = storeRepository.findByPhoneNumberHash(phoneNumberHash);
+		Optional<StoreEntity> store = storeRepository.findByPhoneNumberHashAndPhoneVerifiedTrue(phoneNumberHash);
 		if (store.isPresent()) {
 			if (store.get().getRole().equals(Role.REPORTED)) {
 				throw new NapzakException(StoreErrorCode.BLACKLISTED_PHONE_NUMBER);

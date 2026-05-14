@@ -32,4 +32,6 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
 	List<String> findAllPhoto();
 
 	Optional<StoreEntity> findByPhoneNumberHash(String phoneNumberHash);
+
+	Optional<StoreEntity> findByPhoneNumberHashAndPhoneVerifiedTrue(String phoneNumberHash);
 }
