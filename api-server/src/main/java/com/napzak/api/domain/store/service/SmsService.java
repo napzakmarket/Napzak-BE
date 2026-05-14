@@ -144,6 +144,7 @@ public class SmsService {
 		if (store.getPhoneNumberHash() == null) {
 			throw new NapzakException(SmsErrorCode.PHONE_VERIFICATION_REQUIRED);
 		}
+		validatePhoneNumberUsageByHash(store.getPhoneNumberHash(), storeId);
 		storeUpdater.updatePhoneVerified(storeId);
 	}
 
@@ -156,7 +157,10 @@ public class SmsService {
 	}
 
 	private void validatePhoneNumberUsage(String phoneNumber, Long storeId) {
-		String phoneNumberHash = phoneEncryptionUtil.hash(phoneNumber);
+		validatePhoneNumberUsageByHash(phoneEncryptionUtil.hash(phoneNumber), storeId);
+	}
+
+	private void validatePhoneNumberUsageByHash(String phoneNumberHash, Long storeId) {
 		Optional<StoreEntity> store = storeRepository.findByPhoneNumberHashAndPhoneVerifiedTrue(phoneNumberHash);
 		if (store.isPresent()) {
 			if (store.get().getRole().equals(Role.REPORTED)) {
