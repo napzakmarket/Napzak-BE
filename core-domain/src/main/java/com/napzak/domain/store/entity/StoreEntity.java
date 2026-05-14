@@ -155,6 +155,8 @@ public class StoreEntity {
 	public void setPhoneFields(String phoneNumberEnc, String phoneNumberHash) {
 		this.phoneNumberEnc = phoneNumberEnc;
 		this.phoneNumberHash = phoneNumberHash;
+		this.phoneVerified = false;
+		this.verifiedAt = null;
 	}
 
 	public void markPhoneVerified() {
