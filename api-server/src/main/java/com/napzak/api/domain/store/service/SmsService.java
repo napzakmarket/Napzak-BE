@@ -13,6 +13,7 @@ import com.napzak.api.domain.store.dto.request.SmsConfirmRequest;
 import com.napzak.api.domain.store.dto.request.SmsSendRequest;
 import com.napzak.api.domain.store.dto.response.SmsConfirmResponse;
 import com.napzak.api.domain.store.dto.response.SmsSendResponse;
+import com.napzak.common.auth.redis.LettuceLockRepository;
 import com.napzak.common.auth.role.enums.Role;
 import com.napzak.common.exception.NapzakException;
 import com.napzak.common.util.encryption.PhoneEncryptionUtil;
@@ -51,6 +52,9 @@ public class SmsService {
 	private final DefaultMessageService messageService;
 	private final StoreService storeService;
 	private final StoreUpdater storeUpdater;
+	private final LettuceLockRepository lettuceLockRepository;
+
+	private static final String PHONE_REGISTER_LOCK_TYPE = "phone-register";
 
 	public SmsSendResponse sendVerificationCode(SmsSendRequest request, Long storeId) {
 		String phoneNumber = request.phoneNumber();
@@ -144,8 +148,19 @@ public class SmsService {
 		if (store.getPhoneNumberHash() == null) {
 			throw new NapzakException(SmsErrorCode.PHONE_VERIFICATION_REQUIRED);
 		}
-		validatePhoneNumberUsageByHash(store.getPhoneNumberHash(), storeId);
-		storeUpdater.updatePhoneVerified(storeId);
+
+		String phoneNumberHash = store.getPhoneNumberHash();
+		Boolean locked = lettuceLockRepository.lock(phoneNumberHash, PHONE_REGISTER_LOCK_TYPE);
+		if (!Boolean.TRUE.equals(locked)) {
+			throw new NapzakException(StoreErrorCode.PHONE_NUMBER_ALREADY_IN_USE);
+		}
+
+		try {
+			validatePhoneNumberUsageByHash(phoneNumberHash, storeId);
+			storeUpdater.updatePhoneVerified(storeId);
+		} finally {
+			lettuceLockRepository.unlock(phoneNumberHash);
+		}
 	}
 
 	private int validateDailyLimit(String phoneNumber) {
