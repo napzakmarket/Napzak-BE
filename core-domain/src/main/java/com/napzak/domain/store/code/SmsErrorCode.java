@@ -21,6 +21,7 @@ public enum SmsErrorCode implements BaseErrorCode {
 	404 NOT FOUND
 	 */
 	VERIFICATION_SESSION_NOT_FOUND(HttpStatus.NOT_FOUND, "인증번호가 만료되었거나 존재하지 않습니다. 다시 요청해주세요."),
+	PHONE_VERIFICATION_REQUIRED(HttpStatus.NOT_FOUND, "전화번호 인증을 먼저 진행해주세요."),
 
 	/*
 	429 TOO MANY REQUESTS

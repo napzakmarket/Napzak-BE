@@ -75,12 +75,20 @@ public class StoreUpdater {
 	}
 
 	@Transactional
-	public void updatePhone(final Long storeId, final String phoneNumber) {
+	public void updatePhoneFields(final Long storeId, final String phoneNumber) {
 		StoreEntity storeEntity = storeRepository.findById(storeId)
 			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
 		String phoneNumberEnc = phoneEncryptionUtil.encrypt(phoneNumber);
 		String phoneNumberHash = phoneEncryptionUtil.hash(phoneNumber);
-		storeEntity.verifyAndUpdatePhone(phoneNumberEnc, phoneNumberHash);
+		storeEntity.setPhoneFields(phoneNumberEnc, phoneNumberHash);
+		storeRepository.save(storeEntity);
+	}
+
+	@Transactional
+	public void updatePhoneVerified(final Long storeId) {
+		StoreEntity storeEntity = storeRepository.findById(storeId)
+			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
+		storeEntity.markPhoneVerified();
 		storeRepository.save(storeEntity);
 	}
 }

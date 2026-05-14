@@ -13,6 +13,7 @@ import com.napzak.api.domain.store.dto.request.SmsConfirmRequest;
 import com.napzak.api.domain.store.dto.request.SmsSendRequest;
 import com.napzak.api.domain.store.dto.response.SmsConfirmResponse;
 import com.napzak.api.domain.store.dto.response.SmsSendResponse;
+import com.napzak.common.auth.redis.LettuceLockRepository;
 import com.napzak.common.auth.role.enums.Role;
 import com.napzak.common.exception.NapzakException;
 import com.napzak.common.util.encryption.PhoneEncryptionUtil;
@@ -26,6 +27,7 @@ import com.napzak.domain.store.repository.SmsVerificationRedisRepository;
 import com.napzak.domain.store.repository.StoreRepository;
 import com.napzak.domain.store.repository.WithdrawRepository;
 import com.napzak.domain.store.vo.SmsVerificationData;
+import com.napzak.domain.store.vo.Store;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +52,9 @@ public class SmsService {
 	private final DefaultMessageService messageService;
 	private final StoreService storeService;
 	private final StoreUpdater storeUpdater;
+	private final LettuceLockRepository lettuceLockRepository;
+
+	private static final String PHONE_REGISTER_LOCK_TYPE = "phone-register";
 
 	public SmsSendResponse sendVerificationCode(SmsSendRequest request, Long storeId) {
 		String phoneNumber = request.phoneNumber();
@@ -118,26 +123,43 @@ public class SmsService {
 
 		try {
 			if (isCodeMatching) {
-				storeUpdater.updatePhone(storeId, phoneNumber);
 				smsVerificationRedisRepository.deleteVerificationData(phoneNumber);
+				storeUpdater.updatePhoneFields(storeId, phoneNumber);
 			} else {
 				SmsVerificationData updated = verificationData.get().incrementFailCount();
 				smsVerificationRedisRepository.updateVerificationData(phoneNumber, updated);
-				// 인증번호를 오입력하였고, 마지막 횟수까지 소진된 경우
 				if (updated.failCount() >= smsProperties.getPolicy().getFailMaxCount()) {
 					throw new NapzakException(SmsErrorCode.VERIFICATION_FAIL_COUNT_EXCEEDED);
 				}
 			}
 
-			boolean isPhoneVerified = storeService.getStore(storeId).isPhoneVerified();
 			int remainingCount = smsProperties.getPolicy().getSendMaxCount() - smsVerificationRedisRepository.getDailyCount(phoneNumber);
-
-			return new SmsConfirmResponse(isPhoneVerified, remainingCount);
+			return new SmsConfirmResponse(isCodeMatching, remainingCount);
 		} catch (NapzakException e) {
 			throw e;
 		} catch (Exception e) {
 			log.error("[SMS] 인증번호 검증 처리 중 오류", e);
 			throw new NapzakException(SmsErrorCode.MESSAGE_CONFIRM_FAILED);
+		}
+	}
+
+	public void registerPhone(Long storeId) {
+		Store store = storeService.getStore(storeId);
+		if (store.getPhoneNumberHash() == null) {
+			throw new NapzakException(SmsErrorCode.PHONE_VERIFICATION_REQUIRED);
+		}
+
+		String phoneNumberHash = store.getPhoneNumberHash();
+		Boolean locked = lettuceLockRepository.lock(phoneNumberHash, PHONE_REGISTER_LOCK_TYPE);
+		if (!Boolean.TRUE.equals(locked)) {
+			throw new NapzakException(StoreErrorCode.PHONE_NUMBER_ALREADY_IN_USE);
+		}
+
+		try {
+			validatePhoneNumberUsageByHash(phoneNumberHash, storeId);
+			storeUpdater.updatePhoneVerified(storeId);
+		} finally {
+			lettuceLockRepository.unlock(phoneNumberHash);
 		}
 	}
 
@@ -150,8 +172,11 @@ public class SmsService {
 	}
 
 	private void validatePhoneNumberUsage(String phoneNumber, Long storeId) {
-		String phoneNumberHash = phoneEncryptionUtil.hash(phoneNumber);
-		Optional<StoreEntity> store = storeRepository.findByPhoneNumberHash(phoneNumberHash);
+		validatePhoneNumberUsageByHash(phoneEncryptionUtil.hash(phoneNumber), storeId);
+	}
+
+	private void validatePhoneNumberUsageByHash(String phoneNumberHash, Long storeId) {
+		Optional<StoreEntity> store = storeRepository.findByPhoneNumberHashAndPhoneVerifiedTrue(phoneNumberHash);
 		if (store.isPresent()) {
 			if (store.get().getRole().equals(Role.REPORTED)) {
 				throw new NapzakException(StoreErrorCode.BLACKLISTED_PHONE_NUMBER);

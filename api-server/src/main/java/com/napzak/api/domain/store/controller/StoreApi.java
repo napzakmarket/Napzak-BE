@@ -380,7 +380,7 @@ public interface StoreApi {
 		@CurrentMember Long currentStoreId
 	);
 
-	@Operation(summary = "번호 인증번호 검증", description = "전화번호와 인증번호를 검증하고, 성공 시 현재 스토어의 번호 인증 상태를 완료 처리합니다.")
+	@Operation(summary = "번호 인증번호 검증", description = "전화번호와 인증번호를 검증합니다.")
 	@ApiResponses(value = {
 		@ApiResponse(responseCode = "200", description = "인증번호 검증 성공",
 			content = @Content(schema = @Schema(implementation = SmsConfirmResponse.class))),
@@ -395,6 +395,18 @@ public interface StoreApi {
 		)
 		@Valid @RequestBody SmsConfirmRequest request,
 
+		@Parameter(hidden = true)
+		@CurrentMember Long currentStoreId
+	);
+
+	@Operation(summary = "전화번호 등록", description = "인증 완료된 전화번호를 스토어에 등록합니다. 인증번호 검증 API 호출 후에만 사용 가능합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "전화번호 등록 성공"),
+		@ApiResponse(responseCode = "404", description = "전화번호 인증 미완료"),
+		@ApiResponse(responseCode = "409", description = "이미 사용 중인 전화번호 또는 이미 인증된 사용자")
+	})
+	@PatchMapping("/phone-verifications")
+	ResponseEntity<SuccessResponse<Void>> registerPhone(
 		@Parameter(hidden = true)
 		@CurrentMember Long currentStoreId
 	);

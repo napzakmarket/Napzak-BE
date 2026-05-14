@@ -491,10 +491,17 @@ public class StoreController implements StoreApi {
 		@CurrentMember Long currentStoreId
 	) {
 		SmsConfirmResponse response = smsService.confirmVerificationCode(request, currentStoreId);
-
 		return ResponseEntity.ok()
 			.body(SuccessResponse.of(SmsSuccessCode.VERIFICATION_CODE_CONFIRM_SUCCESS, response));
+	}
 
+	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING})
+	@PatchMapping("/phone-verifications")
+	public ResponseEntity<SuccessResponse<Void>> registerPhone(
+		@CurrentMember Long currentStoreId
+	) {
+		smsService.registerPhone(currentStoreId);
+		return ResponseEntity.ok(SuccessResponse.of(SmsSuccessCode.PHONE_REGISTER_SUCCESS));
 	}
 
 	private List<GenreNameDto> genrePreferenceResponseGenerator(List<GenrePreference> genreList) {
