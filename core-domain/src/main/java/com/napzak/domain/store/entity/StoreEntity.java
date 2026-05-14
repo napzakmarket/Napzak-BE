@@ -158,6 +158,16 @@ public class StoreEntity {
 		this.email = email;
 	}
 
+	public void setPhoneFields(String phoneNumberEnc, String phoneNumberHash) {
+		this.phoneNumberEnc = phoneNumberEnc;
+		this.phoneNumberHash = phoneNumberHash;
+	}
+
+	public void markPhoneVerified() {
+		this.phoneVerified = true;
+		this.verifiedAt = LocalDateTime.now();
+	}
+
 	public void verifyAndUpdatePhone(String phoneNumberEnc, String phoneNumberHash) {
 		this.phoneNumberEnc = phoneNumberEnc;
 		this.phoneNumberHash = phoneNumberHash;
