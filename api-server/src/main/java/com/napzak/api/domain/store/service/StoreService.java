@@ -78,6 +78,13 @@ public class StoreService {
 	}
 
 	@Transactional(readOnly = true)
+	public boolean getPhoneVerificationStatus(final Long storeId) {
+		Store store = getStore(storeId);
+
+		return store.isPhoneVerified();
+	}
+
+	@Transactional(readOnly = true)
 	public Role findRoleByStoreId(final Long storeId) {
 		return storeRetriever.findRoleByStoreId(storeId);
 	}
@@ -155,7 +162,11 @@ public class StoreService {
 
 	@Transactional
 	public void withdraw(Long storeId, String title, String description, List<ChatMessage> messages) {
-		withdrawSaver.save(storeId, title, description, LocalDateTime.now());
+		Store store = getStore(storeId);
+		String phoneNumberEnc = store.isPhoneVerified() ? store.getPhoneNumberEnc() : null;
+		String phoneNumberHash = store.isPhoneVerified() ? store.getPhoneNumberHash() : null;
+		boolean blacklisted = store.getRole() == Role.REPORTED;
+		withdrawSaver.save(storeId, title, description, LocalDateTime.now(), phoneNumberEnc, phoneNumberHash, blacklisted);
 		storeUpdater.updateWithdraw(storeId);
 		genrePreferenceRemover.removeGenrePreference(storeId);
 		chatSystemMessageSender.sendSystemMessages(messages);

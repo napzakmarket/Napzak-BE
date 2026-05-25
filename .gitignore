@@ -188,5 +188,12 @@ src/main/resources/application-dev.yml
 src/main/resources/application-prod.yml
 **/application-*.yml
 
+# Gradle build outputs
+build/
+.gradle/
+
+# Firebase credentials
+**/resources/firebase/
+
 ## Ignore Qclass
-src/main/generated/querydsl
+**/src/main/generated/

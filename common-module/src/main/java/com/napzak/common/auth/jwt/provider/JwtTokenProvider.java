@@ -48,11 +48,6 @@ public class JwtTokenProvider {
 		jwtSecret = Base64.getEncoder().encodeToString(jwtSecret.getBytes(StandardCharsets.UTF_8));
 	}
 
-	public String issueAccessTokenWithCustomExpireAt(final Authentication authentication, final LocalDateTime expireAt) {
-		long expireTime = Duration.between(LocalDateTime.now(), expireAt).toMillis();
-		return issueToken(authentication, expireTime);
-	}
-
 	public String issueAccessToken(final Authentication authentication) {
 		return issueToken(authentication, accessTokenExpireTime);
 	}

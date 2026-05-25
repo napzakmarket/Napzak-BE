@@ -12,14 +12,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = StoreTableConstants.TABLE_STORE, indexes = {@Index(name = "uk1", columnList = "phone", unique = true)})
+@Table(name = StoreTableConstants.TABLE_STORE)
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -36,8 +35,20 @@ public class StoreEntity {
 	@Column(name = StoreTableConstants.COLUMN_NICKNAME, nullable = true)
 	private String nickname;
 
-	@Column(name = StoreTableConstants.COLUMN_PHONE_NUMBER, nullable = true)
-	private String phoneNumber;
+	@Column(name = StoreTableConstants.COLUMN_PHONE_NUMBER_ENC, nullable = true)
+	private String phoneNumberEnc;
+
+	@Column(name = StoreTableConstants.COLUMN_PHONE_NUMBER_HASH, nullable = true)
+	private String phoneNumberHash;
+
+	@Column(name = StoreTableConstants.COLUMN_PHONE_VERIFIED, nullable = false)
+	private boolean phoneVerified;
+
+	@Column(name = StoreTableConstants.COLUMN_VERIFIED_AT, nullable = true)
+	private LocalDateTime verifiedAt;
+
+	@Column(name = StoreTableConstants.COLUMN_EMAIL, nullable = true)
+	private String email;
 
 	@Column(name = StoreTableConstants.COLUMN_PHOTO, nullable = true)
 	private String photo;
@@ -63,10 +74,22 @@ public class StoreEntity {
 	private SocialType socialType;
 
 	@Builder
-	private StoreEntity(String nickname, String phoneNumber, Role role, String description, String socialId,
-		SocialType socialType, String photo, String cover) {
+	private StoreEntity(
+		String nickname,
+		boolean phoneVerified,
+		LocalDateTime verifiedAt,
+		String email,
+		Role role,
+		String description,
+		String socialId,
+		SocialType socialType,
+		String photo,
+		String cover
+	) {
 		this.nickname = nickname;
-		this.phoneNumber = phoneNumber;
+		this.phoneVerified = phoneVerified;
+		this.verifiedAt = verifiedAt;
+		this.email = email;
 		this.photo = photo;
 		this.cover = cover;
 		this.role = role;
@@ -75,18 +98,28 @@ public class StoreEntity {
 		this.socialType = socialType;
 	}
 
-	public static StoreEntity create(final String nickname, final String phoneNumber, final Role role,
-		final String description, final String socialId, final SocialType socialType, final String photo,
-		final String cover) {
-		return StoreEntity.builder().
-			nickname(nickname).
-			phoneNumber(phoneNumber).
-			role(role).
-			description(description).
-			socialId(socialId).
-			socialType(socialType).
-			photo(photo).
-			cover(cover).build();
+	public static StoreEntity create(
+		final String nickname,
+		final String email,
+		final Role role,
+		final String description,
+		final String socialId,
+		final SocialType socialType,
+		final String photo,
+		final String cover
+	) {
+		return StoreEntity.builder()
+			.nickname(nickname)
+			.phoneVerified(false)
+			.verifiedAt(null)
+			.email(email)
+			.role(role)
+			.description(description)
+			.socialId(socialId)
+			.socialType(socialType)
+			.photo(photo)
+			.cover(cover)
+			.build();
 	}
 
 	public void setNickname(String nickname) {
@@ -113,5 +146,28 @@ public class StoreEntity {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setPhoneFields(String phoneNumberEnc, String phoneNumberHash) {
+		this.phoneNumberEnc = phoneNumberEnc;
+		this.phoneNumberHash = phoneNumberHash;
+		this.phoneVerified = false;
+		this.verifiedAt = null;
+	}
+
+	public void markPhoneVerified() {
+		this.phoneVerified = true;
+		this.verifiedAt = LocalDateTime.now();
+	}
+
+	public void clearPhoneVerification() {
+		this.phoneNumberEnc = null;
+		this.phoneNumberHash = null;
+		this.phoneVerified = false;
+		this.verifiedAt = null;
 	}
 }

@@ -6,5 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record SlackWebhookProperties(
 	String withdraw,
 	String storeReport,
-	String productReport
+	String productReport,
+	String signup
 ) {}

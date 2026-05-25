@@ -31,7 +31,10 @@ public enum ErrorCode implements BaseErrorCode {
 	/*
 	 500 INTERNAL SERVER ERROR
 	 */
-	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에서 오류가 발생했습니다.");
+	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에서 오류가 발생했습니다."),
+	ENCRYPTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "암호화 처리 중 오류가 발생했습니다."),
+	DECRYPTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "복호화 처리 중 오류가 발생했습니다."),
+	HASHING_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "해시 생성 중 오류가 발생했습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;

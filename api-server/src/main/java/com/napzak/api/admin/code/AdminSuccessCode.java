@@ -14,6 +14,7 @@ public enum AdminSuccessCode implements BaseSuccessCode {
 	200 Ok
 	 */
 	STORE_REPORT_APPROVE_SUCCESS(HttpStatus.OK, "유저 신고 승인이 완료되었습니다."),
+	PHONE_DECRYPT_SUCCESS(HttpStatus.OK, "전화번호 복호화가 완료되었습니다."),
 	;
 	private final HttpStatus httpStatus;
 	private final String message;

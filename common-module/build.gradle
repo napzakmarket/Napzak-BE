@@ -58,6 +58,9 @@ dependencies {
     implementation 'com.google.guava:guava:32.1.2-jre'
 
     runtimeOnly("io.netty:netty-resolver-dns-native-macos:4.1.109.Final:osx-aarch_64")
+
+    // CoolSMS
+    implementation 'net.nurigo:sdk:4.3.2'
 }
 
 dependencyManagement {

@@ -1,7 +1,5 @@
 package com.napzak.domain.store.crud.storereport;
 
-import java.time.LocalDateTime;
-
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,8 +28,7 @@ public class StoreReportSaver {
 			store.getDescription(),
 			title,
 			description,
-			contact,
-			LocalDateTime.now()
+			contact
 		);
 		storeReportRepository.save(entity);
 
@@ -44,6 +41,7 @@ public class StoreReportSaver {
 			• *닉네임:* %s
 			• *연락처:* %s
 			• *신고 시각:* %s
+			• *환경:* `%s`
 
 			*상점 정보*
 			• *프로필:* %s
@@ -61,6 +59,7 @@ public class StoreReportSaver {
 			entity.getReportedStoreNickname(),
 			entity.getReportContact(),
 			entity.getCreatedAt(),
+			slackWebhookSender.getCurrentEnvironment(),
 			entity.getReportedStoreProfile(),
 			entity.getReportedStoreCover(),
 			entity.getReportedStoreDescription(),

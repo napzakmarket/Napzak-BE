@@ -43,8 +43,7 @@ dependencies {
     implementation 'software.amazon.awssdk:s3outposts:2.32.15'
 
     // CoolSMS 등 외부 API
-    implementation 'net.nurigo:sdk:4.3.0'
-    implementation 'net.nurigo:javaSDK:2.2'
+    implementation 'net.nurigo:sdk:4.3.2'
 
     // WebClient
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
