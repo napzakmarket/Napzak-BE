@@ -35,6 +35,11 @@ public class SecurityConfig {
 		"/api/v1/presigned-url/**",
 		"/error",
 		"/api/v1/stores/login/**",
+		"/api/v1/admin/login",
+		"/admin/**",
+		"/css/**",
+		"/js/**",
+		"/images/**",
 		"/api/v1/onboarding/**",
 		"/api/v1/stores/refresh-token/**",
 		"/api/v1/stores/terms/**",
@@ -46,7 +51,7 @@ public class SecurityConfig {
 	};
 
 	private static final String[] AUTH_ADMIN_ONLY = {
-		"/api/admin/**"
+		"/api/v1/admin/**"
 	};
 
 	@Bean
