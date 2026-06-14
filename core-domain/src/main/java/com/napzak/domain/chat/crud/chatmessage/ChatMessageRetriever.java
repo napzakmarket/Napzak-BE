@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.domain.chat.code.ChatErrorCode;
+import com.napzak.domain.chat.entity.enums.MessageType;
 import com.napzak.domain.chat.repository.ChatMessageRepository;
 import com.napzak.domain.chat.repository.ChatMessageRepositoryCustom;
 import com.napzak.domain.chat.vo.ChatMessage;
@@ -28,6 +30,12 @@ public class ChatMessageRetriever {
 		return chatMessageRepository.findById(id)
 			.map(ChatMessage::fromEntity)
 			.orElseThrow(() -> new NapzakException(ChatErrorCode.MESSAGE_NOT_FOUND));
+	}
+
+	@Transactional(readOnly = true)
+	public List<ChatMessage> findRecentTextMessages(int limit) {
+		return chatMessageRepository.findByTypeOrderByCreatedAtDesc(MessageType.TEXT, PageRequest.of(0, limit))
+			.stream().map(ChatMessage::fromEntity).toList();
 	}
 
 	@Transactional(readOnly = true)
