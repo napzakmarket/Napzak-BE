@@ -20,6 +20,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+
+    // Admin 웹 페이지 (Thymeleaf SSR)
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
     // DB
     runtimeOnly 'com.mysql:mysql-connector-j'
 
