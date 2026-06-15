@@ -34,6 +34,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtTokenProvider jwtTokenProvider;
 
 	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) {
+		String path = request.getServletPath();
+
+		return path.equals("/product")
+			|| path.startsWith("/product/")
+			|| path.equals("/.well-known")
+			|| path.startsWith("/.well-known/");
+	}
+
+	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request,
 		@NonNull HttpServletResponse response,
 		@NonNull FilterChain filterChain) throws ServletException, IOException {

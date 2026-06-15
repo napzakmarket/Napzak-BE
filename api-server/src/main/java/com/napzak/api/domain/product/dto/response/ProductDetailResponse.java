@@ -6,7 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.napzak.domain.store.vo.StoreStatus;
 
 public record ProductDetailResponse(
+	@JsonProperty("isInterested")
 	boolean isInterested,
+
+	@JsonProperty("shareUrl")
+	String shareUrl,
 
 	@JsonProperty("productDetail")
 	ProductDetailDto productDetailDto,
