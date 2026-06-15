@@ -30,13 +30,13 @@ jobs:
       - name: Inject API secrets
         env:
           API_APPLICATION_DEV: ${{ secrets.API_APPLICATION_DEV }}
-          API_FIREBASE_JSON: ${{ secrets.API_FIREBASE_JSON }}
+          API_FIREBASE_JSON_BASE64: ${{ secrets.API_FIREBASE_JSON_BASE64 }}
         run: |
           mkdir -p api-server/src/main/resources
           printf '%s\n' "$API_APPLICATION_DEV" > api-server/src/main/resources/application-dev.yml
 
           mkdir -p api-server/src/main/resources/firebase
-          printf '%s\n' "$API_FIREBASE_JSON" > api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
+          printf '%s' "$API_FIREBASE_JSON_BASE64" | tr -d '\n\r ' | base64 -d > api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
 
           echo "API application-dev.yml size:"
           wc -c api-server/src/main/resources/application-dev.yml
@@ -44,22 +44,36 @@ jobs:
           grep -q '^jwt:' api-server/src/main/resources/application-dev.yml
           grep -q '^[[:space:]]*secret:' api-server/src/main/resources/application-dev.yml
 
+          echo "API firebase json size:"
+          wc -c api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
+          test -s api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
+          python3 -m json.tool api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json >/dev/null
+          grep -q '"type"[[:space:]]*:[[:space:]]*"service_account"' api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
+          grep -q '"private_key"' api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
+
       - name: Inject Chat secrets
         env:
           CHAT_APPLICATION_DEV: ${{ secrets.CHAT_APPLICATION_DEV }}
-          CHAT_FIREBASE_JSON: ${{ secrets.CHAT_FIREBASE_JSON }}
+          CHAT_FIREBASE_JSON_BASE64: ${{ secrets.CHAT_FIREBASE_JSON_BASE64 }}
         run: |
           mkdir -p chat-server/src/main/resources
           printf '%s\n' "$CHAT_APPLICATION_DEV" > chat-server/src/main/resources/application-dev.yml
 
           mkdir -p chat-server/src/main/resources/firebase
-          printf '%s\n' "$CHAT_FIREBASE_JSON" > chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
+          printf '%s' "$CHAT_FIREBASE_JSON_BASE64" | tr -d '\n\r ' | base64 -d > chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
 
           echo "CHAT application-dev.yml size:"
           wc -c chat-server/src/main/resources/application-dev.yml
           test -s chat-server/src/main/resources/application-dev.yml
           grep -q '^jwt:' chat-server/src/main/resources/application-dev.yml
           grep -q '^[[:space:]]*secret:' chat-server/src/main/resources/application-dev.yml
+
+          echo "CHAT firebase json size:"
+          wc -c chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
+          test -s chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
+          python3 -m json.tool chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json >/dev/null
+          grep -q '"type"[[:space:]]*:[[:space:]]*"service_account"' chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
+          grep -q '"private_key"' chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
