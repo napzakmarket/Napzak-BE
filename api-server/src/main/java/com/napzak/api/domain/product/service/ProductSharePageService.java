@@ -12,6 +12,7 @@ import com.napzak.api.domain.product.dto.response.ProductDetailDto;
 import com.napzak.api.domain.product.dto.response.ProductPhotoDto;
 import com.napzak.api.domain.product.dto.response.ProductSharePageView;
 import com.napzak.common.exception.NapzakException;
+import com.napzak.domain.product.code.ProductErrorCode;
 import com.napzak.domain.product.vo.Product;
 
 import lombok.RequiredArgsConstructor;
@@ -51,7 +52,11 @@ public class ProductSharePageService {
 		try {
 			return productService.getProduct(productId);
 		} catch (NapzakException e) {
-			return null;
+			if (ProductErrorCode.PRODUCT_NOT_FOUND.equals(e.getBaseErrorCode())) {
+				return null;
+			}
+
+			throw e;
 		}
 	}
 
@@ -92,22 +97,13 @@ public class ProductSharePageService {
 	}
 
 	private String findOgImageUrl(Long productId) {
-		List<ProductPhotoDto> productPhotoList = productService.getProductPhotos(productId).stream()
+		return productService.getProductPhotos(productId).stream()
 			.map(ProductPhotoDto::from)
 			.sorted(Comparator.comparingInt(ProductPhotoDto::sequence))
-			.toList();
-
-		if (productPhotoList.isEmpty()) {
-			return defaultOgImageUrl;
-		}
-
-		String firstPhotoUrl = productPhotoList.get(0).photoUrl();
-
-		if (!StringUtils.hasText(firstPhotoUrl)) {
-			return defaultOgImageUrl;
-		}
-
-		return firstPhotoUrl;
+			.map(ProductPhotoDto::photoUrl)
+			.filter(StringUtils::hasText)
+			.findFirst()
+			.orElse(defaultOgImageUrl);
 	}
 
 	private String buildTitle(String productName) {
