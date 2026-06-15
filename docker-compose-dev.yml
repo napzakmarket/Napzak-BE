@@ -1,4 +1,3 @@
-# docker-compose-dev.yml
 services:
   api-server:
     image: 203918864903.dkr.ecr.ap-northeast-2.amazonaws.com/napzak-api-dev:latest
@@ -8,6 +7,11 @@ services:
     depends_on:
       redis: { condition: service_healthy }
       rabbitmq: { condition: service_healthy }
+    environment:
+      FIREBASE_CONFIG_PATH: file:/app/firebase/napzak-firebase-adminsdk.json
+    volumes:
+      - ./secrets/api/application-dev.yml:/app/application-dev.yml:ro
+      - ./secrets/api/napzak-firebase-adminsdk.json:/app/firebase/napzak-firebase-adminsdk.json:ro
     networks: [napzak-dev-net]
 
   chat-server:
@@ -18,6 +22,11 @@ services:
     depends_on:
       redis: { condition: service_healthy }
       rabbitmq: { condition: service_healthy }
+    environment:
+      FIREBASE_CONFIG_PATH: file:/app/firebase/napzak-firebase-adminsdk.json
+    volumes:
+      - ./secrets/chat/application-dev.yml:/app/application-dev.yml:ro
+      - ./secrets/chat/napzak-firebase-adminsdk.json:/app/firebase/napzak-firebase-adminsdk.json:ro
     networks: [napzak-dev-net]
 
   redis:

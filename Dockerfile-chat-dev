@@ -1,20 +1,10 @@
-# ---------------- Dockerfile-chat-dev ----------------
-# ---------- build ----------
 FROM gradle:8.8-jdk17 AS builder
 WORKDIR /usr/src/app
 
 COPY . .
 
-# ✅ Docker build context 안에 secret yml이 실제로 들어왔는지 검증
-RUN echo "CHAT yml in builder:" && \
-    wc -c chat-server/src/main/resources/application-dev.yml && \
-    test -s chat-server/src/main/resources/application-dev.yml && \
-    grep -q "jwt:" chat-server/src/main/resources/application-dev.yml && \
-    grep -q "secret:" chat-server/src/main/resources/application-dev.yml
-
 RUN chmod +x ./gradlew && ./gradlew :chat-server:bootJar -x test
 
-# ---------- runtime ----------
 FROM eclipse-temurin:17-jdk
 
 RUN apt-get update && \
@@ -25,17 +15,6 @@ ENV TZ=Asia/Seoul
 ENV JAVA_TOOL_OPTIONS="-Duser.timezone=Asia/Seoul -Xms128m -Xmx384m"
 
 WORKDIR /app
-
-# ✅ runtime에도 secret yml 복사
-COPY chat-server/src/main/resources/application-dev.yml /app/application-dev.yml
-COPY chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json /app/firebase/napzak-firebase-adminsdk.json
-
-# ✅ runtime 파일도 0바이트면 이미지 빌드 실패
-RUN echo "CHAT yml in runtime:" && \
-    wc -c /app/application-dev.yml && \
-    test -s /app/application-dev.yml && \
-    grep -q "jwt:" /app/application-dev.yml && \
-    grep -q "secret:" /app/application-dev.yml
 
 COPY --from=builder /usr/src/app/chat-server/build/libs/chat-server.jar /app/chat-server.jar
 
