@@ -11,7 +11,13 @@ public class ProductShareUrlProvider {
 	public ProductShareUrlProvider(
 		@Value("${napzak.share.base-url}") String shareBaseUrl
 	) {
-		this.shareBaseUrl = removeTrailingSlash(shareBaseUrl);
+		String normalizedShareBaseUrl = removeTrailingSlash(shareBaseUrl);
+
+		if (normalizedShareBaseUrl.isBlank()) {
+			throw new IllegalStateException("napzak.share.base-url must not be blank");
+		}
+
+		this.shareBaseUrl = normalizedShareBaseUrl;
 	}
 
 	public String generate(Long productId) {
@@ -23,10 +29,12 @@ public class ProductShareUrlProvider {
 			return "";
 		}
 
-		if (url.endsWith("/")) {
-			return url.substring(0, url.length() - 1);
+		String trimmedUrl = url.trim();
+
+		if (trimmedUrl.endsWith("/")) {
+			return trimmedUrl.substring(0, trimmedUrl.length() - 1);
 		}
 
-		return url;
+		return trimmedUrl;
 	}
 }
