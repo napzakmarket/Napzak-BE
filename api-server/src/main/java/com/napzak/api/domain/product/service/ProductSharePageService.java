@@ -1,11 +1,9 @@
 package com.napzak.api.domain.product.service;
 
 import java.util.Comparator;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.napzak.api.domain.product.dto.response.ProductDetailDto;
@@ -37,7 +35,6 @@ public class ProductSharePageService {
 	@Value("${napzak.share.unavailable-og-image-url}")
 	private String unavailableOgImageUrl;
 
-	@Transactional(readOnly = true)
 	public String renderProductSharePage(Long productId) {
 		Product product = findVisibleProductOrNull(productId);
 
