@@ -42,7 +42,9 @@ public class SecurityConfig {
 		"/",
 		"/stomp-test.html",
 		"/ws-test.html",
-		"/favicon.ico"
+		"/favicon.ico",
+		"/product/**",
+		"/.well-known/**"
 	};
 
 	private static final String[] AUTH_ADMIN_ONLY = {
