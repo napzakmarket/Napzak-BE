@@ -197,3 +197,6 @@ build/
 
 ## Ignore Qclass
 **/src/main/generated/
+
+# Ignore runtime secrets
+secrets/

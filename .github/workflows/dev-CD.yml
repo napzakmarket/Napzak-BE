@@ -22,59 +22,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'corretto'
-
-      - name: Inject API secrets
-        env:
-          API_APPLICATION_DEV: ${{ secrets.API_APPLICATION_DEV }}
-          API_FIREBASE_JSON_BASE64: ${{ secrets.API_FIREBASE_JSON_BASE64 }}
-        run: |
-          mkdir -p api-server/src/main/resources
-          printf '%s\n' "$API_APPLICATION_DEV" > api-server/src/main/resources/application-dev.yml
-
-          mkdir -p api-server/src/main/resources/firebase
-          printf '%s' "$API_FIREBASE_JSON_BASE64" | tr -d '\n\r ' | base64 -d > api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-
-          echo "API application-dev.yml size:"
-          wc -c api-server/src/main/resources/application-dev.yml
-          test -s api-server/src/main/resources/application-dev.yml
-          grep -q '^jwt:' api-server/src/main/resources/application-dev.yml
-          grep -q '^[[:space:]]*secret:' api-server/src/main/resources/application-dev.yml
-
-          echo "API firebase json size:"
-          wc -c api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-          test -s api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-          python3 -m json.tool api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json >/dev/null
-          grep -q '"type"[[:space:]]*:[[:space:]]*"service_account"' api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-          grep -q '"private_key"' api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-
-      - name: Inject Chat secrets
-        env:
-          CHAT_APPLICATION_DEV: ${{ secrets.CHAT_APPLICATION_DEV }}
-          CHAT_FIREBASE_JSON_BASE64: ${{ secrets.CHAT_FIREBASE_JSON_BASE64 }}
-        run: |
-          mkdir -p chat-server/src/main/resources
-          printf '%s\n' "$CHAT_APPLICATION_DEV" > chat-server/src/main/resources/application-dev.yml
-
-          mkdir -p chat-server/src/main/resources/firebase
-          printf '%s' "$CHAT_FIREBASE_JSON_BASE64" | tr -d '\n\r ' | base64 -d > chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-
-          echo "CHAT application-dev.yml size:"
-          wc -c chat-server/src/main/resources/application-dev.yml
-          test -s chat-server/src/main/resources/application-dev.yml
-          grep -q '^jwt:' chat-server/src/main/resources/application-dev.yml
-          grep -q '^[[:space:]]*secret:' chat-server/src/main/resources/application-dev.yml
-
-          echo "CHAT firebase json size:"
-          wc -c chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-          test -s chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-          python3 -m json.tool chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json >/dev/null
-          grep -q '"type"[[:space:]]*:[[:space:]]*"service_account"' chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-          grep -q '"private_key"' chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -137,10 +84,77 @@ jobs:
           API_ECR_APP_NAME: ${{ env.API_ECR_APP_NAME }}
           CHAT_ECR_APP_NAME: ${{ env.CHAT_ECR_APP_NAME }}
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          API_FIREBASE_JSON_BASE64: ${{ secrets.API_FIREBASE_JSON_BASE64 }}
+          CHAT_FIREBASE_JSON_BASE64: ${{ secrets.CHAT_FIREBASE_JSON_BASE64 }}
         with:
           host: ${{ secrets.DEV_SERVER_HOST }}
           username: ${{ secrets.DEV_SERVER_USERNAME }}
           key: ${{ secrets.DEV_SERVER_KEY }}
-          envs: ECR_HOST,API_ECR_APP_NAME,CHAT_ECR_APP_NAME,IMAGE_TAG
+          envs: ECR_HOST,API_ECR_APP_NAME,CHAT_ECR_APP_NAME,IMAGE_TAG,API_FIREBASE_JSON_BASE64,CHAT_FIREBASE_JSON_BASE64
           script: |
+            set -e
+
+            cd /home/ubuntu/Napzak-BE
+
+            validate_jwt_secret() {
+              file="$1"
+              awk '
+                /^jwt:[[:space:]]*$/ { in_jwt=1; next }
+                /^[^[:space:]#][^:]*:/ { if ($0 !~ /^jwt:/) in_jwt=0 }
+                in_jwt && /^[[:space:]]+secret:[[:space:]]*.+/ { found=1 }
+                END { exit found ? 0 : 1 }
+              ' "$file"
+            }
+
+            validate_firebase_json() {
+              file="$1"
+              python3 - "$file" <<'PY'
+            import json
+            import sys
+            from pathlib import Path
+
+            path = Path(sys.argv[1])
+            data = json.loads(path.read_text())
+
+            required = ["type", "project_id", "private_key", "client_email"]
+            missing = [key for key in required if not str(data.get(key, "")).strip()]
+
+            if missing:
+                raise SystemExit(f"missing required firebase fields: {missing}")
+
+            if data["type"] != "service_account":
+                raise SystemExit("firebase type must be service_account")
+            PY
+            }
+
+            umask 077
+            mkdir -p secrets/api secrets/chat
+
+            cat > secrets/api/application-dev.yml <<'EOF_API_APPLICATION_DEV'
+            ${{ secrets.API_APPLICATION_DEV }}
+            EOF_API_APPLICATION_DEV
+
+            cat > secrets/chat/application-dev.yml <<'EOF_CHAT_APPLICATION_DEV'
+            ${{ secrets.CHAT_APPLICATION_DEV }}
+            EOF_CHAT_APPLICATION_DEV
+
+            printf '%s' "$API_FIREBASE_JSON_BASE64" | tr -d '\n\r ' | base64 -d > secrets/api/napzak-firebase-adminsdk.json
+            printf '%s' "$CHAT_FIREBASE_JSON_BASE64" | tr -d '\n\r ' | base64 -d > secrets/chat/napzak-firebase-adminsdk.json
+
+            test -s secrets/api/application-dev.yml
+            test -s secrets/chat/application-dev.yml
+            test -s secrets/api/napzak-firebase-adminsdk.json
+            test -s secrets/chat/napzak-firebase-adminsdk.json
+
+            validate_jwt_secret secrets/api/application-dev.yml
+            validate_jwt_secret secrets/chat/application-dev.yml
+
+            validate_firebase_json secrets/api/napzak-firebase-adminsdk.json
+            validate_firebase_json secrets/chat/napzak-firebase-adminsdk.json
+
+            chmod 600 secrets/api/application-dev.yml
+            chmod 600 secrets/chat/application-dev.yml
+            chmod 600 secrets/api/napzak-firebase-adminsdk.json
+            chmod 600 secrets/chat/napzak-firebase-adminsdk.json
+
             bash /home/ubuntu/deploy-napzak-dev.sh

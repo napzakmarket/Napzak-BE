@@ -7,7 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    environment: dev
 
     steps:
       - uses: actions/checkout@v3
@@ -17,55 +16,53 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
-      - name: Inject API secrets
-        env:
-          API_APPLICATION_DEV: ${{ secrets.API_APPLICATION_DEV }}
-          API_FIREBASE_JSON_BASE64: ${{ secrets.API_FIREBASE_JSON_BASE64 }}
+      - name: Inject dummy config
         run: |
-          mkdir -p api-server/src/main/resources
-          printf '%s\n' "$API_APPLICATION_DEV" > api-server/src/main/resources/application-dev.yml
-
           mkdir -p api-server/src/main/resources/firebase
-          printf '%s' "$API_FIREBASE_JSON_BASE64" | tr -d '\n\r ' | base64 -d > api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-
-          echo "API application-dev.yml size:"
-          wc -c api-server/src/main/resources/application-dev.yml
-          test -s api-server/src/main/resources/application-dev.yml
-          grep -q '^jwt:' api-server/src/main/resources/application-dev.yml
-          grep -q '^[[:space:]]*secret:' api-server/src/main/resources/application-dev.yml
-
-          echo "API firebase json size:"
-          wc -c api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-          test -s api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-          python3 -m json.tool api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json >/dev/null
-          grep -q '"type"[[:space:]]*:[[:space:]]*"service_account"' api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-          grep -q '"private_key"' api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-
-      - name: Inject Chat secrets
-        env:
-          CHAT_APPLICATION_DEV: ${{ secrets.CHAT_APPLICATION_DEV }}
-          CHAT_FIREBASE_JSON_BASE64: ${{ secrets.CHAT_FIREBASE_JSON_BASE64 }}
-        run: |
-          mkdir -p chat-server/src/main/resources
-          printf '%s\n' "$CHAT_APPLICATION_DEV" > chat-server/src/main/resources/application-dev.yml
-
           mkdir -p chat-server/src/main/resources/firebase
-          printf '%s' "$CHAT_FIREBASE_JSON_BASE64" | tr -d '\n\r ' | base64 -d > chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
 
-          echo "CHAT application-dev.yml size:"
-          wc -c chat-server/src/main/resources/application-dev.yml
+          cat > api-server/src/main/resources/application-dev.yml <<'EOF'
+          jwt:
+            secret: ci-dummy-jwt-secret-for-build-only-ci-dummy-jwt-secret
+          firebase:
+            config-path: classpath:firebase/napzak-firebase-adminsdk.json
+          EOF
+
+          cp api-server/src/main/resources/application-dev.yml \
+             chat-server/src/main/resources/application-dev.yml
+
+          cat > api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json <<'EOF'
+          {
+            "type": "service_account",
+            "project_id": "dummy-project",
+            "private_key_id": "dummy-private-key-id",
+            "private_key": "-----BEGIN PRIVATE KEY-----\nDUMMY\n-----END PRIVATE KEY-----\n",
+            "client_email": "dummy@dummy-project.iam.gserviceaccount.com",
+            "client_id": "dummy-client-id",
+            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+            "token_uri": "https://oauth2.googleapis.com/token",
+            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+            "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/dummy%40dummy-project.iam.gserviceaccount.com",
+            "universe_domain": "googleapis.com"
+          }
+          EOF
+
+          cp api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json \
+             chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
+
+      - name: Validate dummy config
+        run: |
+          set -e
+
+          test -s api-server/src/main/resources/application-dev.yml
           test -s chat-server/src/main/resources/application-dev.yml
-          grep -q '^jwt:' chat-server/src/main/resources/application-dev.yml
-          grep -q '^[[:space:]]*secret:' chat-server/src/main/resources/application-dev.yml
-
-          echo "CHAT firebase json size:"
-          wc -c chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
+          test -s api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
           test -s chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-          python3 -m json.tool chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json >/dev/null
-          grep -q '"type"[[:space:]]*:[[:space:]]*"service_account"' chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
-          grep -q '"private_key"' chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
 
-      - name: Build (Gradle)
+          python3 -m json.tool api-server/src/main/resources/firebase/napzak-firebase-adminsdk.json >/dev/null
+          python3 -m json.tool chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json >/dev/null
+
+      - name: Build Gradle
         run: |
           chmod +x ./gradlew
           ./gradlew clean build -x test
