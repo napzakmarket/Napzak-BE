@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Napzak Admin · 유저 신고내역</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+		.profile-img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: #e9ecef; }
+		.table th, .table td { text-align: center; vertical-align: middle; font-size: 0.875rem; }
+	</style>
+</head>
+<body class="bg-light">
+
+<!-- 메뉴바 -->
+<nav class="navbar bg-white border-bottom shadow-sm px-4">
+	<div class="d-flex align-items-center gap-2">
+		<div class="dropdown">
+			<button class="btn btn-outline-secondary" type="button" id="menuButton"
+					data-bs-toggle="dropdown" aria-expanded="false" aria-label="메뉴 열기">
+				<span class="navbar-toggler-icon" style="width:1.2em;height:1.2em;"></span>
+			</button>
+			<ul class="dropdown-menu" aria-labelledby="menuButton">
+				<li><a class="dropdown-item" href="/admin">대시보드</a></li>
+				<li><a class="dropdown-item" href="/admin/users">유저 목록</a></li>
+				<li><a class="dropdown-item" href="/admin/reports/store">유저 신고내역</a></li>
+				<li><a class="dropdown-item" href="/admin/chats">최신 채팅내역</a></li>
+			</ul>
+		</div>
+		<a class="navbar-brand fw-bold m-0" href="/admin">Napzak Admin</a>
+	</div>
+	<form th:action="@{/admin/logout}" method="post" class="m-0 ms-auto">
+		<button type="submit" class="btn btn-outline-secondary btn-sm">로그아웃</button>
+	</form>
+</nav>
+
+<div class="container-fluid p-4">
+
+	<!-- 유저 신고내역 -->
+	<div class="card mb-4 shadow-sm border-0">
+		<div class="card-header bg-white">
+			<span class="fw-semibold">유저 신고내역 <small class="text-muted">(한 페이지 15개 · 신고일자 최신순)</small></span>
+		</div>
+		<div class="card-body p-0">
+			<table class="table table-hover mb-0">
+				<thead class="table-light">
+				<tr>
+					<th>id</th><th>프로필이미지</th><th>닉네임</th><th>ROLE</th><th>신고승인여부</th><th>신고일자</th><th>승인</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr th:each="report : ${reportList.reports}">
+					<td th:text="${report.id}">1</td>
+					<td><img class="profile-img" th:src="${report.profile}" alt=""></td>
+					<td th:text="${report.nickname}">닉네임</td>
+					<td><span class="badge bg-secondary" th:text="${report.role}">STORE</span></td>
+					<td>
+						<span class="badge"
+							  th:classappend="${report.approvalStatus == 'APPROVED'} ? 'bg-success' : (${report.approvalStatus == 'PENDING'} ? 'bg-warning text-dark' : 'bg-secondary')"
+							  th:text="${report.approvalStatus}">PENDING</span>
+					</td>
+					<td th:text="${report.createdAt}">2026-06-15 12:00</td>
+					<td>
+						<form th:action="@{'/admin/reports/store/' + ${report.id} + '/approve'}" method="post" class="m-0">
+							<input type="hidden" name="reportedStoreId" th:value="${report.reportedStoreId}">
+							<input type="hidden" name="page" th:value="${reportList.currentPage}">
+							<button type="submit" class="btn btn-sm btn-danger"
+									th:disabled="${report.approvalStatus != 'PENDING'}"
+									onclick="return confirm('이 신고를 승인하시겠습니까?');">신고 승인</button>
+						</form>
+					</td>
+				</tr>
+				<tr th:if="${reportList.reports.isEmpty()}">
+					<td colspan="7" class="text-center text-muted py-4">데이터가 없습니다.</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<!-- 페이지네이션 -->
+	<nav th:if="${reportList.totalPages > 0}">
+		<ul class="pagination justify-content-center">
+			<li class="page-item" th:classappend="${!reportList.hasPrevious} ? 'disabled'">
+				<a class="page-link" th:href="@{/admin/reports/store(page=${reportList.currentPage - 1})}">&laquo;</a>
+			</li>
+			<li class="page-item" th:each="p : ${reportList.pageNumbers}"
+				th:classappend="${p == reportList.currentPage} ? 'active'">
+				<a class="page-link" th:href="@{/admin/reports/store(page=${p})}" th:text="${p + 1}">1</a>
+			</li>
+			<li class="page-item" th:classappend="${!reportList.hasNext} ? 'disabled'">
+				<a class="page-link" th:href="@{/admin/reports/store(page=${reportList.currentPage + 1})}">&raquo;</a>
+			</li>
+		</ul>
+	</nav>
+
+</div>
+
+<!-- 처리 결과 팝업 -->
+<script th:if="${toastSuccess}" th:inline="javascript">
+	alert(/*[[${toastSuccess}]]*/ '');
+</script>
+<script th:if="${toastError}" th:inline="javascript">
+	alert(/*[[${toastError}]]*/ '');
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
