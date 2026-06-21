@@ -39,6 +39,18 @@ public class StoreRetriever {
 	}
 
 	@Transactional(readOnly = true)
+	public Page<Store> findStorePageByNickname(String keyword, int page, int size) {
+		return storeRepository
+			.findByNicknameContaining(keyword, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id")))
+			.map(Store::fromEntity);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Long> findStoreIdsByNickname(String keyword) {
+		return storeRepository.findIdsByNicknameContaining(keyword);
+	}
+
+	@Transactional(readOnly = true)
 	public List<Store> findStoresByStoreIds(List<Long> storeIds) {
 		List<StoreEntity> storeEntities = storeRepository.findAllById(storeIds);
 		return storeEntities.stream().map(Store::fromEntity).toList();

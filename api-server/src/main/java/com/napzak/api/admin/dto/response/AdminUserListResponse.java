@@ -8,6 +8,7 @@ public record AdminUserListResponse(
 	int totalPages,
 	boolean hasPrevious,
 	boolean hasNext,
-	List<Integer> pageNumbers
+	List<Integer> pageNumbers,
+	String keyword
 ) {
 }

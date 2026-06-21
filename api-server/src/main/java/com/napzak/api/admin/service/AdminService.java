@@ -102,8 +102,11 @@ public class AdminService {
 	// ===== 유저 목록 & 유저 ROLE 변경=====
 
 	@Transactional(readOnly = true)
-	public AdminUserListResponse getUserList(int page) {
-		Page<Store> storePage = storeRetriever.findStorePage(page, PAGE_SIZE);
+	public AdminUserListResponse getUserList(int page, String keyword) {
+		String trimmed = (keyword != null && !keyword.isBlank()) ? keyword.trim() : null;
+		Page<Store> storePage = (trimmed != null)
+			? storeRetriever.findStorePageByNickname(trimmed, page, PAGE_SIZE)
+			: storeRetriever.findStorePage(page, PAGE_SIZE);
 
 		List<Long> storeIds = storePage.getContent().stream().map(Store::getId).toList();
 		// storeId -> 가장 최근 PENDING 신고 id (신고 발행됐지만 승인 안 된 유저 식별용)
@@ -130,7 +133,8 @@ public class AdminService {
 			storePage.getTotalPages(),
 			storePage.hasPrevious(),
 			storePage.hasNext(),
-			pageNumbers(storePage.getNumber(), storePage.getTotalPages())
+			pageNumbers(storePage.getNumber(), storePage.getTotalPages()),
+			trimmed
 		);
 	}
 

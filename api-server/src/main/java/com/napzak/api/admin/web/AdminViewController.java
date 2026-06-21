@@ -1,5 +1,7 @@
 package com.napzak.api.admin.web;
 
+import java.util.Arrays;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,12 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.napzak.api.admin.dto.response.AdminChatListResponse;
 import com.napzak.api.admin.dto.response.AdminDashboardResponse;
 import com.napzak.api.admin.dto.response.AdminLoginResponse;
 import com.napzak.api.admin.dto.response.AdminStoreReportListResponse;
 import com.napzak.api.admin.dto.response.AdminUserListResponse;
 import com.napzak.api.admin.service.AdminLoginService;
 import com.napzak.api.admin.service.AdminService;
+import com.napzak.common.auth.role.enums.Role;
 import com.napzak.common.exception.NapzakException;
 
 import jakarta.servlet.http.Cookie;
@@ -63,9 +67,10 @@ public class AdminViewController {
 	@GetMapping("/users")
 	public String users(
 		@RequestParam(name = "page", defaultValue = "0") int page,
+		@RequestParam(name = "q", required = false) String q,
 		Model model
 	) {
-		AdminUserListResponse userList = adminService.getUserList(page);
+		AdminUserListResponse userList = adminService.getUserList(page, q);
 		model.addAttribute("userList", userList);
 		model.addAttribute("roles", Arrays.stream(Role.values()).map(Enum::name).toList());
 		return "admin/users";
@@ -93,6 +98,7 @@ public class AdminViewController {
 		@RequestParam("storeId") Long storeId,
 		@RequestParam("mode") String mode,
 		@RequestParam(name = "page", defaultValue = "0") int page,
+		@RequestParam(name = "q", required = false) String q,
 		RedirectAttributes redirectAttributes
 	) {
 		try {
@@ -106,7 +112,7 @@ public class AdminViewController {
 		} catch (NapzakException e) {
 			redirectAttributes.addFlashAttribute("toastError", e.getMessage());
 		}
-		return "redirect:/admin/users?page=" + page;
+		return redirectToUsers(page, q, redirectAttributes);
 	}
 
 	@PostMapping("/users/approve")
@@ -114,6 +120,7 @@ public class AdminViewController {
 		@RequestParam("storeId") Long storeId,
 		@RequestParam("reportId") Long reportId,
 		@RequestParam(name = "page", defaultValue = "0") int page,
+		@RequestParam(name = "q", required = false) String q,
 		RedirectAttributes redirectAttributes
 	) {
 		try {
@@ -122,7 +129,15 @@ public class AdminViewController {
 		} catch (NapzakException e) {
 			redirectAttributes.addFlashAttribute("toastError", e.getMessage());
 		}
-		return "redirect:/admin/users?page=" + page;
+		return redirectToUsers(page, q, redirectAttributes);
+	}
+
+	private String redirectToUsers(int page, String q, RedirectAttributes redirectAttributes) {
+		redirectAttributes.addAttribute("page", page);
+		if (q != null && !q.isBlank()) {
+			redirectAttributes.addAttribute("q", q);
+		}
+		return "redirect:/admin/users";
 	}
 
 	@GetMapping("/reports/store")
