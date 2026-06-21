@@ -18,7 +18,7 @@ public class StoreReportSaver {
 	private final SlackWebhookSender slackWebhookSender;
 
 	@Transactional
-	public void save(Long reporterId, Store store, String title, String description, String contact) {
+	public Long save(Long reporterId, Store store, String title, String description, String contact) {
 		StoreReportEntity entity = StoreReportEntity.create(
 			reporterId,
 			store.getId(),
@@ -30,7 +30,7 @@ public class StoreReportSaver {
 			description,
 			contact
 		);
-		storeReportRepository.save(entity);
+		StoreReportEntity saved = storeReportRepository.save(entity);
 
 		slackWebhookSender.sendStoreReport("""
 			----------------------------------------
@@ -66,5 +66,7 @@ public class StoreReportSaver {
 			entity.getReportTitle(),
 			entity.getReportDescription()
 		));
+
+		return saved.getId();
 	}
 }
