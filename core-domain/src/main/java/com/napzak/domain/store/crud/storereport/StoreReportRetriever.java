@@ -25,6 +25,14 @@ public class StoreReportRetriever {
 		return storeReportRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(0, limit))
 			.stream().map(StoreReport::fromEntity).toList();
 	}
+
+	@Transactional(readOnly = true)
+	public Page<StoreReport> findReportPage(int page, int size) {
+		return storeReportRepository
+			.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt")))
+			.map(StoreReport::fromEntity);
+	}
+
 	@Transactional(readOnly = true)
 	public List<StoreReport> findPendingReportsByStoreIds(List<Long> storeIds) {
 		if (storeIds.isEmpty()) {

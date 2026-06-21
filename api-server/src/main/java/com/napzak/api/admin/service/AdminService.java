@@ -239,6 +239,25 @@ public class AdminService {
 
 	// ===== 헬퍼 =====
 
+	private List<AdminStoreReportRow> toReportRows(List<StoreReport> reports) {
+		List<Long> reportedStoreIds = reports.stream()
+			.map(StoreReport::getReportedStoreId).distinct().toList();
+		Map<Long, Role> roleByStoreId = storeRetriever.findStoresByStoreIds(reportedStoreIds).stream()
+			.collect(Collectors.toMap(Store::getId, Store::getRole, (a, b) -> a));
+
+		return reports.stream()
+			.map(report -> new AdminStoreReportRow(
+				report.getId(),
+				report.getReportedStoreId(),
+				report.getReportedStoreProfile(),
+				report.getReportedStoreNickname(),
+				roleName(roleByStoreId.get(report.getReportedStoreId())),
+				report.getReportApprovalStatus() != null ? report.getReportApprovalStatus().name() : "-",
+				format(report.getCreatedAt())
+			))
+			.toList();
+	}
+
 	private List<Integer> pageNumbers(int current, int totalPages) {
 		if (totalPages == 0) {
 			return List.of();

@@ -3,6 +3,7 @@ package com.napzak.api.admin.web;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,7 +11,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.napzak.api.admin.dto.response.AdminDashboardResponse;
 import com.napzak.api.admin.dto.response.AdminLoginResponse;
-import com.napzak.api.admin.service.AdminDashboardService;
+import com.napzak.api.admin.dto.response.AdminStoreReportListResponse;
+import com.napzak.api.admin.dto.response.AdminUserListResponse;
 import com.napzak.api.admin.service.AdminLoginService;
 import com.napzak.api.admin.service.AdminService;
 import com.napzak.common.exception.NapzakException;
@@ -104,6 +106,33 @@ public class AdminViewController {
 		}
 		return "redirect:/admin/users?page=" + page;
 	}
+
+	@GetMapping("/reports/store")
+	public String storeReports(
+		@RequestParam(name = "page", defaultValue = "0") int page,
+		Model model
+	) {
+		AdminStoreReportListResponse reportList = adminService.getReportList(page);
+		model.addAttribute("reportList", reportList);
+		return "admin/reports";
+	}
+
+	@PostMapping("/reports/store/{reportId}/approve")
+	public String approveStoreReport(
+		@PathVariable("reportId") Long reportId,
+		@RequestParam("reportedStoreId") Long reportedStoreId,
+		@RequestParam(name = "page", defaultValue = "0") int page,
+		RedirectAttributes redirectAttributes
+	) {
+		try {
+			adminService.approveExistingReport(reportedStoreId, reportId);
+			redirectAttributes.addFlashAttribute("toastSuccess", "신고 승인이 완료되었습니다");
+		} catch (NapzakException e) {
+			redirectAttributes.addFlashAttribute("toastError", e.getMessage());
+		}
+		return "redirect:/admin/reports/store?page=" + page;
+	}
+
 	@PostMapping("/logout")
 	public String logout(HttpServletResponse response) {
 		response.addCookie(buildTokenCookie("", 0));
