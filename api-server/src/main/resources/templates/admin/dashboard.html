@@ -16,7 +16,7 @@
 <nav class="navbar bg-white border-bottom shadow-sm px-4">
 	<div class="d-flex align-items-center gap-2">
 		<div class="dropdown">
-			<button class="btn btn-outline-secondary" type="button" id="menuButton"
+			<button class="btn border-0 px-2" type="button" id="menuButton"
 					data-bs-toggle="dropdown" aria-expanded="false" aria-label="메뉴 열기">
 				<span class="navbar-toggler-icon" style="width:1.2em;height:1.2em;"></span>
 			</button>
@@ -39,7 +39,7 @@
 	<!-- 유저 목록 -->
 	<div class="card mb-4 shadow-sm border-0">
 		<div class="card-header bg-white d-flex justify-content-between align-items-center">
-			<span class="fw-semibold">유저 목록 <small class="text-muted">(가입일 최신 7명)</small></span>
+			<span class="fw-semibold">최신 가입 유저 목록</span>
 			<a href="/admin/users" class="small">더보기</a>
 		</div>
 		<div class="card-body p-0">
@@ -68,7 +68,7 @@
 	<!-- 유저 신고내역 -->
 	<div class="card mb-4 shadow-sm border-0">
 		<div class="card-header bg-white d-flex justify-content-between align-items-center">
-			<span class="fw-semibold">유저 신고내역 <small class="text-muted">(최신 7개)</small></span>
+			<span class="fw-semibold">최신 유저 신고내역</span>
 			<a href="/admin/reports/store" class="small">더보기</a>
 		</div>
 		<div class="card-body p-0">
@@ -102,19 +102,20 @@
 	<!-- 최신 채팅내역 -->
 	<div class="card mb-4 shadow-sm border-0">
 		<div class="card-header bg-white d-flex justify-content-between align-items-center">
-			<span class="fw-semibold">최신 채팅내역 <small class="text-muted">(30개)</small></span>
+			<span class="fw-semibold">최신 채팅내역</span>
 			<a href="/admin/chats" class="small">더보기</a>
 		</div>
 		<div class="card-body p-0" style="max-height: 360px; overflow-y: auto;">
 			<table class="table table-hover table-sm mb-0">
 				<thead class="table-light">
 				<tr>
-					<th>id</th><th>상점ID</th><th>프로필이미지</th><th>닉네임</th><th>내용</th><th>전송시각</th>
+					<th>id</th><th>채팅방 ID</th><th>상점ID</th><th>프로필이미지</th><th>닉네임</th><th>내용</th><th>전송시각</th>
 				</tr>
 				</thead>
 				<tbody>
 				<tr th:each="chat : ${dashboard.chats}">
 					<td th:text="${chat.id}">1</td>
+					<td th:text="${chat.roomId}">7</td>
 					<td th:text="${chat.senderId}">5</td>
 					<td><img class="profile-img" th:src="${chat.senderProfile}" alt=""></td>
 					<td th:text="${chat.senderNickname}">닉네임</td>
@@ -122,7 +123,7 @@
 					<td th:text="${chat.createdAt}">2026-06-15 12:00</td>
 				</tr>
 				<tr th:if="${dashboard.chats.isEmpty()}">
-					<td colspan="6" class="text-center text-muted py-4">데이터가 없습니다.</td>
+					<td colspan="7" class="text-center text-muted py-4">데이터가 없습니다.</td>
 				</tr>
 				</tbody>
 			</table>

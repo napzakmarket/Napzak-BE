@@ -10,7 +10,11 @@
 <div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
 	<div class="card shadow-sm border-0" style="width: 360px;">
 		<div class="card-body p-4">
-			<h1 class="h3 fw-bold text-center mb-4">로고</h1>
+			<div class="text-center mb-4">
+				<h1 class="h5 fw-bold mb-3">납작마켓 관리자</h1>
+				<img th:src="@{/images/admin_napzakcat1.png}" alt="납작마켓 로고"
+					 style="width: 120px; height: auto;">
+			</div>
 
 			<div th:if="${error}" class="alert alert-danger py-2" th:text="${error}">에러 메시지</div>
 

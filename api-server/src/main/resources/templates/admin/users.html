@@ -16,7 +16,7 @@
 <nav class="navbar bg-white border-bottom shadow-sm px-4">
 	<div class="d-flex align-items-center gap-2">
 		<div class="dropdown">
-			<button class="btn btn-outline-secondary" type="button" id="menuButton"
+			<button class="btn border-0 px-2" type="button" id="menuButton"
 					data-bs-toggle="dropdown" aria-expanded="false" aria-label="메뉴 열기">
 				<span class="navbar-toggler-icon" style="width:1.2em;height:1.2em;"></span>
 			</button>
@@ -38,8 +38,15 @@
 
 	<!-- 유저 목록 -->
 	<div class="card mb-4 shadow-sm border-0">
-		<div class="card-header bg-white">
-			<span class="fw-semibold">유저 목록 <small class="text-muted">(한 페이지 15명 · ID 오름차순)</small></span>
+		<div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-2">
+			<span class="fw-semibold">유저 목록 <small class="text-muted">ID 오름차순</small></span>
+			<form method="get" th:action="@{/admin/users}" class="d-flex gap-2 m-0 align-items-center">
+				<a th:if="${userList.keyword != null}" href="/admin/users"
+				   class="btn btn-sm btn-link text-decoration-underline px-1">초기화</a>
+				<input type="text" name="q" class="form-control form-control-sm" style="width: 220px;"
+					   placeholder="닉네임 검색" th:value="${userList.keyword}">
+				<button type="submit" class="btn btn-sm btn-outline-dark">검색</button>
+			</form>
 		</div>
 		<div class="card-body p-0">
 			<table class="table table-hover mb-0">
@@ -53,7 +60,25 @@
 					<td th:text="${user.id}">1</td>
 					<td><img class="profile-img" th:src="${user.photo}" alt=""></td>
 					<td th:text="${user.nickname}">닉네임</td>
-					<td><span class="badge bg-secondary" th:text="${user.role}">STORE</span></td>
+					<td>
+						<div class="dropdown">
+							<span class="badge bg-secondary dropdown-toggle" role="button"
+								  data-bs-toggle="dropdown" aria-expanded="false" th:text="${user.role}">STORE</span>
+							<ul class="dropdown-menu">
+								<li th:each="r : ${roles}" th:unless="${r == user.role}">
+									<form th:action="@{/admin/users/role}" method="post" class="m-0">
+										<input type="hidden" name="storeId" th:value="${user.id}">
+										<input type="hidden" name="role" th:value="${r}">
+										<input type="hidden" name="page" th:value="${userList.currentPage}">
+										<input type="hidden" name="q" th:value="${userList.keyword}">
+										<button type="submit" class="dropdown-item role-change-btn"
+												th:attr="data-nickname=${user.nickname}, data-role=${r}"
+												th:text="${r}">STORE</button>
+									</form>
+								</li>
+							</ul>
+						</div>
+					</td>
 					<td th:text="${user.createdAt}">2026-06-15 12:00</td>
 					<td>
 						<!-- 신고 승인까지 완료 (REPORTED) -->
@@ -65,6 +90,7 @@
 							<input type="hidden" name="storeId" th:value="${user.id}">
 							<input type="hidden" name="reportId" th:value="${user.pendingReportId}">
 							<input type="hidden" name="page" th:value="${userList.currentPage}">
+							<input type="hidden" name="q" th:value="${userList.keyword}">
 							<button type="submit" class="btn btn-sm btn-warning"
 									onclick="return confirm('이 신고를 승인하시겠습니까?');">신고 승인</button>
 						</form>
@@ -92,14 +118,14 @@
 	<nav th:if="${userList.totalPages > 0}">
 		<ul class="pagination justify-content-center">
 			<li class="page-item" th:classappend="${!userList.hasPrevious} ? 'disabled'">
-				<a class="page-link" th:href="@{/admin/users(page=${userList.currentPage - 1})}">&laquo;</a>
+				<a class="page-link" th:href="@{/admin/users(page=${userList.currentPage - 1}, q=${userList.keyword})}">&laquo;</a>
 			</li>
 			<li class="page-item" th:each="p : ${userList.pageNumbers}"
 				th:classappend="${p == userList.currentPage} ? 'active'">
-				<a class="page-link" th:href="@{/admin/users(page=${p})}" th:text="${p + 1}">1</a>
+				<a class="page-link" th:href="@{/admin/users(page=${p}, q=${userList.keyword})}" th:text="${p + 1}">1</a>
 			</li>
 			<li class="page-item" th:classappend="${!userList.hasNext} ? 'disabled'">
-				<a class="page-link" th:href="@{/admin/users(page=${userList.currentPage + 1})}">&raquo;</a>
+				<a class="page-link" th:href="@{/admin/users(page=${userList.currentPage + 1}, q=${userList.keyword})}">&raquo;</a>
 			</li>
 		</ul>
 	</nav>
@@ -126,6 +152,7 @@
 					  class="m-0 w-100 d-flex justify-content-end gap-2">
 					<input type="hidden" name="storeId" id="reportModalStoreId" value="">
 					<input type="hidden" name="page" th:value="${userList.currentPage}">
+					<input type="hidden" name="q" th:value="${userList.keyword}">
 					<button type="submit" name="mode" value="issue" class="btn btn-outline-dark">신고 발행만</button>
 					<button type="submit" name="mode" value="approve" class="btn btn-outline-dark">신고 승인까지</button>
 				</form>
@@ -151,6 +178,16 @@
 			document.getElementById('reportModalStoreId').value = storeId;
 		});
 	}
+
+	document.querySelectorAll('.role-change-btn').forEach(function (btn) {
+		btn.addEventListener('click', function (event) {
+			const nickname = btn.getAttribute('data-nickname');
+			const role = btn.getAttribute('data-role');
+			if (!confirm('유저 ' + nickname + '의 ROLE을 ' + role + '로 변경하시겠습니까?')) {
+				event.preventDefault();
+			}
+		});
+	});
 </script>
 </body>
 </html>
