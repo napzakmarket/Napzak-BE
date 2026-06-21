@@ -225,17 +225,18 @@ public class AdminService {
 	// ===== 기타 ADMIN 로직 =====
 
 	@Transactional
-	public void approveReport(Long reportedStoreId, Long reportId){
+	public void approveReport(Long reportedStoreId, Long reportId) {
 		storeReportUpdater.approveReport(reportedStoreId, reportId);
 		storeUpdater.updateRole(reportedStoreId, Role.REPORTED);
 	}
 
-	public void sendReportSystemMessage(List<ChatMessage> messages){
+	public void sendReportSystemMessage(List<ChatMessage> messages) {
 		chatSystemMessageSender.sendSystemMessages(messages);
 	}
 
 	public String decryptPhoneNumber(String phoneNumberEnc) {
 		return phoneEncryptionUtil.decrypt(phoneNumberEnc);
+	}
 
 	// ===== 헬퍼 =====
 

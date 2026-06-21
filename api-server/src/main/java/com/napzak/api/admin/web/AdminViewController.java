@@ -29,7 +29,7 @@ public class AdminViewController {
 	private static final int COOKIE_MAX_AGE_SECONDS = 60 * 60; // 1시간 (accessToken 수명에 맞춰 조정)
 
 	private final AdminLoginService adminLoginService;
-	private final AdminDashboardService adminDashboardService;
+	private final AdminService adminService;
 
 	@GetMapping("/login")
 	public String loginPage() {
@@ -55,7 +55,7 @@ public class AdminViewController {
 
 	@GetMapping({"", "/"})
 	public String dashboard(Model model) {
-		AdminDashboardResponse dashboard = adminDashboardService.getDashboard();
+		AdminDashboardResponse dashboard = adminService.getDashboard();
 		model.addAttribute("dashboard", dashboard);
 		return "admin/dashboard";
 	}
