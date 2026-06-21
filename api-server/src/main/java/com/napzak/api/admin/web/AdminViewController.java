@@ -133,6 +133,18 @@ public class AdminViewController {
 		return "redirect:/admin/reports/store?page=" + page;
 	}
 
+	@GetMapping("/chats")
+	public String chats(
+		@RequestParam(name = "page", defaultValue = "0") int page,
+		@RequestParam(name = "type", required = false) String type,
+		@RequestParam(name = "q", required = false) String q,
+		Model model
+	) {
+		AdminChatListResponse chatList = adminService.getChatList(page, type, q);
+		model.addAttribute("chatList", chatList);
+		return "admin/chats";
+	}
+
 	@PostMapping("/logout")
 	public String logout(HttpServletResponse response) {
 		response.addCookie(buildTokenCookie("", 0));

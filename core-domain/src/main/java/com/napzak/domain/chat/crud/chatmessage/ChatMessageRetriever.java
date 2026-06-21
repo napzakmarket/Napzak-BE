@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,29 @@ public class ChatMessageRetriever {
 	public List<ChatMessage> findRecentTextMessages(int limit) {
 		return chatMessageRepository.findByTypeOrderByCreatedAtDesc(MessageType.TEXT, PageRequest.of(0, limit))
 			.stream().map(ChatMessage::fromEntity).toList();
+	}
+
+	@Transactional(readOnly = true)
+	public Page<ChatMessage> findTextMessagePage(int page, int size) {
+		return chatMessageRepository
+			.findByType(MessageType.TEXT, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt")))
+			.map(ChatMessage::fromEntity);
+	}
+
+	@Transactional(readOnly = true)
+	public Page<ChatMessage> findTextMessagePageByRoomId(Long roomId, int page, int size) {
+		return chatMessageRepository
+			.findByTypeAndRoomId(MessageType.TEXT, roomId,
+				PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt")))
+			.map(ChatMessage::fromEntity);
+	}
+
+	@Transactional(readOnly = true)
+	public Page<ChatMessage> findTextMessagePageBySenderIds(List<Long> senderIds, int page, int size) {
+		return chatMessageRepository
+			.findByTypeAndSenderIdIn(MessageType.TEXT, senderIds,
+				PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt")))
+			.map(ChatMessage::fromEntity);
 	}
 
 	@Transactional(readOnly = true)

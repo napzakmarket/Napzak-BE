@@ -10,9 +10,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.napzak.api.admin.dto.response.AdminChatListResponse;
 import com.napzak.api.admin.dto.response.AdminChatRow;
 import com.napzak.api.admin.dto.response.AdminDashboardResponse;
 import com.napzak.api.admin.dto.response.AdminStoreReportListResponse;
@@ -94,29 +96,7 @@ public class AdminService {
 	}
 
 	private List<AdminChatRow> getRecentChats() {
-		List<ChatMessage> messages = chatMessageRetriever.findRecentTextMessages(CHAT_LIMIT);
-
-		List<Long> senderIds = messages.stream()
-			.map(ChatMessage::getSenderId)
-			.filter(Objects::nonNull)
-			.distinct()
-			.toList();
-		Map<Long, Store> storeBySenderId = storeRetriever.findStoresByStoreIds(senderIds).stream()
-			.collect(Collectors.toMap(Store::getId, Function.identity(), (a, b) -> a));
-
-		return messages.stream()
-			.map((ChatMessage message) -> {
-				Store sender = storeBySenderId.get(message.getSenderId());
-				return new AdminChatRow(
-					message.getId(),
-					message.getSenderId(),
-					sender != null ? sender.getPhoto() : null,
-					sender != null ? sender.getNickname() : "-",
-					message.getContent(),
-					format(message.getCreatedAt())
-				);
-			})
-			.toList();
+		return toChatRows(chatMessageRetriever.findRecentTextMessages(CHAT_LIMIT));
 	}
 
 	// ===== 유저 목록 =====
@@ -168,6 +148,52 @@ public class AdminService {
 			reportPage.hasNext(),
 			pageNumbers(reportPage.getNumber(), reportPage.getTotalPages())
 		);
+	}
+
+	// ===== 채팅 목록 =====
+
+	@Transactional(readOnly = true)
+	public AdminChatListResponse getChatList(int page, String searchType, String keyword) {
+		String trimmed = (keyword != null && !keyword.isBlank()) ? keyword.trim() : null;
+		String type = "nickname".equals(searchType) ? "nickname" : "room";
+
+		Page<ChatMessage> chatPage = findChatPage(page, type, trimmed);
+
+		return new AdminChatListResponse(
+			toChatRows(chatPage.getContent()),
+			chatPage.getNumber(),
+			chatPage.getTotalPages(),
+			chatPage.hasPrevious(),
+			chatPage.hasNext(),
+			pageNumbers(chatPage.getNumber(), chatPage.getTotalPages()),
+			type,
+			trimmed
+		);
+	}
+
+	private Page<ChatMessage> findChatPage(int page, String type, String keyword) {
+		if (keyword == null) {
+			return chatMessageRetriever.findTextMessagePage(page, PAGE_SIZE);
+		}
+		if ("nickname".equals(type)) {
+			List<Long> senderIds = storeRetriever.findStoreIdsByNickname(keyword);
+			return senderIds.isEmpty()
+				? Page.empty(PageRequest.of(page, PAGE_SIZE))
+				: chatMessageRetriever.findTextMessagePageBySenderIds(senderIds, page, PAGE_SIZE);
+		}
+		// roomId 검색
+		Long roomId = parseLongOrNull(keyword);
+		return (roomId != null)
+			? chatMessageRetriever.findTextMessagePageByRoomId(roomId, page, PAGE_SIZE)
+			: Page.empty(PageRequest.of(page, PAGE_SIZE));
+	}
+
+	private Long parseLongOrNull(String value) {
+		try {
+			return Long.valueOf(value);
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 
 	// ===== 신고 / 승인 오케스트레이션 =====
@@ -256,6 +282,31 @@ public class AdminService {
 				report.getReportApprovalStatus() != null ? report.getReportApprovalStatus().name() : "-",
 				format(report.getCreatedAt())
 			))
+			.toList();
+	}
+
+	private List<AdminChatRow> toChatRows(List<ChatMessage> messages) {
+		List<Long> senderIds = messages.stream()
+			.map(ChatMessage::getSenderId)
+			.filter(Objects::nonNull)
+			.distinct()
+			.toList();
+		Map<Long, Store> storeBySenderId = storeRetriever.findStoresByStoreIds(senderIds).stream()
+			.collect(Collectors.toMap(Store::getId, Function.identity(), (a, b) -> a));
+
+		return messages.stream()
+			.map((ChatMessage message) -> {
+				Store sender = storeBySenderId.get(message.getSenderId());
+				return new AdminChatRow(
+					message.getId(),
+					message.getRoomId(),
+					message.getSenderId(),
+					sender != null ? sender.getPhoto() : null,
+					sender != null ? sender.getNickname() : "-",
+					message.getContent(),
+					format(message.getCreatedAt())
+				);
+			})
 			.toList();
 	}
 
