@@ -5,6 +5,7 @@ public record AdminUserRow(
 	String photo,
 	String nickname,
 	String role,
-	String createdAt
+	String createdAt,
+	Long pendingReportId
 ) {
 }

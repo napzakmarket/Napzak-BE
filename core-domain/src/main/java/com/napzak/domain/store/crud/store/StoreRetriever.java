@@ -30,6 +30,13 @@ public class StoreRetriever {
 	}
 
 	@Transactional(readOnly = true)
+	public Page<Store> findStorePage(int page, int size) {
+		return storeRepository
+			.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id")))
+			.map(Store::fromEntity);
+	}
+
+	@Transactional(readOnly = true)
 	public List<Store> findStoresByStoreIds(List<Long> storeIds) {
 		List<StoreEntity> storeEntities = storeRepository.findAllById(storeIds);
 		return storeEntities.stream().map(Store::fromEntity).toList();
