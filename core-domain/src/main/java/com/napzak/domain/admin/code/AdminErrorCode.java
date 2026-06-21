@@ -14,6 +14,7 @@ public enum AdminErrorCode implements BaseErrorCode {
 	400 Bad Request
 	 */
 	STORE_ROLE_REQUIRED(HttpStatus.BAD_REQUEST, "유저의 role이 store가 아니므로 요청에 실패했습니다."),
+	INVALID_ROLE(HttpStatus.BAD_REQUEST, "유효하지 않은 ROLE입니다."),
 
 	/*
 	401 Unauthorized

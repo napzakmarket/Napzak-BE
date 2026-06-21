@@ -67,7 +67,25 @@ public class AdminViewController {
 	) {
 		AdminUserListResponse userList = adminService.getUserList(page);
 		model.addAttribute("userList", userList);
+		model.addAttribute("roles", Arrays.stream(Role.values()).map(Enum::name).toList());
 		return "admin/users";
+	}
+
+	@PostMapping("/users/role")
+	public String updateUserRole(
+		@RequestParam("storeId") Long storeId,
+		@RequestParam("role") String role,
+		@RequestParam(name = "page", defaultValue = "0") int page,
+		@RequestParam(name = "q", required = false) String q,
+		RedirectAttributes redirectAttributes
+	) {
+		try {
+			adminService.updateStoreRole(storeId, role);
+			redirectAttributes.addFlashAttribute("toastSuccess", "ROLE이 변경되었습니다");
+		} catch (NapzakException e) {
+			redirectAttributes.addFlashAttribute("toastError", e.getMessage());
+		}
+		return redirectToUsers(page, q, redirectAttributes);
 	}
 
 	@PostMapping("/users/report")

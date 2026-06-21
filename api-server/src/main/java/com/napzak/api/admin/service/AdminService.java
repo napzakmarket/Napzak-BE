@@ -99,7 +99,7 @@ public class AdminService {
 		return toChatRows(chatMessageRetriever.findRecentTextMessages(CHAT_LIMIT));
 	}
 
-	// ===== 유저 목록 =====
+	// ===== 유저 목록 & 유저 ROLE 변경=====
 
 	@Transactional(readOnly = true)
 	public AdminUserListResponse getUserList(int page) {
@@ -132,6 +132,16 @@ public class AdminService {
 			storePage.hasNext(),
 			pageNumbers(storePage.getNumber(), storePage.getTotalPages())
 		);
+	}
+
+	public void updateStoreRole(Long storeId, String roleName) {
+		Role role;
+		try {
+			role = Role.valueOf(roleName);
+		} catch (IllegalArgumentException | NullPointerException e) {
+			throw new NapzakException(AdminErrorCode.INVALID_ROLE);
+		}
+		storeUpdater.updateRole(storeId, role);
 	}
 
 	// ===== 신고 목록 =====
