@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.napzak.api.admin.dto.response.AdminLoginResponse;
-import com.napzak.api.domain.store.service.TokenService;
 import com.napzak.common.auth.jwt.provider.JwtTokenProvider;
 import com.napzak.common.auth.role.enums.Role;
 import com.napzak.common.auth.security.AdminAuthentication;
@@ -29,11 +28,9 @@ public class AdminLoginService {
 	private final AdminRetriever adminRetriever;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
-	private final TokenService tokenService;
 
 	/**
-	 * 어드민 loginId/password 로그인 후 Access/Refresh Token을 발급한다.
-	 * 기존 store 인증 인프라(JwtTokenProvider, AdminAuthentication, TokenService)를 그대로 재사용하며,
+	 * 어드민 loginId/password 로그인 후 Access Token을 발급한다. (Refresh Token은 발급하지 않는다)
 	 * 어드민 PK를 JWT의 storeId 클레임 자리에 담고 role을 ADMIN으로 발급한다.
 	 */
 	@Transactional
@@ -48,11 +45,9 @@ public class AdminLoginService {
 		AdminAuthentication authentication = new AdminAuthentication(admin.getId(), null, authorities);
 
 		String accessToken = jwtTokenProvider.issueAccessToken(authentication);
-		String refreshToken = jwtTokenProvider.issueRefreshToken(authentication);
-		tokenService.saveRefreshToken(admin.getId(), refreshToken);
 
 		log.info("Admin login success for adminId: {}", admin.getId());
 
-		return AdminLoginResponse.of(accessToken, refreshToken);
+		return AdminLoginResponse.of(accessToken);
 	}
 }
