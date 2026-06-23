@@ -24,7 +24,17 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessageEntity, 
 
 	Page<ChatMessageEntity> findByTypeAndRoomId(MessageType type, Long roomId, Pageable pageable);
 
-	Page<ChatMessageEntity> findByTypeAndSenderIdIn(MessageType type, List<Long> senderIds, Pageable pageable);
+	@Query(value = """
+		SELECT m FROM ChatMessageEntity m, StoreEntity s
+		WHERE m.senderId = s.id AND m.type = :type AND s.nickname LIKE %:keyword%
+		ORDER BY m.createdAt DESC
+		""",
+		countQuery = """
+			SELECT COUNT(m) FROM ChatMessageEntity m, StoreEntity s
+			WHERE m.senderId = s.id AND m.type = :type AND s.nickname LIKE %:keyword%
+			""")
+	Page<ChatMessageEntity> findByTypeAndSenderNicknameContaining(
+		@Param("type") MessageType type, @Param("keyword") String keyword, Pageable pageable);
 
 	@Query("SELECT MAX(m.id) FROM ChatMessageEntity m WHERE m.roomId = :roomId")
 	Optional<Long> findLastMessageIdByRoomId(@Param("roomId") Long roomId);

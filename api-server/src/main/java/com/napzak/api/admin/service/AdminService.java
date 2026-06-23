@@ -190,10 +190,7 @@ public class AdminService {
 			return chatMessageRetriever.findTextMessagePage(page, PAGE_SIZE);
 		}
 		if ("nickname".equals(type)) {
-			List<Long> senderIds = storeRetriever.findStoreIdsByNickname(keyword);
-			return senderIds.isEmpty()
-				? Page.empty(PageRequest.of(page, PAGE_SIZE))
-				: chatMessageRetriever.findTextMessagePageBySenderIds(senderIds, page, PAGE_SIZE);
+			return chatMessageRetriever.findTextMessagePageBySenderNickname(keyword, page, PAGE_SIZE);
 		}
 		// roomId 검색
 		Long roomId = parseLongOrNull(keyword);

@@ -37,9 +37,6 @@ public interface StoreRepository extends JpaRepository<StoreEntity, Long> {
 
 	Page<StoreEntity> findByNicknameContaining(String nickname, Pageable pageable);
 
-	@Query("SELECT s.id FROM StoreEntity s WHERE s.nickname LIKE %:keyword%")
-	List<Long> findIdsByNicknameContaining(@Param("keyword") String keyword);
-
 	Optional<StoreEntity> findByPhoneNumberHash(String phoneNumberHash);
 
 	Optional<StoreEntity> findByPhoneNumberHashAndPhoneVerifiedTrue(String phoneNumberHash);

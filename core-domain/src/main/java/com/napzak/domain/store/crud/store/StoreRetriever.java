@@ -45,10 +45,6 @@ public class StoreRetriever {
 			.map(Store::fromEntity);
 	}
 
-	@Transactional(readOnly = true)
-	public List<Long> findStoreIdsByNickname(String keyword) {
-		return storeRepository.findIdsByNicknameContaining(keyword);
-	}
 
 	@Transactional(readOnly = true)
 	public List<Store> findStoresByStoreIds(List<Long> storeIds) {

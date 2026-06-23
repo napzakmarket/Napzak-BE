@@ -56,10 +56,9 @@ public class ChatMessageRetriever {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<ChatMessage> findTextMessagePageBySenderIds(List<Long> senderIds, int page, int size) {
+	public Page<ChatMessage> findTextMessagePageBySenderNickname(String keyword, int page, int size) {
 		return chatMessageRepository
-			.findByTypeAndSenderIdIn(MessageType.TEXT, senderIds,
-				PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt")))
+			.findByTypeAndSenderNicknameContaining(MessageType.TEXT, keyword, PageRequest.of(page, size))
 			.map(ChatMessage::fromEntity);
 	}
 
