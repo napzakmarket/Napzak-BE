@@ -2,12 +2,14 @@ package com.napzak.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import com.napzak.common.auth.jwt.filter.JwtAuthenticationFilter;
 import com.napzak.common.auth.role.enums.Role;
@@ -36,7 +38,6 @@ public class SecurityConfig {
 		"/error",
 		"/api/v1/stores/login/**",
 		"/api/v1/admin/login",
-		"/admin/**",
 		"/css/**",
 		"/js/**",
 		"/images/**",
@@ -54,7 +55,30 @@ public class SecurityConfig {
 		"/api/v1/admin/**"
 	};
 
+	/**
+	 * 어드민 SSR 전용 체인 - CSRF 보호 활성화
+	 */
 	@Bean
+	@Order(1)
+	public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
+		http
+			.securityMatcher("/admin/**")
+			.formLogin(AbstractHttpConfigurer::disable)
+			.httpBasic(AbstractHttpConfigurer::disable)
+			.sessionManagement(session ->
+				session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.csrf(csrf ->
+				csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+			.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+		return http.build();
+	}
+
+	/**
+	 * 모바일/REST 전용 체인 - CSRF 보호 비활성화
+	 */
+	@Bean
+	@Order(2)
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
 			.formLogin(AbstractHttpConfigurer::disable)
