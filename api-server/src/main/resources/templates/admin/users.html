@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Napzak Admin · 유저 목록</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+		.profile-img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: #e9ecef; }
+		.table th, .table td { text-align: center; vertical-align: middle; font-size: 0.875rem; }
+	</style>
+</head>
+<body class="bg-light">
+
+<!-- 메뉴바 -->
+<nav class="navbar bg-white border-bottom shadow-sm px-4">
+	<div class="d-flex align-items-center gap-2">
+		<div class="dropdown">
+			<button class="btn border-0 px-2" type="button" id="menuButton"
+					data-bs-toggle="dropdown" aria-expanded="false" aria-label="메뉴 열기">
+				<span class="navbar-toggler-icon" style="width:1.2em;height:1.2em;"></span>
+			</button>
+			<ul class="dropdown-menu" aria-labelledby="menuButton">
+				<li><a class="dropdown-item" href="/admin">대시보드</a></li>
+				<li><a class="dropdown-item" href="/admin/users">유저 목록</a></li>
+				<li><a class="dropdown-item" href="/admin/reports/store">유저 신고내역</a></li>
+				<li><a class="dropdown-item" href="/admin/chats">최신 채팅내역</a></li>
+			</ul>
+		</div>
+		<a class="navbar-brand fw-bold m-0" href="/admin">Napzak Admin</a>
+	</div>
+	<form th:action="@{/admin/logout}" method="post" class="m-0 ms-auto">
+		<button type="submit" class="btn btn-outline-secondary btn-sm">로그아웃</button>
+	</form>
+</nav>
+
+<div class="container-fluid p-4">
+
+	<!-- 유저 목록 -->
+	<div class="card mb-4 shadow-sm border-0">
+		<div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-2">
+			<span class="fw-semibold">유저 목록 <small class="text-muted">ID 오름차순</small></span>
+			<form method="get" th:action="@{/admin/users}" class="d-flex gap-2 m-0 align-items-center">
+				<a th:if="${userList.keyword != null}" href="/admin/users"
+				   class="btn btn-sm btn-link text-decoration-underline px-1">초기화</a>
+				<input type="text" name="q" class="form-control form-control-sm" style="width: 220px;"
+					   placeholder="닉네임 검색" th:value="${userList.keyword}">
+				<button type="submit" class="btn btn-sm btn-outline-dark">검색</button>
+			</form>
+		</div>
+		<div class="card-body p-0">
+			<table class="table table-hover mb-0">
+				<thead class="table-light">
+				<tr>
+					<th>id</th><th>프로필이미지</th><th>닉네임</th><th>ROLE</th><th>가입일</th><th>신고</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr th:each="user : ${userList.users}">
+					<td th:text="${user.id}">1</td>
+					<td><img class="profile-img" th:src="${user.photo}" alt=""></td>
+					<td th:text="${user.nickname}">닉네임</td>
+					<td>
+						<div class="dropdown">
+							<span class="badge bg-secondary dropdown-toggle" role="button"
+								  data-bs-toggle="dropdown" aria-expanded="false" th:text="${user.role}">STORE</span>
+							<ul class="dropdown-menu">
+								<li th:each="r : ${roles}" th:unless="${r == user.role}">
+									<form th:action="@{/admin/users/role}" method="post" class="m-0">
+										<input type="hidden" name="storeId" th:value="${user.id}">
+										<input type="hidden" name="role" th:value="${r}">
+										<input type="hidden" name="page" th:value="${userList.currentPage}">
+										<input type="hidden" name="q" th:value="${userList.keyword}">
+										<button type="submit" class="dropdown-item role-change-btn"
+												th:attr="data-nickname=${user.nickname}, data-role=${r}"
+												th:text="${r}">STORE</button>
+									</form>
+								</li>
+							</ul>
+						</div>
+					</td>
+					<td th:text="${user.createdAt}">2026-06-15 12:00</td>
+					<td>
+						<!-- 신고 승인까지 완료 (REPORTED) -->
+						<span th:if="${user.role == 'REPORTED'}" class="text-muted fw-semibold">신고 승인 완료</span>
+
+						<!-- 신고 발행됐지만 승인 안 됨 (PENDING) → 신고 승인 -->
+						<form th:if="${user.role != 'REPORTED' and user.pendingReportId != null}"
+							  th:action="@{/admin/users/approve}" method="post" class="m-0">
+							<input type="hidden" name="storeId" th:value="${user.id}">
+							<input type="hidden" name="reportId" th:value="${user.pendingReportId}">
+							<input type="hidden" name="page" th:value="${userList.currentPage}">
+							<input type="hidden" name="q" th:value="${userList.keyword}">
+							<button type="submit" class="btn btn-sm btn-warning"
+									onclick="return confirm('이 신고를 승인하시겠습니까?');">신고 승인</button>
+						</form>
+
+						<!-- 신고 가능 (STORE & 신고내역 없음) → 모달 -->
+						<button th:if="${user.role == 'STORE' and user.pendingReportId == null}"
+								type="button" class="btn btn-sm btn-danger"
+								data-bs-toggle="modal" data-bs-target="#reportModal"
+								th:attr="data-store-id=${user.id}">신고</button>
+
+						<!-- 신고 불가 (STORE/REPORTED 아님) -->
+						<button th:if="${user.role != 'REPORTED' and user.role != 'STORE' and user.pendingReportId == null}"
+								type="button" class="btn btn-sm btn-danger" disabled>신고</button>
+					</td>
+				</tr>
+				<tr th:if="${userList.users.isEmpty()}">
+					<td colspan="6" class="text-center text-muted py-4">데이터가 없습니다.</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<!-- 페이지네이션 -->
+	<nav th:if="${userList.totalPages > 0}">
+		<ul class="pagination justify-content-center">
+			<li class="page-item" th:classappend="${!userList.hasPrevious} ? 'disabled'">
+				<a class="page-link" th:href="@{/admin/users(page=${userList.currentPage - 1}, q=${userList.keyword})}">&laquo;</a>
+			</li>
+			<li class="page-item" th:each="p : ${userList.pageNumbers}"
+				th:classappend="${p == userList.currentPage} ? 'active'">
+				<a class="page-link" th:href="@{/admin/users(page=${p}, q=${userList.keyword})}" th:text="${p + 1}">1</a>
+			</li>
+			<li class="page-item" th:classappend="${!userList.hasNext} ? 'disabled'">
+				<a class="page-link" th:href="@{/admin/users(page=${userList.currentPage + 1}, q=${userList.keyword})}">&raquo;</a>
+			</li>
+		</ul>
+	</nav>
+
+</div>
+
+<!-- 신고 처리 모달 -->
+<div class="modal fade" id="reportModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">신고 처리</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+			</div>
+			<div class="modal-body">
+				<p class="mb-2">신고 발행 후 신고 승인까지 한 번에 처리하시겠습니까?</p>
+				<ul class="text-muted small mb-0 ps-3">
+					<li>'신고 발행만' 선택 시, 미리 지정된 템플릿으로 신고 내역이 발행됩니다. 신고 승인이 이루어지기 전까지 유저는 앱에 접근할 수 있습니다.</li>
+					<li>'신고 승인까지' 선택 시, 신고 발행에 추가로 신고 승인까지 수행되어 즉시 유저의 앱 접근이 제한됩니다. </li>
+				</ul>
+			</div>
+			<div class="modal-footer">
+				<form method="post" th:action="@{/admin/users/report}"
+					  class="m-0 w-100 d-flex justify-content-end gap-2">
+					<input type="hidden" name="storeId" id="reportModalStoreId" value="">
+					<input type="hidden" name="page" th:value="${userList.currentPage}">
+					<input type="hidden" name="q" th:value="${userList.keyword}">
+					<button type="submit" name="mode" value="issue" class="btn btn-outline-dark">신고 발행만</button>
+					<button type="submit" name="mode" value="approve" class="btn btn-outline-dark">신고 승인까지</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 처리 결과 팝업 -->
+<script th:if="${toastSuccess}" th:inline="javascript">
+	alert(/*[[${toastSuccess}]]*/ '');
+</script>
+<script th:if="${toastError}" th:inline="javascript">
+	alert(/*[[${toastError}]]*/ '');
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+	const reportModal = document.getElementById('reportModal');
+	if (reportModal) {
+		reportModal.addEventListener('show.bs.modal', function (event) {
+			const storeId = event.relatedTarget.getAttribute('data-store-id');
+			document.getElementById('reportModalStoreId').value = storeId;
+		});
+	}
+
+	document.querySelectorAll('.role-change-btn').forEach(function (btn) {
+		btn.addEventListener('click', function (event) {
+			const nickname = btn.getAttribute('data-nickname');
+			const role = btn.getAttribute('data-role');
+			if (!confirm('유저 ' + nickname + '의 ROLE을 ' + role + '로 변경하시겠습니까?')) {
+				event.preventDefault();
+			}
+		});
+	});
+</script>
+</body>
+</html>

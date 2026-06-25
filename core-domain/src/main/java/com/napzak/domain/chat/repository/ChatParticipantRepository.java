@@ -35,7 +35,7 @@ public interface ChatParticipantRepository extends JpaRepository<ChatParticipant
 	List<ChatParticipantEntity> findAllByStoreId(@Param("storeId") Long storeId);
 
 	@Query("""
-    SELECT cp.id
+    SELECT cp.roomId
     FROM ChatParticipantEntity cp
     WHERE cp.storeId = :storeId AND cp.isExited = false
 """)
