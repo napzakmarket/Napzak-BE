@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <meta property="og:title" content="{{title}}" />
+    <meta property="og:description" content="{{description}}" />
+    <meta property="og:image" content="{{imageUrl}}" />
+    <meta property="og:url" content="{{pageUrl}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="납작마켓" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{title}}" />
+    <meta name="twitter:description" content="{{description}}" />
+    <meta name="twitter:image" content="{{imageUrl}}" />
+
+    <title>{{title}}</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            color: #2f2f2f;
+            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+        }
+
+        .share-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px 56px;
+            background: #ffffff;
+        }
+
+        .share-content {
+            width: 100%;
+            max-width: 532px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .share-illustration {
+            width: 220px;
+            max-width: 58vw;
+            height: auto;
+            display: block;
+            margin: 0 0 36px;
+        }
+
+        .share-title {
+            margin: 0;
+            color: #333333;
+            font-size: 26px;
+            line-height: 1.42;
+            font-weight: 600;
+            letter-spacing: -0.04em;
+            word-break: keep-all;
+        }
+
+        .share-subtitle {
+            margin: 16px 0 0;
+            color: #8a8a8a;
+            font-size: 18px;
+            line-height: 1.55;
+            font-weight: 500;
+            letter-spacing: -0.035em;
+            word-break: keep-all;
+        }
+
+        .share-button-group {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            margin-top: 62px;
+        }
+
+        .store-guide-text {
+            margin: 18px 0 14px;
+            color: #8a8a8a;
+            font-size: 15px;
+            line-height: 1.5;
+            font-weight: 500;
+            letter-spacing: -0.03em;
+            word-break: keep-all;
+        }
+
+        .store-button-group {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .share-button,
+        .share-button:link,
+        .share-button:visited {
+            width: 100%;
+            display: block;
+            border: 0;
+            border-radius: 14px;
+            padding: 22px 20px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 20px;
+            line-height: 1.2;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            font-family: inherit;
+        }
+
+        .share-button-primary {
+            background: #7534ff;
+            color: #ffffff;
+        }
+
+        .share-button-secondary,
+        .share-button-secondary:link,
+        .share-button-secondary:visited {
+            background: #B2A4FF;
+            color: #111111;
+        }
+
+        .share-button:hover,
+        .share-button:active {
+            opacity: 0.92;
+        }
+
+        @media (max-width: 480px) {
+            .share-page {
+                padding: 32px 20px 48px;
+            }
+
+            .share-content {
+                max-width: 100%;
+            }
+
+            .share-illustration {
+                width: 210px;
+                margin-bottom: 34px;
+            }
+
+            .share-title {
+                font-size: 24px;
+            }
+
+            .share-subtitle {
+                font-size: 16px;
+            }
+
+            .share-button-group {
+                margin-top: 58px;
+            }
+
+            .store-guide-text {
+                margin: 16px 0 12px;
+                font-size: 15px;
+            }
+
+            .store-button-group {
+                gap: 24px;
+            }
+
+            .share-button,
+            .share-button:link,
+            .share-button:visited {
+                padding: 20px 18px;
+                border-radius: 14px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="share-page">
+    <section class="share-content">
+        <img
+                class="share-illustration"
+                src="/images/napzak-share-illustration.png"
+                alt="납작마켓 안내 이미지"
+        />
+
+        <h1 class="share-title">{{bodyTitle}}</h1>
+
+        {{bodyDescriptionHtml}}
+
+        <div class="share-button-group">
+            <button
+                    id="open-app-button"
+                    type="button"
+                    class="share-button share-button-primary"
+            >
+                납작마켓 앱에서 보기
+            </button>
+
+            <p class="store-guide-text">
+                아직 앱이 없다면 스토어에서 설치해 주세요.
+            </p>
+
+            <div class="store-button-group">
+                <a
+                        href="{{appStoreUrl}}"
+                        class="share-button share-button-secondary"
+                >
+                    App Store에서 다운로드
+                </a>
+
+                <a
+                        href="{{playStoreUrl}}"
+                        class="share-button share-button-secondary"
+                >
+                    Google Play에서 다운로드
+                </a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    (function () {
+        const APP_LINK_URL = '{{appLinkUrl}}';
+        const AUTO_OPEN_DELAY_MS = 500;
+        const AUTO_OPEN_PARAM = 'napzak_open_attempted';
+
+        function buildOpenAttemptUrl(source) {
+            const url = new URL(APP_LINK_URL);
+
+            url.searchParams.set(AUTO_OPEN_PARAM, 'true');
+            url.searchParams.set('napzak_open_source', source);
+            url.searchParams.set('napzak_open_ts', String(Date.now()));
+
+            return url.toString();
+        }
+
+        function hasAutoOpenAttempted() {
+            const currentParams = new URLSearchParams(window.location.search);
+            return currentParams.get(AUTO_OPEN_PARAM) === 'true';
+        }
+
+        function openApp(source) {
+            window.location.href = buildOpenAttemptUrl(source);
+        }
+
+        function tryAutoOpen() {
+            if (hasAutoOpenAttempted()) {
+                return;
+            }
+
+            window.setTimeout(function () {
+                openApp('auto');
+            }, AUTO_OPEN_DELAY_MS);
+        }
+
+        const openAppButton = document.getElementById('open-app-button');
+
+        if (openAppButton) {
+            openAppButton.addEventListener('click', function () {
+                openApp('button');
+            });
+        }
+
+        tryAutoOpen();
+    })();
+</script>
+</body>
+</html>

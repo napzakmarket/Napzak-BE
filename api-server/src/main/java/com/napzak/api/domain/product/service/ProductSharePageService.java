@@ -21,8 +21,10 @@ public class ProductSharePageService {
 
 	private static final String SITE_NAME = "납작마켓";
 	private static final String DEFAULT_DESCRIPTION = "납작마켓 앱에서 상품을 확인해 주세요.";
-	private static final String UNAVAILABLE_TITLE = "이미 판매되었거나 삭제된 상품이에요 | 납작마켓";
-	private static final String UNAVAILABLE_DESCRIPTION = "납작마켓 앱에서 다양한 상품을 둘러보세요.";
+
+	private static final String UNAVAILABLE_TITLE = "삭제되었거나 더 이상 존재하지 않는 상품이에요.";
+	private static final String UNAVAILABLE_DESCRIPTION = "납작마켓에서 다른 상품을 둘러보세요.";
+
 	private static final int OG_DESCRIPTION_MAX_LENGTH = 100;
 
 	private final ProductService productService;
