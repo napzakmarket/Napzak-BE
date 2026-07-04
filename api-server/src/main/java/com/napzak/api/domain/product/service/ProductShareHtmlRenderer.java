@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -15,6 +17,9 @@ import com.napzak.api.domain.product.dto.response.ProductSharePageView;
 
 @Component
 public class ProductShareHtmlRenderer {
+
+	private static final Pattern PLACEHOLDER_PATTERN =
+		Pattern.compile("\\{\\{([A-Za-z0-9_]+)\\}\\}");
 
 	private final String appStoreUrl;
 	private final String playStoreUrl;
@@ -71,13 +76,23 @@ public class ProductShareHtmlRenderer {
 	}
 
 	private String replacePlaceholders(String template, Map<String, String> values) {
-		String rendered = template;
+		Matcher matcher = PLACEHOLDER_PATTERN.matcher(template);
+		StringBuilder result = new StringBuilder();
 
-		for (Map.Entry<String, String> entry : values.entrySet()) {
-			rendered = rendered.replace("{{" + entry.getKey() + "}}", entry.getValue());
+		while (matcher.find()) {
+			String placeholderName = matcher.group(1);
+			String value = values.get(placeholderName);
+
+			if (value == null) {
+				throw new IllegalStateException("Missing template placeholder value: " + placeholderName);
+			}
+
+			matcher.appendReplacement(result, Matcher.quoteReplacement(value));
 		}
 
-		return rendered;
+		matcher.appendTail(result);
+
+		return result.toString();
 	}
 
 	private String escapeHtml(String value) {
