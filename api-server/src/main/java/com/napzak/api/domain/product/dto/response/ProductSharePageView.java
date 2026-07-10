@@ -4,6 +4,7 @@ public record ProductSharePageView(
 	String title,
 	String description,
 	String imageUrl,
-	String pageUrl
+	String pageUrl,
+	Long productId
 ) {
 }

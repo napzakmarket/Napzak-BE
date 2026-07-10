@@ -76,7 +76,8 @@ public class ProductSharePageService {
 			title,
 			description,
 			imageUrl,
-			pageUrl
+			pageUrl,
+			productId
 		);
 
 		return productShareHtmlRenderer.renderAvailable(view);
@@ -89,7 +90,8 @@ public class ProductSharePageService {
 			UNAVAILABLE_TITLE,
 			UNAVAILABLE_DESCRIPTION,
 			unavailableOgImageUrl,
-			pageUrl
+			pageUrl,
+			productId
 		);
 
 		return productShareHtmlRenderer.renderUnavailable(view);
