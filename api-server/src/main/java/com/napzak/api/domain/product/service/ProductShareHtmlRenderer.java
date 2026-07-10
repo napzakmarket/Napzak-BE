@@ -23,15 +23,18 @@ public class ProductShareHtmlRenderer {
 
 	private final String appStoreUrl;
 	private final String playStoreUrl;
+	private final String appScheme;
 	private final String template;
 
 	public ProductShareHtmlRenderer(
 		@Value("${napzak.share.app-store-url}") String appStoreUrl,
 		@Value("${napzak.share.play-store-url}") String playStoreUrl,
+		@Value("${napzak.share.app-scheme}") String appScheme,
 		@Value("classpath:templates/share/product-share-page.html") Resource templateResource
 	) {
 		this.appStoreUrl = validateNotBlank(appStoreUrl, "napzak.share.app-store-url");
 		this.playStoreUrl = validateNotBlank(playStoreUrl, "napzak.share.play-store-url");
+		this.appScheme = validateNotBlank(appScheme, "napzak.share.app-scheme");
 		this.template = loadTemplate(templateResource);
 	}
 
@@ -71,8 +74,16 @@ public class ProductShareHtmlRenderer {
 			"bodyDescriptionHtml", bodyDescriptionHtml,
 			"appStoreUrl", escapeHtml(appStoreUrl),
 			"playStoreUrl", escapeHtml(playStoreUrl),
-			"appLinkUrl", escapeJavaScript(view.pageUrl())
+			"appDeepLinkUrl", escapeJavaScript(buildAppDeepLinkUrl(view.productId()))
 		));
+	}
+
+	private String buildAppDeepLinkUrl(Long productId) {
+		if (productId == null) {
+			throw new IllegalStateException("productId must not be null");
+		}
+
+		return appScheme + "://product/" + productId;
 	}
 
 	private String replacePlaceholders(String template, Map<String, String> values) {

@@ -49,7 +49,7 @@
 
         .share-content {
             width: 100%;
-            max-width: 532px;
+            max-width: 294px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -57,44 +57,47 @@
         }
 
         .share-illustration {
-            width: 220px;
+            width: 160px;
             max-width: 58vw;
             height: auto;
             display: block;
-            margin: 0 0 36px;
+            margin: 0 0 34px;
         }
 
         .share-title {
+            width: 240px;
             margin: 0;
             color: #333333;
-            font-size: 26px;
-            line-height: 1.42;
+            font-size: 18px;
+            line-height: 23px;
             font-weight: 600;
-            letter-spacing: -0.04em;
+            letter-spacing: 0;
             word-break: keep-all;
         }
 
         .share-subtitle {
-            margin: 16px 0 0;
+            width: 294px;
+            margin: 12px 0 0;
             color: #8a8a8a;
-            font-size: 18px;
-            line-height: 1.55;
-            font-weight: 500;
-            letter-spacing: -0.035em;
+            font-size: 14px;
+            line-height: 18px;
+            font-weight: 600;
+            letter-spacing: 0;
             word-break: keep-all;
         }
 
         .share-button-group {
-            width: 100%;
+            width: 266px;
             display: flex;
             flex-direction: column;
-            margin-top: 62px;
+            align-items: center;
+            margin-top: 48px;
         }
 
         .store-guide-text {
-            margin: 18px 0 14px;
+            margin: 14px 0 12px;
             color: #8a8a8a;
-            font-size: 15px;
+            font-size: 13px;
             line-height: 1.5;
             font-weight: 500;
             letter-spacing: -0.03em;
@@ -102,23 +105,26 @@
         }
 
         .store-button-group {
-            width: 100%;
+            width: 266px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 12px;
         }
 
         .share-button,
         .share-button:link,
         .share-button:visited {
-            width: 100%;
-            display: block;
+            width: 266px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border: 0;
-            border-radius: 14px;
-            padding: 22px 20px;
+            border-radius: 8px;
+            padding: 0 16px;
             text-align: center;
             text-decoration: none;
-            font-size: 20px;
+            font-size: 16px;
             line-height: 1.2;
             font-weight: 600;
             letter-spacing: -0.03em;
@@ -151,41 +157,49 @@
             }
 
             .share-content {
-                max-width: 100%;
+                max-width: 294px;
             }
 
             .share-illustration {
-                width: 210px;
+                width: 160px;
                 margin-bottom: 34px;
             }
 
             .share-title {
-                font-size: 24px;
+                width: 240px;
+                font-size: 18px;
+                line-height: 23px;
             }
 
             .share-subtitle {
-                font-size: 16px;
+                width: 294px;
+                font-size: 14px;
+                line-height: 18px;
             }
 
             .share-button-group {
-                margin-top: 58px;
+                width: 266px;
+                margin-top: 48px;
             }
 
             .store-guide-text {
-                margin: 16px 0 12px;
-                font-size: 15px;
+                margin: 14px 0 12px;
+                font-size: 13px;
             }
 
             .store-button-group {
-                gap: 24px;
+                width: 266px;
+                gap: 12px;
             }
 
             .share-button,
             .share-button:link,
             .share-button:visited {
-                padding: 20px 18px;
-                border-radius: 14px;
-                font-size: 18px;
+                width: 266px;
+                height: 48px;
+                padding: 0 16px;
+                border-radius: 8px;
+                font-size: 16px;
             }
         }
     </style>
@@ -237,27 +251,28 @@
 
 <script>
     (function () {
-        const APP_LINK_URL = '{{appLinkUrl}}';
+        const APP_DEEP_LINK_URL = '{{appDeepLinkUrl}}';
         const AUTO_OPEN_DELAY_MS = 500;
-        const AUTO_OPEN_PARAM = 'napzak_open_attempted';
-
-        function buildOpenAttemptUrl(source) {
-            const url = new URL(APP_LINK_URL);
-
-            url.searchParams.set(AUTO_OPEN_PARAM, 'true');
-            url.searchParams.set('napzak_open_source', source);
-            url.searchParams.set('napzak_open_ts', String(Date.now()));
-
-            return url.toString();
-        }
+        const AUTO_OPEN_STORAGE_KEY = 'napzak_auto_open_attempted:' + window.location.pathname;
 
         function hasAutoOpenAttempted() {
-            const currentParams = new URLSearchParams(window.location.search);
-            return currentParams.get(AUTO_OPEN_PARAM) === 'true';
+            try {
+                return sessionStorage.getItem(AUTO_OPEN_STORAGE_KEY) === 'true';
+            } catch (error) {
+                return window.__napzakAutoOpenAttempted === true;
+            }
         }
 
-        function openApp(source) {
-            window.location.href = buildOpenAttemptUrl(source);
+        function markAutoOpenAttempted() {
+            try {
+                sessionStorage.setItem(AUTO_OPEN_STORAGE_KEY, 'true');
+            } catch (error) {
+                window.__napzakAutoOpenAttempted = true;
+            }
+        }
+
+        function openApp() {
+            window.location.href = APP_DEEP_LINK_URL;
         }
 
         function tryAutoOpen() {
@@ -266,7 +281,8 @@
             }
 
             window.setTimeout(function () {
-                openApp('auto');
+                markAutoOpenAttempted();
+                openApp();
             }, AUTO_OPEN_DELAY_MS);
         }
 
@@ -274,7 +290,7 @@
 
         if (openAppButton) {
             openAppButton.addEventListener('click', function () {
-                openApp('button');
+                openApp();
             });
         }
 
