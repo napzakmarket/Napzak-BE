@@ -47,4 +47,12 @@ public class TokenService {
 		tokenRepository.delete(token);
 		log.info("Successfully deleted refresh token for memberId: {}", memberId);
 	}
+
+	@Transactional
+	public void deleteByRefreshToken(final String refreshToken) {
+		Token token = tokenRepository.findByRefreshToken(refreshToken)
+			.orElseThrow(() -> new NapzakException(TokenErrorCode.REFRESH_TOKEN_NOT_FOUND));
+		tokenRepository.delete(token);
+		log.info("Successfully deleted refresh token for memberId: {}", token.getId());
+	}
 }
