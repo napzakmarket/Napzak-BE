@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,6 +33,7 @@ import com.napzak.api.domain.store.code.SmsSuccessCode;
 import com.napzak.api.domain.store.code.StoreSuccessCode;
 import com.napzak.api.domain.store.dto.request.GenrePreferenceRequest;
 import com.napzak.api.domain.store.dto.request.NicknameRequest;
+import com.napzak.api.domain.store.dto.request.RefreshTokenDeleteRequest;
 import com.napzak.api.domain.store.dto.request.RoleDto;
 import com.napzak.api.domain.store.dto.request.SmsConfirmRequest;
 import com.napzak.api.domain.store.dto.request.SmsSendRequest;
@@ -160,6 +162,15 @@ public class StoreController implements StoreApi {
 	) {
 		AccessTokenGenerateResponse accessTokenGenerateResponse = authenticationService.generateAccessTokenFromRefreshToken(refreshToken);
 		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.ACCESS_TOKEN_REISSUE_SUCCESS, accessTokenGenerateResponse));
+	}
+
+	// 테스트용: body의 refreshToken 원문으로 Redis에서 해당 토큰만 삭제
+	@DeleteMapping("/refresh-token")
+	public ResponseEntity<SuccessResponse<Void>> deleteRefreshToken(
+		@RequestBody RefreshTokenDeleteRequest request
+	) {
+		tokenService.deleteByRefreshToken(request.refreshToken());
+		return ResponseEntity.ok(SuccessResponse.of(StoreSuccessCode.REFRESH_TOKEN_DELETE_SUCCESS));
 	}
 
 	@AuthorizedRole({Role.ADMIN, Role.STORE, Role.ONBOARDING, Role.WITHDRAWN})
