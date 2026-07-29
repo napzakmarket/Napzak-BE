@@ -30,7 +30,7 @@
             margin: 0;
             padding: 0;
             background: #ffffff;
-            color: #2f2f2f;
+            color: #2C2C2C;
             font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", sans-serif;
         }
 
@@ -39,81 +39,133 @@
         }
 
         .share-page {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 24px 56px;
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            min-height: 780px;
             background: #ffffff;
+            overflow-x: hidden;
         }
 
-        .share-content {
-            width: 100%;
-            max-width: 294px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .install-section {
+            position: absolute;
+            top: 462px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            min-height: 318px;
+            background: #F5F5F5;
             text-align: center;
         }
 
         .share-illustration {
+            position: absolute;
+            top: 105px;
+            left: 50%;
             width: 160px;
             max-width: 58vw;
             height: auto;
             display: block;
-            margin: 0 0 34px;
+            transform: translateX(-50%);
         }
 
         .share-title {
-            width: 240px;
+            position: absolute;
+            top: 250px;
+            left: 50%;
+            width: 320px;
+            max-width: calc(100vw - 40px);
             margin: 0;
-            color: #333333;
-            font-size: 18px;
-            line-height: 23px;
-            font-weight: 600;
-            letter-spacing: 0;
+            color: #2C2C2C;
+            font-size: 20px;
+            line-height: 1.35;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            text-align: center;
             word-break: keep-all;
+            white-space: pre-line;
+            transform: translateX(-50%);
         }
 
         .share-subtitle {
-            width: 294px;
-            margin: 12px 0 0;
-            color: #8a8a8a;
-            font-size: 14px;
-            line-height: 18px;
+            position: absolute;
+            top: 308px;
+            left: 50%;
+            width: 360px;
+            max-width: calc(100vw - 24px);
+            margin: 0;
+            color: #7F7F7F;
+            font-size: 16px;
+            line-height: 1.45;
             font-weight: 600;
-            letter-spacing: 0;
+            letter-spacing: -0.04em;
+            text-align: center;
             word-break: keep-all;
+            transform: translateX(-50%);
         }
 
-        .share-button-group {
-            width: 266px;
+        .open-app-button {
+            position: absolute;
+            top: 356px;
+            left: 50%;
+            width: 148px;
+            height: 48px;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            margin-top: 48px;
+            justify-content: center;
+            border: 0;
+            border-radius: 8px;
+            padding: 0 16px;
+            background: #7534FF;
+            color: #FFFFFF;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            line-height: 1.2;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            font-family: inherit;
+            transform: translateX(-50%);
+        }
+
+        .open-app-button:hover,
+        .open-app-button:active {
+            opacity: 0.92;
         }
 
         .store-guide-text {
-            margin: 14px 0 12px;
-            color: #8a8a8a;
-            font-size: 13px;
-            line-height: 1.5;
-            font-weight: 500;
-            letter-spacing: -0.03em;
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            width: 266px;
+            margin: 0;
+            color: #7F7F7F;
+            font-size: 16px;
+            line-height: 1.4;
+            font-weight: 600;
+            letter-spacing: -0.04em;
+            text-align: center;
             word-break: keep-all;
+            transform: translateX(-50%);
         }
 
         .store-button-group {
+            position: absolute;
+            top: 108px;
+            left: 50%;
             width: 266px;
             display: flex;
             flex-direction: column;
             gap: 12px;
+            transform: translateX(-50%);
         }
 
-        .share-button,
-        .share-button:link,
-        .share-button:visited {
+        .store-button,
+        .store-button:link,
+        .store-button:visited {
             width: 266px;
             height: 48px;
             display: flex;
@@ -122,11 +174,13 @@
             border: 0;
             border-radius: 8px;
             padding: 0 16px;
+            background: #545454;
+            color: #FFFFFF;
             text-align: center;
             text-decoration: none;
-            font-size: 16px;
+            font-size: 14px;
             line-height: 1.2;
-            font-weight: 600;
+            font-weight: 700;
             letter-spacing: -0.03em;
             cursor: pointer;
             appearance: none;
@@ -134,119 +188,72 @@
             font-family: inherit;
         }
 
-        .share-button-primary {
-            background: #7534ff;
-            color: #ffffff;
-        }
-
-        .share-button-secondary,
-        .share-button-secondary:link,
-        .share-button-secondary:visited {
-            background: #B2A4FF;
-            color: #111111;
-        }
-
-        .share-button:hover,
-        .share-button:active {
+        .store-button:hover,
+        .store-button:active {
             opacity: 0.92;
         }
 
-        @media (max-width: 480px) {
-            .share-page {
-                padding: 32px 20px 48px;
-            }
-
-            .share-content {
-                max-width: 294px;
-            }
-
-            .share-illustration {
-                width: 160px;
-                margin-bottom: 34px;
-            }
-
+        @media (max-width: 360px) {
             .share-title {
-                width: 240px;
-                font-size: 18px;
-                line-height: 23px;
+                max-width: calc(100vw - 32px);
             }
 
             .share-subtitle {
-                width: 294px;
-                font-size: 14px;
-                line-height: 18px;
+                max-width: calc(100vw - 24px);
             }
 
-            .share-button-group {
-                width: 266px;
-                margin-top: 48px;
-            }
-
-            .store-guide-text {
-                margin: 14px 0 12px;
-                font-size: 13px;
-            }
-
-            .store-button-group {
-                width: 266px;
-                gap: 12px;
-            }
-
-            .share-button,
-            .share-button:link,
-            .share-button:visited {
-                width: 266px;
-                height: 48px;
-                padding: 0 16px;
-                border-radius: 8px;
-                font-size: 16px;
+            .store-guide-text,
+            .store-button-group,
+            .store-button,
+            .store-button:link,
+            .store-button:visited {
+                max-width: calc(100vw - 40px);
             }
         }
     </style>
 </head>
 <body>
 <main class="share-page">
-    <section class="share-content">
-        <img
-                class="share-illustration"
-                src="/images/napzak-share-illustration.png"
-                alt="납작마켓 안내 이미지"
-        />
+    <section class="install-section">
+        <p class="store-guide-text">
+            아직 앱이 없다면<br />
+            스토어에서 설치해 주세요.
+        </p>
 
-        <h1 class="share-title">{{bodyTitle}}</h1>
-
-        {{bodyDescriptionHtml}}
-
-        <div class="share-button-group">
-            <button
-                    id="open-app-button"
-                    type="button"
-                    class="share-button share-button-primary"
+        <div class="store-button-group">
+            <a
+                    href="{{appStoreUrl}}"
+                    class="store-button"
             >
-                납작마켓 앱에서 보기
-            </button>
+                App Store에서 다운로드
+            </a>
 
-            <p class="store-guide-text">
-                아직 앱이 없다면 스토어에서 설치해 주세요.
-            </p>
-
-            <div class="store-button-group">
-                <a
-                        href="{{appStoreUrl}}"
-                        class="share-button share-button-secondary"
-                >
-                    App Store에서 다운로드
-                </a>
-
-                <a
-                        href="{{playStoreUrl}}"
-                        class="share-button share-button-secondary"
-                >
-                    Google Play에서 다운로드
-                </a>
-            </div>
+            <a
+                    href="{{playStoreUrl}}"
+                    class="store-button"
+            >
+                Google Play에서 다운로드
+            </a>
         </div>
     </section>
+
+    <img
+            class="share-illustration"
+            src="/images/napzak-share-illustration.png"
+            alt="납작마켓 안내 이미지"
+    />
+
+    <h1 class="share-title">{{bodyTitle}}</h1>
+
+    {{bodyDescriptionHtml}}
+
+    <button
+            id="open-app-button"
+            type="button"
+            class="open-app-button"
+    >
+        앱으로 가기&nbsp;▶
+    </button>
 </main>
 
 <script>
