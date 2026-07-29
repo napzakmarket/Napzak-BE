@@ -2,17 +2,19 @@ package com.napzak.domain.store.crud.store;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.napzak.domain.store.code.StoreErrorCode;
-import com.napzak.domain.store.repository.StoreRepository;
-import com.napzak.domain.store.vo.StoreStatus;
-import com.napzak.domain.store.entity.StoreEntity;
-import com.napzak.common.auth.role.enums.Role;
 import com.napzak.common.auth.client.enums.SocialType;
-import com.napzak.domain.store.vo.Store;
+import com.napzak.common.auth.role.enums.Role;
 import com.napzak.common.exception.NapzakException;
+import com.napzak.domain.store.code.StoreErrorCode;
+import com.napzak.domain.store.entity.StoreEntity;
+import com.napzak.domain.store.repository.StoreRepository;
+import com.napzak.domain.store.vo.Store;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +30,21 @@ public class StoreRetriever {
 			.orElseThrow(() -> new NapzakException(StoreErrorCode.STORE_NOT_FOUND));
 		return Store.fromEntity((storeEntity));
 	}
+
+	@Transactional(readOnly = true)
+	public Page<Store> findStorePage(int page, int size) {
+		return storeRepository
+			.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id")))
+			.map(Store::fromEntity);
+	}
+
+	@Transactional(readOnly = true)
+	public Page<Store> findStorePageByNickname(String keyword, int page, int size) {
+		return storeRepository
+			.findByNicknameContaining(keyword, PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id")))
+			.map(Store::fromEntity);
+	}
+
 
 	@Transactional(readOnly = true)
 	public List<Store> findStoresByStoreIds(List<Long> storeIds) {
@@ -67,6 +84,12 @@ public class StoreRetriever {
 	@Transactional(readOnly = true)
 	public boolean existsByNickname(String nickname) {
 		return storeRepository.existsByNickname(nickname);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Store> findRecentStores(int limit) {
+		return storeRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(0, limit))
+			.stream().map(Store::fromEntity).toList();
 	}
 
 	@Transactional(readOnly = true)

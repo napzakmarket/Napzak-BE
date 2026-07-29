@@ -36,6 +36,7 @@ import com.napzak.api.domain.product.dto.response.ProductSellResponse;
 import com.napzak.api.domain.product.dto.response.RecommendSearchWordDto;
 import com.napzak.api.domain.product.service.ProductPagination;
 import com.napzak.api.domain.product.service.ProductService;
+import com.napzak.api.domain.product.service.ProductShareUrlProvider;
 import com.napzak.domain.product.entity.enums.TradeType;
 import com.napzak.domain.product.vo.Product;
 import com.napzak.domain.product.vo.ProductPhoto;
@@ -90,6 +91,7 @@ public class ProductController implements ProductApi {
 	private final ProductGenreFacade productGenreFacade;
 	private final ProductStoreFacade productStoreFacade;
 	private final ProductPhotoS3ImageCleaner productPhotoS3ImageCleaner;
+	private final ProductShareUrlProvider productShareUrlProvider;
 
 	@Override
 	@AuthorizedRole({Role.ADMIN, Role.STORE})
@@ -466,6 +468,8 @@ public class ProductController implements ProductApi {
 			productOwnerBuyCount
 		);
 
+		String shareUrl = productShareUrlProvider.generate(productId);
+
 		// List<Review> reviewList = productReviewFacade.findAllByStoreId(product.getStoreId());
 		//
 		// List<Long> reviewIds = reviewList.stream()
@@ -482,8 +486,9 @@ public class ProductController implements ProductApi {
 		// 	})
 		// 	.toList();
 
-		ProductDetailResponse response = new ProductDetailResponse(isInterested, productDetailDto, photoDtoList,
-			storeStatus);
+		ProductDetailResponse response = new ProductDetailResponse(
+			isInterested, shareUrl, productDetailDto, photoDtoList, storeStatus
+		);
 
 		return ResponseEntity.ok(
 			SuccessResponse.of(

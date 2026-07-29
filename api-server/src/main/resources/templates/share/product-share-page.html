@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <meta property="og:title" content="{{title}}" />
+    <meta property="og:description" content="{{description}}" />
+    <meta property="og:image" content="{{imageUrl}}" />
+    <meta property="og:url" content="{{pageUrl}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="납작마켓" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{title}}" />
+    <meta name="twitter:description" content="{{description}}" />
+    <meta name="twitter:image" content="{{imageUrl}}" />
+
+    <title>{{title}}</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            color: #2C2C2C;
+            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+        }
+
+        .share-page {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            min-height: 780px;
+            background: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .install-section {
+            position: absolute;
+            top: 462px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            min-height: 318px;
+            background: #F5F5F5;
+            text-align: center;
+        }
+
+        .share-illustration {
+            position: absolute;
+            top: 105px;
+            left: 50%;
+            width: 160px;
+            max-width: 58vw;
+            height: auto;
+            display: block;
+            transform: translateX(-50%);
+        }
+
+        .share-title {
+            position: absolute;
+            top: 250px;
+            left: 50%;
+            width: 320px;
+            max-width: calc(100vw - 40px);
+            margin: 0;
+            color: #2C2C2C;
+            font-size: 20px;
+            line-height: 1.35;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            text-align: center;
+            word-break: keep-all;
+            white-space: pre-line;
+            transform: translateX(-50%);
+        }
+
+        .share-subtitle {
+            position: absolute;
+            top: 308px;
+            left: 50%;
+            width: 360px;
+            max-width: calc(100vw - 24px);
+            margin: 0;
+            color: #7F7F7F;
+            font-size: 16px;
+            line-height: 1.45;
+            font-weight: 600;
+            letter-spacing: -0.04em;
+            text-align: center;
+            word-break: keep-all;
+            transform: translateX(-50%);
+        }
+
+        .open-app-button {
+            position: absolute;
+            top: 356px;
+            left: 50%;
+            width: 148px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            border-radius: 8px;
+            padding: 0 16px;
+            background: #7534FF;
+            color: #FFFFFF;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            line-height: 1.2;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            font-family: inherit;
+            transform: translateX(-50%);
+        }
+
+        .open-app-button:hover,
+        .open-app-button:active {
+            opacity: 0.92;
+        }
+
+        .store-guide-text {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            width: 266px;
+            margin: 0;
+            color: #7F7F7F;
+            font-size: 16px;
+            line-height: 1.4;
+            font-weight: 600;
+            letter-spacing: -0.04em;
+            text-align: center;
+            word-break: keep-all;
+            transform: translateX(-50%);
+        }
+
+        .store-button-group {
+            position: absolute;
+            top: 108px;
+            left: 50%;
+            width: 266px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transform: translateX(-50%);
+        }
+
+        .store-button,
+        .store-button:link,
+        .store-button:visited {
+            width: 266px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            border-radius: 8px;
+            padding: 0 16px;
+            background: #545454;
+            color: #FFFFFF;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            line-height: 1.2;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            font-family: inherit;
+        }
+
+        .store-button:hover,
+        .store-button:active {
+            opacity: 0.92;
+        }
+
+        @media (max-width: 360px) {
+            .share-title {
+                max-width: calc(100vw - 32px);
+            }
+
+            .share-subtitle {
+                max-width: calc(100vw - 24px);
+            }
+
+            .store-guide-text,
+            .store-button-group,
+            .store-button,
+            .store-button:link,
+            .store-button:visited {
+                max-width: calc(100vw - 40px);
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="share-page">
+    <section class="install-section">
+        <p class="store-guide-text">
+            아직 앱이 없다면<br />
+            스토어에서 설치해 주세요.
+        </p>
+
+        <div class="store-button-group">
+            <a
+                    href="{{appStoreUrl}}"
+                    class="store-button"
+            >
+                App Store에서 다운로드
+            </a>
+
+            <a
+                    href="{{playStoreUrl}}"
+                    class="store-button"
+            >
+                Google Play에서 다운로드
+            </a>
+        </div>
+    </section>
+
+    <img
+            class="share-illustration"
+            src="/images/napzak-share-illustration.png"
+            alt="납작마켓 안내 이미지"
+    />
+
+    <h1 class="share-title">{{bodyTitle}}</h1>
+
+    {{bodyDescriptionHtml}}
+
+    <button
+            id="open-app-button"
+            type="button"
+            class="open-app-button"
+    >
+        앱으로 가기&nbsp;▶
+    </button>
+</main>
+
+<script>
+    (function () {
+        const APP_DEEP_LINK_URL = '{{appDeepLinkUrl}}';
+        const AUTO_OPEN_DELAY_MS = 500;
+        const AUTO_OPEN_STORAGE_KEY = 'napzak_auto_open_attempted:' + window.location.pathname;
+
+        function hasAutoOpenAttempted() {
+            try {
+                return sessionStorage.getItem(AUTO_OPEN_STORAGE_KEY) === 'true';
+            } catch (error) {
+                return window.__napzakAutoOpenAttempted === true;
+            }
+        }
+
+        function markAutoOpenAttempted() {
+            try {
+                sessionStorage.setItem(AUTO_OPEN_STORAGE_KEY, 'true');
+            } catch (error) {
+                window.__napzakAutoOpenAttempted = true;
+            }
+        }
+
+        function openApp() {
+            window.location.href = APP_DEEP_LINK_URL;
+        }
+
+        function tryAutoOpen() {
+            if (hasAutoOpenAttempted()) {
+                return;
+            }
+
+            window.setTimeout(function () {
+                markAutoOpenAttempted();
+                openApp();
+            }, AUTO_OPEN_DELAY_MS);
+        }
+
+        const openAppButton = document.getElementById('open-app-button');
+
+        if (openAppButton) {
+            openAppButton.addEventListener('click', function () {
+                openApp();
+            });
+        }
+
+        tryAutoOpen();
+    })();
+</script>
+</body>
+</html>

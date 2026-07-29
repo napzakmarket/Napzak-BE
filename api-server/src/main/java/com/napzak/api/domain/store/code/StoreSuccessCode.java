@@ -14,6 +14,7 @@ public enum StoreSuccessCode implements BaseSuccessCode {
 	200 Ok
 	 */
 	LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃 성공"),
+	REFRESH_TOKEN_DELETE_SUCCESS(HttpStatus.OK, "리프레시 토큰 삭제 성공"),
 	GENRE_PREPERENCE_REGISTER_SUCCESS(HttpStatus.CREATED, "장르 정보 저장 성공"),
 	GET_MYPAGE_INFO_SUCCESS(HttpStatus.OK, "마이페이지 정보 조회 성공"),
 	GET_STORE_ID_SUCCESS(HttpStatus.OK, "상점 id 조회 성공"),
