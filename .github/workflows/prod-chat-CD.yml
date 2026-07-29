@@ -2,12 +2,17 @@ name: prod-chat-CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 env:
   ECR_HOST: ${{ secrets.PROD_ECR_HOST }}
   ECR_APP_NAME: ${{ secrets.CHAT_ECR_APP_NAME }}
   IMAGE_TAG: ${{ github.sha }}
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build-push:
@@ -19,15 +24,8 @@ jobs:
 
       - uses: actions/setup-java@v3
         with:
-          java-version: '17'
-          distribution: 'corretto'
-
-      - name: Inject CHAT secrets
-        run: |
-          printf '%s' "${{ secrets.CHAT_APPLICATION_PROD }}" > chat-server/src/main/resources/application-chat-prod.yml
-          mkdir -p chat-server/src/main/resources/firebase
-          printf '%s' "${{ secrets.CHAT_FIREBASE_JSON_B64 }}" | base64 -d \
-            > chat-server/src/main/resources/firebase/napzak-firebase-adminsdk.json
+          java-version: "17"
+          distribution: corretto
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -38,13 +36,25 @@ jobs:
 
       - name: Login to Amazon ECR
         run: |
-          aws ecr get-login-password --region ap-northeast-2 | \
-          docker login --username AWS --password-stdin ${{ env.ECR_HOST }}
+          set -euo pipefail
+
+          aws ecr get-login-password \
+            --region ap-northeast-2 |
+          docker login \
+            --username AWS \
+            --password-stdin \
+            "${{ env.ECR_HOST }}"
 
       - name: Ensure ECR repository exists
         run: |
-          aws ecr describe-repositories --repository-names "${{ env.ECR_APP_NAME }}" >/dev/null 2>&1 || \
-          aws ecr create-repository --repository-name "${{ env.ECR_APP_NAME }}" >/dev/null
+          set -euo pipefail
+
+          aws ecr describe-repositories \
+            --repository-names "${{ env.ECR_APP_NAME }}" \
+            >/dev/null 2>&1 || \
+          aws ecr create-repository \
+            --repository-name "${{ env.ECR_APP_NAME }}" \
+            >/dev/null
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -52,12 +62,13 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build & push CHAT image
+      - name: Build and push CHAT image
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ${{ github.workspace }}
           file: ./Dockerfile-chat-prod
           push: true
+          no-cache: true
           platforms: linux/arm64
           tags: |
             ${{ env.ECR_HOST }}/${{ env.ECR_APP_NAME }}:${{ env.IMAGE_TAG }}
@@ -69,19 +80,138 @@ jobs:
     environment: prod
 
     steps:
-      - name: Chat deploy (auto blue-green)
+      - name: Deploy CHAT with runtime secrets
         uses: appleboy/ssh-action@master
         env:
           ECR_HOST: ${{ env.ECR_HOST }}
           ECR_APP_NAME: ${{ env.ECR_APP_NAME }}
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          CHAT_FIREBASE_JSON_BASE64: ${{ secrets.CHAT_FIREBASE_JSON_B64 }}
+
         with:
           host: ${{ secrets.PROD_CHAT_SERVER_HOST }}
           username: ${{ secrets.PROD_CHAT_SERVER_USERNAME }}
           key: ${{ secrets.PROD_CHAT_SERVER_KEY }}
-          envs: ECR_HOST, ECR_APP_NAME, IMAGE_TAG
+          envs: ECR_HOST,ECR_APP_NAME,IMAGE_TAG,CHAT_FIREBASE_JSON_BASE64
+
           script: |
-            bash /home/ec2-user/Napzak-BE/deploy-blue-green.sh
+            set -euo pipefail
+
+            APP_DIR="/home/ec2-user/Napzak-BE"
+            SECRET_DIR="${APP_DIR}/secrets/prod/chat"
+            APPLICATION_FILE="${SECRET_DIR}/application-prod.yml"
+            FIREBASE_FILE="${SECRET_DIR}/napzak-firebase-adminsdk.json"
+
+            cd "$APP_DIR"
+
+            validate_jwt_secret() {
+              file="$1"
+
+              awk '
+                /^jwt:[[:space:]]*$/ {
+                  in_jwt=1
+                  next
+                }
+
+                /^[^[:space:]#][^:]*:/ {
+                  if ($0 !~ /^jwt:/) {
+                    in_jwt=0
+                  }
+                }
+
+                in_jwt &&
+                /^[[:space:]]+secret:[[:space:]]*[^[:space:]].*/ {
+                  found=1
+                }
+
+                END {
+                  exit found ? 0 : 1
+                }
+              ' "$file"
+            }
+
+            validate_firebase_json() {
+              file="$1"
+
+              python3 - "$file" <<'PY'
+            import json
+            import sys
+            from pathlib import Path
+
+            path = Path(sys.argv[1])
+
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except Exception as exc:
+                raise SystemExit(f"invalid firebase JSON: {exc}")
+
+            required = [
+                "type",
+                "project_id",
+                "private_key",
+                "client_email",
+            ]
+
+            missing = [
+                key
+                for key in required
+                if not str(data.get(key, "")).strip()
+            ]
+
+            if missing:
+                raise SystemExit(
+                    f"missing required firebase fields: {missing}"
+                )
+
+            if data["type"] != "service_account":
+                raise SystemExit(
+                    "firebase type must be service_account"
+                )
+            PY
+            }
+
+            if [ -z "${CHAT_FIREBASE_JSON_BASE64:-}" ]; then
+              echo "ERROR: CHAT_FIREBASE_JSON_BASE64 is unavailable or empty"
+              exit 1
+            fi
+
+            umask 077
+            mkdir -p "$SECRET_DIR"
+
+            cat > "$APPLICATION_FILE" <<'EOF_CHAT_APPLICATION_PROD'
+            ${{ secrets.CHAT_APPLICATION_PROD }}
+            EOF_CHAT_APPLICATION_PROD
+
+            printf '%s' "$CHAT_FIREBASE_JSON_BASE64" \
+              | tr -d '\n\r ' \
+              | base64 -d \
+              > "$FIREBASE_FILE"
+
+            test -s "$APPLICATION_FILE" || {
+              echo "ERROR: application-prod.yml is empty"
+              exit 1
+            }
+
+            test -s "$FIREBASE_FILE" || {
+              echo "ERROR: Firebase credential is empty"
+              exit 1
+            }
+
+            validate_jwt_secret "$APPLICATION_FILE" || {
+              echo "ERROR: jwt.secret is missing or empty"
+              exit 1
+            }
+
+            validate_firebase_json "$FIREBASE_FILE"
+
+            chmod 600 "$APPLICATION_FILE"
+            chmod 600 "$FIREBASE_FILE"
+
+            echo "CHAT application-prod.yml size: $(wc -c < "$APPLICATION_FILE") bytes"
+            echo "CHAT Firebase JSON size: $(wc -c < "$FIREBASE_FILE") bytes"
+            echo "CHAT runtime secrets validated successfully"
+
+            bash "${APP_DIR}/deploy-blue-green.sh"
 
       - name: Switch nginx upstream
         uses: appleboy/ssh-action@master
@@ -89,15 +219,18 @@ jobs:
           host: ${{ secrets.PROD_API_SERVER_HOST }}
           username: ${{ secrets.PROD_API_SERVER_USERNAME }}
           key: ${{ secrets.PROD_API_SERVER_KEY }}
+
           script: |
+            set -euo pipefail
             sudo /home/ubuntu/scripts/switch_chat_upstream.sh
 
-      - name: Clean-up old chat container
+      - name: Clean up old CHAT container
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.PROD_CHAT_SERVER_HOST }}
           username: ${{ secrets.PROD_CHAT_SERVER_USERNAME }}
           key: ${{ secrets.PROD_CHAT_SERVER_KEY }}
+
           script: |
+            set -euo pipefail
             bash /home/ec2-user/Napzak-BE/cleanup-chat-old.sh
-        
