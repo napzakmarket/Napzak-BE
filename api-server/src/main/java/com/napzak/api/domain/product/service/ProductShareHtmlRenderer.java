@@ -49,7 +49,7 @@ public class ProductShareHtmlRenderer {
 	public String renderUnavailable(ProductSharePageView view) {
 		return render(
 			view,
-			"삭제되었거나 더 이상 존재하지 않는 상품이에요.",
+			"삭제되었거나 더 이상\n존재하지 않는 상품이에요.",
 			"납작마켓에서 다른 상품을 둘러보세요."
 		);
 	}
