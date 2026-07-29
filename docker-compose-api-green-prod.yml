@@ -2,10 +2,22 @@ version: "3.8"
 
 services:
   api-server-green:
-    image: 203918864903.dkr.ecr.ap-northeast-2.amazonaws.com/napzak-api-prod:latest
+    image: ${ECR_HOST}/${ECR_APP_NAME}:${IMAGE_TAG}
     container_name: napzak-api-green-prod
-    ports: ["8081:8080"]
-    networks: ["napzak-prod-net"]
+
+    ports:
+      - "8081:8080"
+
+    environment:
+      FIREBASE_CONFIG_PATH: file:/app/firebase/napzak-firebase-adminsdk.json
+
+    volumes:
+      - /home/ubuntu/Napzak-BE/secrets/prod/api/application-prod.yml:/app/application-prod.yml:ro
+      - /home/ubuntu/Napzak-BE/secrets/prod/api/napzak-firebase-adminsdk.json:/app/firebase/napzak-firebase-adminsdk.json:ro
+
+    networks:
+      - napzak-prod-net
+
     restart: always
 
 networks:
