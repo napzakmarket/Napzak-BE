@@ -11,7 +11,6 @@ env:
   IMAGE_TAG: ${{ github.sha }}
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
@@ -63,13 +62,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push API image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: ${{ github.workspace }}
           file: ./Dockerfile-api-prod
           push: true
-          no-cache: true
           platforms: linux/amd64
+          cache-from: type=gha,scope=prod-api
+          cache-to: type=gha,mode=max,scope=prod-api
           tags: |
             ${{ env.ECR_HOST }}/${{ env.ECR_APP_NAME }}:${{ env.IMAGE_TAG }}
             ${{ env.ECR_HOST }}/${{ env.ECR_APP_NAME }}:latest
@@ -81,7 +81,7 @@ jobs:
 
     steps:
       - name: Deploy API with runtime secrets
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.2.5
         env:
           ECR_HOST: ${{ env.ECR_HOST }}
           ECR_APP_NAME: ${{ env.ECR_APP_NAME }}
@@ -103,6 +103,11 @@ jobs:
             FIREBASE_FILE="${SECRET_DIR}/napzak-firebase-adminsdk.json"
 
             cd "$APP_DIR"
+            
+            command -v python3 >/dev/null 2>&1 || {
+              echo "ERROR: python3 is required for Firebase JSON validation"
+              exit 1
+            }
 
             validate_jwt_secret() {
               file="$1"

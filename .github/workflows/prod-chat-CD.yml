@@ -11,7 +11,6 @@ env:
   IMAGE_TAG: ${{ github.sha }}
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
@@ -63,13 +62,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push CHAT image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: ${{ github.workspace }}
           file: ./Dockerfile-chat-prod
           push: true
-          no-cache: true
           platforms: linux/arm64
+          cache-from: type=gha,scope=prod-chat
+          cache-to: type=gha,mode=max,scope=prod-chat
           tags: |
             ${{ env.ECR_HOST }}/${{ env.ECR_APP_NAME }}:${{ env.IMAGE_TAG }}
             ${{ env.ECR_HOST }}/${{ env.ECR_APP_NAME }}:latest
@@ -81,7 +81,7 @@ jobs:
 
     steps:
       - name: Deploy CHAT with runtime secrets
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.2.5
         env:
           ECR_HOST: ${{ env.ECR_HOST }}
           ECR_APP_NAME: ${{ env.ECR_APP_NAME }}
@@ -103,6 +103,11 @@ jobs:
             FIREBASE_FILE="${SECRET_DIR}/napzak-firebase-adminsdk.json"
 
             cd "$APP_DIR"
+            
+            command -v python3 >/dev/null 2>&1 || {
+              echo "ERROR: python3 is required for Firebase JSON validation"
+              exit 1
+            }
 
             validate_jwt_secret() {
               file="$1"
@@ -214,7 +219,7 @@ jobs:
             bash "${APP_DIR}/deploy-blue-green.sh"
 
       - name: Switch nginx upstream
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.PROD_API_SERVER_HOST }}
           username: ${{ secrets.PROD_API_SERVER_USERNAME }}
@@ -225,7 +230,7 @@ jobs:
             sudo /home/ubuntu/scripts/switch_chat_upstream.sh
 
       - name: Clean up old CHAT container
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.PROD_CHAT_SERVER_HOST }}
           username: ${{ secrets.PROD_CHAT_SERVER_USERNAME }}
