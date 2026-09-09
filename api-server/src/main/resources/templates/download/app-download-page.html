@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <meta property="og:title" content="{{title}}" />
+    <meta property="og:description" content="{{description}}" />
+    <meta property="og:image" content="{{imageUrl}}" />
+    <meta property="og:url" content="{{pageUrl}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="납작마켓" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{title}}" />
+    <meta name="twitter:description" content="{{description}}" />
+    <meta name="twitter:image" content="{{imageUrl}}" />
+
+    <title>{{title}}</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            color: #2C2C2C;
+            font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+        }
+
+        .share-page {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            min-height: 780px;
+            background: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .share-illustration {
+            position: absolute;
+            top: 105px;
+            left: 50%;
+            width: 160px;
+            max-width: 58vw;
+            height: auto;
+            display: block;
+            transform: translateX(-50%);
+        }
+
+        .share-title {
+            position: absolute;
+            top: 250px;
+            left: 50%;
+            width: 320px;
+            max-width: calc(100vw - 40px);
+            margin: 0;
+            color: #2C2C2C;
+            font-size: 20px;
+            line-height: 1.35;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            text-align: center;
+            word-break: keep-all;
+            white-space: pre-line;
+            transform: translateX(-50%);
+        }
+
+        .share-subtitle {
+            position: absolute;
+            top: 308px;
+            left: 50%;
+            width: 360px;
+            max-width: calc(100vw - 24px);
+            margin: 0;
+            color: #7F7F7F;
+            font-size: 16px;
+            line-height: 1.45;
+            font-weight: 600;
+            letter-spacing: -0.04em;
+            text-align: center;
+            word-break: keep-all;
+            transform: translateX(-50%);
+        }
+
+        .download-button,
+        .download-button:link,
+        .download-button:visited {
+            position: absolute;
+            top: 379px;
+            left: 50%;
+            width: 148px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            border-radius: 8px;
+            padding: 0 16px;
+            background: #7534FF;
+            color: #FFFFFF;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            line-height: 1.2;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            font-family: inherit;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+
+        .download-button:hover,
+        .download-button:active {
+            opacity: 0.92;
+        }
+
+        @media (max-width: 360px) {
+            .share-title {
+                max-width: calc(100vw - 32px);
+            }
+
+            .share-subtitle {
+                max-width: calc(100vw - 24px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+<main class="share-page">
+
+    <img
+            class="share-illustration"
+            src="/images/napzak-share-illustration.png"
+            alt="납작마켓 안내 이미지"
+    />
+
+    <h1 class="share-title">
+        덕후들이 사랑하는 거래 공간
+    </h1>
+
+    <p class="share-subtitle">
+        납작마켓에서 취향 저격 굿즈를<br />
+        수수료 없이 거래해보세요
+    </p>
+
+    <a
+            href="https://www.napzakmarket.short.gy/napzak"
+            class="download-button"
+    >
+        납작마켓 다운로드
+    </a>
+
+</main>
+</body>
+</html>

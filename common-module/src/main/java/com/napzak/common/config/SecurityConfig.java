@@ -50,6 +50,7 @@ public class SecurityConfig {
 		"/ws-test.html",
 		"/favicon.ico",
 		"/product/**",
+		"/download",
 		"/.well-known/**"
 	};
 
